@@ -534,8 +534,18 @@ int ngap_amf_handle_pdu_session_resource_modify_response(
     }
   }
 
-  // TODO:for PDUSessionResourceFailedToModifyListModRes
-  // TODO: process User Location Information if available
+  // TODO [AMF-QOS-FAIL]: QoS Flow modification failures silently dropped — never forwarded to SMF
+  // Task 4.1: Call getPduSessionResourceFailedToModifyList() on response_msg
+  //   For each failed item: extract pduSessionId and pduSessionResourceModifyUnsuccessfulTransfer blob
+  //   Build itti_nsmf_pdusession_update_sm_context with n2sm_info_type = "PDU_RES_MOD_FAIL"
+  //   Send to TASK_AMF_SBI → amf_sbi forwards to SMF via Nsmf_PDUSession_UpdateSMContext [TS 29.502 §5.6.2.2]
+  //   SMF uses this to rollback the rejected QoS flow and notify PCF via N7 [TS 29.512 §4.2.6.1]
+  // Standards: TS 38.413 §8.2.3.2, TS 23.502 §4.3.3.2, TS 29.502 §5.6.2.2
+
+  // TODO [AMF-QOS-FAIL]: User Location Information from modify response not forwarded to SMF
+  // Task 4.2: Extract UserLocationInformation IE; encode as NGAP blob; set in ITTI message
+  //   Forward in Nsmf_PDUSession_UpdateSMContext request body and update UE context last_user_location
+  //   [TS 38.413 §9.3.1.96, TS 29.502 §5.6.2.2]
   return RETURNok;
 }
 

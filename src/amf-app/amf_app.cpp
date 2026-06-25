@@ -491,6 +491,60 @@ void amf_app::handle_itti_message(
     }
   } else if (itti_msg.is_n1sm_set or itti_msg.is_n2sm_set) {
     Logger::amf_app().info("Handle ITTI N1N2 Message Transfer Request");
+
+    // TODO [AMF-N11-MODIFY]: Implement PCF/SMF-initiated QoS modification path
+    // Reference: - Phase 1: Network-Initiated QoS Modification Path
+    // This is where the inbound N1N2MessageTransfer (SMF → AMF) carrying an N1
+    // NAS-SM blob and/or an N2 NGAP blob (e.g. n2sm_info_type =
+    // "PDU_RES_MOD_REQ") lands and must branch on the UE CM state.
+    //
+    // Task 1.2: Check UE CM state [TS 23.501 §5.3.2]
+    //   - CM-CONNECTED → Task 1.3; CM-IDLE → Task 1.4
+    // Task 1.3 (CM-CONNECTED): build itti_downlink_nas_transfer with
+    //   n2sm_info_type = "PDU_RES_MOD_REQ", relay N1+N2 to UE/RAN via the
+    //   existing DL NAS TRANSPORT → PDU SESSION RESOURCE MODIFY REQUEST handlers
+    //   [TS 23.502 §4.3.3.2 step 5b]
+    // Task 1.4 (CM-IDLE): store pending N1+N2 blobs in the PDU session context,
+    //   forward paging assistance data (5QI/ARP/PPI) via itti_paging (Phase 3),
+    //   deliver stored blobs after the UE Service Request completes
+    //   [TS 23.501 §5.4.3.1, TS 23.502 §4.2.3.3]
+    // Task 1.5: return 200 OK with N1N2MessageTransferRspData, cause
+    //   = "N1_N2_TRANSFER_INITIATED" (CM-CONNECTED) or "UE_NOT_REACHABLE"
+    //   (CM-IDLE) [TS 29.518 §6.3.5.4]
+    //
+    // Standards:
+    //   - TS 23.501 §5.6.2, §5.3.2, §5.4.3.1
+    //   - TS 23.502 §4.3.3.2, §4.2.3.3
+    //   - TS 29.518 §6.3.5
+    //
+    // [QOS-MOCK] Phase 1 — Network-initiated QoS modification path
+    // ([AMF-N11-MODIFY]; no business logic). Mocks the Task 1.2–1.5 TODO above:
+    //   - Task 1.2 (Check UE CM state): done for real via
+    //     amf_n1::get_ue_cm_state() (simple nas_status lookup).
+    //   - Task 1.3 (CM-CONNECTED): relays N1+N2 to UE/RAN through the existing,
+    //     functional DL NAS TRANSPORT → PDU SESSION RESOURCE MODIFY REQUEST
+    //     handlers (real code path).
+    //   - Task 1.4 (CM-IDLE): MOCKED — pending N1+N2 payload buffering and
+    //     paging assistance forwarding (Phase 3) are out of scope; the branch
+    //     only logs the decision. Without PPI the SMF did not request paging.
+    //   - Task 1.5 (N11 response): the N1N2MessageTransferRspData (cause
+    //     N1_N2_TRANSFER_INITIATED) is already returned synchronously at the
+    //     API layer (N1N2MessageCollectionDocumentApiImpl.cpp), so no extra
+    //     response is built here.
+    cm_state_t cm_state = amf_n1_inst->get_ue_cm_state(itti_msg.supi);
+    if (cm_state == CM_IDLE) {
+      // [QOS-MOCK] CM-IDLE path not wired (Phase 3 paging out of scope).
+      Logger::amf_app().warn(
+          "[QOS-MOCK] UE %s is CM_IDLE — network-initiated modification would "
+          "buffer N1+N2 and trigger paging (Phase 3, not implemented); "
+          "relaying directly for the mock",
+          itti_msg.supi.c_str());
+    } else {
+      Logger::amf_app().info(
+          "[QOS-MOCK] UE %s is CM_CONNECTED — relaying N1+N2 to UE/RAN",
+          itti_msg.supi.c_str());
+    }
+
     auto dl_msg =
         std::make_shared<itti_downlink_nas_transfer>(TASK_AMF_APP, TASK_AMF_N1);
 
@@ -949,13 +1003,24 @@ void amf_app::handle_itti_message(
           itti_msg.ue_id, itti_msg.pdu_session_id,
           itti_msg.smContextStatusNotification)) {
     Logger::amf_app().debug("Update PDU Session Release successfully");
+
+    // TODO [AMF-RELEASE]: SmContextStatusNotification RELEASED does not trigger N2 tear-down
+    // Task 5.1: After local context cleanup, check if UE has an active N2 context for this PDU session:
+    //   - If yes: build itti_pdu_session_resource_release_command and send to TASK_AMF_N2
+    //     amf_n2::handle_itti_message(itti_pdu_session_resource_release_command) at amf_n2.cpp:1297
+    //     already encodes and sends NGAP PDU SESSION RESOURCE RELEASE COMMAND [TS 38.413 §8.2.5]
+    //   - If no active N2 context: skip N2 release, only local cleanup needed
+    // Without this, RAN-side bearers are leaked on every SMF-notified PDU session release
+    // Standards: TS 23.502 §4.3.4, TS 38.413 §8.2.5, TS 29.502 §5.6.2.5
     response_data[kSbiResponseHttpResponseCode] =
         oai::common::sbi::http_status_code::NO_CONTENT;
 
   } else {
+    // TODO [AMF-RELEASE]: Populate ProblemDetails on update failure
+    // Task 5.3: Return 500 Internal Server Error with ProblemDetails body instead of 204
+    //   when update_pdu_sessions_context() fails [TS 29.500 §5.2.2]
     response_data[kSbiResponseHttpResponseCode] =
         oai::common::sbi::http_status_code::NO_CONTENT;
-    // TODO check if we set problem_details
     Logger::amf_app().debug("Update PDU Session Release failed");
   }
 

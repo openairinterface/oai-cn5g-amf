@@ -40,6 +40,14 @@ typedef uint32_t n1n2sub_id_t;
 
 constexpr uint64_t SECONDS_SINCE_FIRST_EPOCH = 2208988800;
 
+// TODO [AMF-N2-QOS]: UE-AMBR is hardcoded — must be sourced dynamically
+// Task 2.1: Parse ueAmbr from UDM AM Data response (amf_sbi.cpp, handle_itti_message(itti_sbi_retrieve_am_data))
+//   and store in UE context (ue_ambr_dl, ue_ambr_ul) [TS 29.503 §5.2.2.2]
+// Task 2.2: Extract ueAmbr from SMF N1N2MessageTransfer request body [TS 29.518 §6.3.5.2]
+//   SMF-provided value takes priority over UDM-subscribed value [TS 23.501 §5.6.2]
+// Task 2.3: Replace all setUeAggregateMaxBitRate() call sites (amf_n2.cpp:1117, 1205, 1825)
+//   with dynamic UE context values; fall back to these constants only when has_ue_ambr = false
+// Standards: TS 23.501 §5.6.2, TS 29.503 §5.2.2.2, TS 38.413 §9.3.1.47
 #define UE_AGGREGATE_MAXIMUM_BIT_RATE_DL 1000000000
 #define UE_AGGREGATE_MAXIMUM_BIT_RATE_UL 1000000000
 

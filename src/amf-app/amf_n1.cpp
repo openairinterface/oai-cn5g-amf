@@ -220,6 +220,13 @@ amf_n1::~amf_n1() {
 }
 
 //------------------------------------------------------------------------------
+// TODO [AMF-PAGING]: No CM state check before sending DL NAS TRANSPORT
+// Task 3.3: Before applying NAS security and dispatching to N2, check UE CM state [TS 23.501 §5.3.2]:
+//   - CM-CONNECTED → proceed normally (current behaviour)
+//   - CM-IDLE       → buffer the DL NAS payload; trigger itti_paging if not already paging for this UE;
+//     deliver buffered payload after next UE Service Request completes [TS 23.502 §4.2.3.2]
+// Without this check, DL NAS sent to a CM-IDLE UE fails silently at the SCTP layer
+// Standards: TS 23.501 §5.3.2, TS 23.502 §4.2.3.2
 void amf_n1::handle_itti_message(itti_downlink_nas_transfer& itti_msg) {
   uint64_t amf_ue_ngap_id         = itti_msg.amf_ue_ngap_id;
   uint32_t ran_ue_ngap_id         = itti_msg.ran_ue_ngap_id;
@@ -2256,6 +2263,41 @@ bool amf_n1::supi_2_amf_id(const std::string& supi, uint64_t& amf_ue_ngap_id) {
   } else {
     return false;
   }
+}
+
+//------------------------------------------------------------------------------
+cm_state_t amf_n1::get_ue_cm_state(const std::string& supi) {
+  // TODO [AMF-N11-MODIFY]: Implement UE CM state check
+  // Reference: - Phase 1, Task 1.2 (UE CM State Check)
+  //
+  // Task 1.2: UE CM State Check
+  //   - Read nas_context->nas_status field from UE NAS context
+  //   - Map NAS status to CM state:
+  //     - CM_CONNECTED: NAS registration complete and UE context active
+  //     - CM_IDLE: UE context released (post-UEContextReleaseComplete)
+  //   - Return CM_CONNECTED or CM_IDLE enumeration value
+  //   - Handle edge case: UE context not found → treat as CM_IDLE
+  //
+  // Standards:
+  //   - TS 23.501 §5.3.2 (CM state machine: CM-CONNECTED vs CM-IDLE)
+  //
+  // [QOS-MOCK] Phase 1 — UE CM state check ([AMF-N11-MODIFY], Task 1.2). Mocks
+  // the Task 1.2 TODO above:
+  //   - Reads nas_context->nas_status — done for real via a simple lookup
+  //     (SUPI → amf_ue_ngap_id → nas_context). No mock data needed here.
+  //   - Edge case (no NAS context found): MOCKED — treated as CM_CONNECTED so
+  //     the mock network-initiated relay path proceeds (the real impl treats a
+  //     missing context as CM_IDLE and triggers paging) [TS 23.501 §5.3.2].
+  uint64_t amf_ue_ngap_id         = INVALID_AMF_UE_NGAP_ID;
+  std::shared_ptr<nas_context> nc = {};
+  if (!supi_2_amf_id(supi, amf_ue_ngap_id) ||
+      !amf_ue_id_2_nas_context(amf_ue_ngap_id, nc) || !nc) {
+    Logger::amf_n1().warn(
+        "[QOS-MOCK] No NAS context for SUPI %s; assuming CM_CONNECTED",
+        supi.c_str());
+    return CM_CONNECTED;
+  }
+  return nc->nas_status;
 }
 
 //------------------------------------------------------------------------------
@@ -7130,7 +7172,16 @@ void amf_n1::handle_t3513_expiry(
   Logger::amf_n1().debug(
       "T3513 (Paging) expiry for UE %s — retransmit not yet implemented",
       amf_ue_ngap_id_str.c_str());
-  // TODO: implement T3513 paging retransmit handling
+  // TODO [AMF-PAGING]: T3513 paging retransmit not implemented — fires and does nothing
+  // Task 3.5: On each T3513 expiry:
+  //   1. Check if UE has become CM-CONNECTED since last page; if so, cancel retry
+  //   2. If still CM-IDLE and retry_count < max_paging_retries (configurable):
+  //      - Retransmit NGAP Paging to RAN with same RanPagingPriority (Phase 3.1)
+  //      - Increment retry counter and restart T3513
+  //   3. If retry_count exhausted:
+  //      - Notify SMF via N11 that UE is unreachable [TS 29.518 §6.3.5.4]
+  //      - Clear pending paged session state (buffered N1+N2 blobs from Phase 1.4)
+  // Standards: TS 24.501 §5.6.3.4, TS 23.502 §4.2.3.3
 }
 
 // ---------------------------------------------------------------------------
