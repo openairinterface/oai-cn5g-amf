@@ -100,17 +100,24 @@ std::string amf_sbi_helper::get_sm_context_status_notification_uri(
 //------------------------------------------------------------------------------
 bool amf_sbi_helper::get_smf_pdu_session_context_uri(
     const std::shared_ptr<pdu_session_context>& psc, std::string& smf_uri) {
-  if (!psc) return false;
+  if (!psc) {
+    Logger::amf_sbi().error("PDU session context is null");
+    return false;
+  }
 
   if (!psc->smf_info.info_available) {
     Logger::amf_sbi().error("No SMF is available for this PDU session");
     return false;
   }
 
-  if (psc->smf_info.context_location.size() == 0) return false;
+  if (psc->smf_info.context_location.size() == 0) {
+    Logger::amf_sbi().error(
+        "SMF context_location is empty (not set from Location header)");
+    return false;
+  }
 
   Logger::amf_sbi().debug(
-      "smf_info, context location %s", psc->smf_info.context_location);
+      "smf_info, context location %s", psc->smf_info.context_location.c_str());
   std::size_t found = psc->smf_info.context_location.find("/");
   if (found != 0)
     smf_uri = psc->smf_info.context_location;
