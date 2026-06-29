@@ -29,6 +29,9 @@
 #include "uint_generator.hpp"
 #include "StatusChange.h"
 
+// Forward declaration
+class nas_context;
+
 using namespace oai::config;
 using namespace oai::_3gpp::model;
 
@@ -283,6 +286,28 @@ class amf_app {
       itti_sbi_am_policy_association_termination_notification& itti_msg);
 
   /*
+   * Handle ITTI message (Nudm_SDM Notification)
+   * @param [itti_sbi_nudm_sdm_notification&]: ITTI message
+   * @return void
+   */
+  void handle_itti_message(itti_sbi_nudm_sdm_notification& itti_msg);
+
+  /*
+   * Subscribe for UDM SDM notifications for a given UE
+   * @param [const std::shared_ptr<ue_context>&] uc: UE context
+   * @return void
+   */
+  void subscribe_sdm_notifications(const std::shared_ptr<ue_context>& uc) const;
+
+  /*
+   * Unsubscribe from UDM SDM notifications for a given UE
+   * @param [const std::shared_ptr<ue_context>&] uc: UE context
+   * @return void
+   */
+  void unsubscribe_sdm_notifications(
+      const std::shared_ptr<ue_context>& uc) const;
+
+  /*
    * Handle ITTI message (UE Context In SMF Data Retrieval response)
    * @param [itti_sbi_ue_context_in_smf_data_retrieval_response&]: ITTI
    * message
@@ -342,12 +367,14 @@ class amf_app {
   void register_3gpp_access(const std::shared_ptr<ue_context>& uc) const;
 
   /*
-   * Retrieve a UE's Access and Mobility Subscription Data from UDM
+   * Retrieve a UE's Access and Mobility Subscription Data from UDM.
    * @param [const std::shared_ptr<ue_context>&] uc: UE context
+   * @param [const std::shared_ptr<nas_context>&] nc: NAS context (MPS field)
    * @return void
    */
   void get_access_and_mobility_subscription_data(
-      const std::shared_ptr<ue_context>& uc) const;
+      const std::shared_ptr<ue_context>& uc,
+      const std::shared_ptr<nas_context>& nc) const;
 
   /*
    * Request to retrieve a SMF Selection Subcription Data from UDM

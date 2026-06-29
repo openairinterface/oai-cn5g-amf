@@ -45,6 +45,29 @@ void amf_support_features::from_yaml(const YAML::Node& node) {
     m_enable_am_policy_association.from_yaml(
         node[AMF_CONFIG_SUPPORT_FEATURES_ENABLE_AM_POLICY_ASSOCIATION]);
   }
+  // NAS Rel 17.10 features
+  if (node[AMF_CONFIG_SUPPORT_FEATURES_ENABLE_NSSRG]) {
+    m_enable_nssrg.from_yaml(node[AMF_CONFIG_SUPPORT_FEATURES_ENABLE_NSSRG]);
+  }
+  if (node[AMF_CONFIG_SUPPORT_FEATURES_ENABLE_NSAG]) {
+    m_enable_nsag.from_yaml(node[AMF_CONFIG_SUPPORT_FEATURES_ENABLE_NSAG]);
+  }
+  if (node[AMF_CONFIG_SUPPORT_FEATURES_ENABLE_MPS_INDICATOR_UPDATE]) {
+    m_enable_mps_indicator_update.from_yaml(
+        node[AMF_CONFIG_SUPPORT_FEATURES_ENABLE_MPS_INDICATOR_UPDATE]);
+  }
+  if (node[AMF_CONFIG_SUPPORT_FEATURES_ENABLE_UAS_UUAA_MM]) {
+    m_enable_uas_uuaa_mm.from_yaml(
+        node[AMF_CONFIG_SUPPORT_FEATURES_ENABLE_UAS_UUAA_MM]);
+  }
+  if (node[AMF_CONFIG_SUPPORT_FEATURES_ENABLE_LOCAL_5GSM_DECODE]) {
+    m_enable_local_5gsm_decode.from_yaml(
+        node[AMF_CONFIG_SUPPORT_FEATURES_ENABLE_LOCAL_5GSM_DECODE]);
+  }
+  if (node[AMF_CONFIG_SUPPORT_FEATURES_ENABLE_UE_POLICY_DELIVERY]) {
+    m_enable_ue_policy_delivery.from_yaml(
+        node[AMF_CONFIG_SUPPORT_FEATURES_ENABLE_UE_POLICY_DELIVERY]);
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -102,6 +125,55 @@ std::string amf_support_features::to_string(const std::string& indent) const {
       AMF_CONFIG_SUPPORT_FEATURES_ENABLE_AM_POLICY_ASSOCIATION_LABEL,
       inner_width, enable_am_policy_association_string));
 
+  // NAS Rel 17.10 features
+  std::string enable_nssrg_string = m_enable_nssrg.get_value() ?
+                                        AMF_CONFIG_OPTION_YES_STR :
+                                        AMF_CONFIG_OPTION_NO_STR;
+  out.append(indent).append(fmt::format(
+      BASE_FORMATTER, INNER_LIST_ELEM,
+      AMF_CONFIG_SUPPORT_FEATURES_ENABLE_NSSRG_LABEL, inner_width,
+      enable_nssrg_string));
+
+  std::string enable_nsag_string = m_enable_nsag.get_value() ?
+                                       AMF_CONFIG_OPTION_YES_STR :
+                                       AMF_CONFIG_OPTION_NO_STR;
+  out.append(indent).append(fmt::format(
+      BASE_FORMATTER, INNER_LIST_ELEM,
+      AMF_CONFIG_SUPPORT_FEATURES_ENABLE_NSAG_LABEL, inner_width,
+      enable_nsag_string));
+
+  std::string enable_mps_indicator_update_string =
+      m_enable_mps_indicator_update.get_value() ? AMF_CONFIG_OPTION_YES_STR :
+                                                  AMF_CONFIG_OPTION_NO_STR;
+  out.append(indent).append(fmt::format(
+      BASE_FORMATTER, INNER_LIST_ELEM,
+      AMF_CONFIG_SUPPORT_FEATURES_ENABLE_MPS_INDICATOR_UPDATE_LABEL,
+      inner_width, enable_mps_indicator_update_string));
+
+  std::string enable_uas_uuaa_mm_string = m_enable_uas_uuaa_mm.get_value() ?
+                                              AMF_CONFIG_OPTION_YES_STR :
+                                              AMF_CONFIG_OPTION_NO_STR;
+  out.append(indent).append(fmt::format(
+      BASE_FORMATTER, INNER_LIST_ELEM,
+      AMF_CONFIG_SUPPORT_FEATURES_ENABLE_UAS_UUAA_MM_LABEL, inner_width,
+      enable_uas_uuaa_mm_string));
+
+  std::string enable_local_5gsm_decode_string =
+      m_enable_local_5gsm_decode.get_value() ? AMF_CONFIG_OPTION_YES_STR :
+                                               AMF_CONFIG_OPTION_NO_STR;
+  out.append(indent).append(fmt::format(
+      BASE_FORMATTER, INNER_LIST_ELEM,
+      AMF_CONFIG_SUPPORT_FEATURES_ENABLE_LOCAL_5GSM_DECODE_LABEL, inner_width,
+      enable_local_5gsm_decode_string));
+
+  std::string enable_ue_policy_delivery_string =
+      m_enable_ue_policy_delivery.get_value() ? AMF_CONFIG_OPTION_YES_STR :
+                                                AMF_CONFIG_OPTION_NO_STR;
+  out.append(indent).append(fmt::format(
+      BASE_FORMATTER, INNER_LIST_ELEM,
+      AMF_CONFIG_SUPPORT_FEATURES_ENABLE_UE_POLICY_DELIVERY_LABEL, inner_width,
+      enable_ue_policy_delivery_string));
+
   return out;
 }
 
@@ -134,6 +206,36 @@ bool amf_support_features::
 //------------------------------------------------------------------------------
 bool amf_support_features::get_option_enable_am_policy_association() const {
   return m_enable_am_policy_association.get_value();
+}
+
+//------------------------------------------------------------------------------
+bool amf_support_features::get_option_enable_nssrg() const {
+  return m_enable_nssrg.get_value();
+}
+
+//------------------------------------------------------------------------------
+bool amf_support_features::get_option_enable_nsag() const {
+  return m_enable_nsag.get_value();
+}
+
+//------------------------------------------------------------------------------
+bool amf_support_features::get_option_enable_mps_indicator_update() const {
+  return m_enable_mps_indicator_update.get_value();
+}
+
+//------------------------------------------------------------------------------
+bool amf_support_features::get_option_enable_uas_uuaa_mm() const {
+  return m_enable_uas_uuaa_mm.get_value();
+}
+
+//------------------------------------------------------------------------------
+bool amf_support_features::get_option_enable_local_5gsm_decode() const {
+  return m_enable_local_5gsm_decode.get_value();
+}
+
+//------------------------------------------------------------------------------
+bool amf_support_features::get_option_enable_ue_policy_delivery() const {
+  return m_enable_ue_policy_delivery.get_value();
 }
 
 //------------------------------------------------------------------------------
@@ -937,8 +1039,15 @@ amf_config::amf_config(
   support_features.enable_access_and_mobility_subscription_data_retrieval =
       false;
   support_features.enable_am_policy_association = false;
-  support_features.http_version                 = 2;  // HTTP/2 by default
-  is_emergency_support                          = false;
+  // NAS Rel 17.10 features, default to false
+  support_features.enable_nssrg                = false;
+  support_features.enable_nsag                 = false;
+  support_features.enable_mps_indicator_update = false;
+  support_features.enable_uas_uuaa_mm          = false;
+  support_features.enable_local_5gsm_decode    = false;
+  support_features.enable_ue_policy_delivery   = false;
+  support_features.http_version                = 2;  // HTTP/2 by default
+  is_emergency_support                         = false;
 }
 
 //------------------------------------------------------------------------------
@@ -1007,6 +1116,20 @@ void amf_config::pre_process() {
     support_features.enable_am_policy_association =
         amf_local->get_support_features()
             .get_option_enable_am_policy_association();
+    support_features.enable_nssrg =
+        amf_local->get_support_features().get_option_enable_nssrg();
+    support_features.enable_nsag =
+        amf_local->get_support_features().get_option_enable_nsag();
+    support_features.enable_mps_indicator_update =
+        amf_local->get_support_features()
+            .get_option_enable_mps_indicator_update();
+    support_features.enable_uas_uuaa_mm =
+        amf_local->get_support_features().get_option_enable_uas_uuaa_mm();
+    support_features.enable_local_5gsm_decode =
+        amf_local->get_support_features().get_option_enable_local_5gsm_decode();
+    support_features.enable_ue_policy_delivery =
+        amf_local->get_support_features()
+            .get_option_enable_ue_policy_delivery();
   }
 
   support_features.http_version = get_http_version();
@@ -1108,30 +1231,22 @@ void amf_config::pre_process() {
   }
 
   // NAS conf
+  // Only NIA0, NIA1, NIA2 are implemented; warn and filter NIA3-NIA7
   for (const auto& s : amf_local->get_supported_integrity_algorithms()) {
     if (!s.compare("NIA0")) {
       nas_cfg.prefered_integrity_algorithm.push_back(_5g_ia_e::_5G_IA0);
-    }
-    if (!s.compare("NIA1")) {
+    } else if (!s.compare("NIA1")) {
       nas_cfg.prefered_integrity_algorithm.push_back(_5g_ia_e::_5G_IA1);
-    }
-    if (!s.compare("NIA2")) {
+    } else if (!s.compare("NIA2")) {
       nas_cfg.prefered_integrity_algorithm.push_back(_5g_ia_e::_5G_IA2);
-    }
-    if (!s.compare("NIA3")) {
-      nas_cfg.prefered_integrity_algorithm.push_back(_5g_ia_e::_5G_IA3);
-    }
-    if (!s.compare("NIA4")) {
-      nas_cfg.prefered_integrity_algorithm.push_back(_5g_ia_e::_5G_IA4);
-    }
-    if (!s.compare("NIA5")) {
-      nas_cfg.prefered_integrity_algorithm.push_back(_5g_ia_e::_5G_IA5);
-    }
-    if (!s.compare("NIA6")) {
-      nas_cfg.prefered_integrity_algorithm.push_back(_5g_ia_e::_5G_IA6);
-    }
-    if (!s.compare("NIA7")) {
-      nas_cfg.prefered_integrity_algorithm.push_back(_5g_ia_e::_5G_IA7);
+    } else if (
+        !s.compare("NIA3") || !s.compare("NIA4") || !s.compare("NIA5") ||
+        !s.compare("NIA6") || !s.compare("NIA7")) {
+      Logger::config().warn(
+          "%s is not implemented and will be ignored in NAS integrity "
+          "algorithm "
+          "list",
+          s.c_str());
     }
   }
 
@@ -1142,30 +1257,21 @@ void amf_config::pre_process() {
     nas_cfg.prefered_integrity_algorithm.push_back(_5g_ia_e::_5G_IA2);
   }
 
+  // Only NEA0, NEA1, NEA2 are implemented; warn and filter NEA3-NEA7
   for (const auto& s : amf_local->get_supported_encryption_algorithms()) {
     if (!s.compare("NEA0")) {
       nas_cfg.prefered_ciphering_algorithm.push_back(_5g_ea_e::_5G_EA0);
-    }
-    if (!s.compare("NEA1")) {
+    } else if (!s.compare("NEA1")) {
       nas_cfg.prefered_ciphering_algorithm.push_back(_5g_ea_e::_5G_EA1);
-    }
-    if (!s.compare("NEA2")) {
+    } else if (!s.compare("NEA2")) {
       nas_cfg.prefered_ciphering_algorithm.push_back(_5g_ea_e::_5G_EA2);
-    }
-    if (!s.compare("NEA3")) {
-      nas_cfg.prefered_ciphering_algorithm.push_back(_5g_ea_e::_5G_EA3);
-    }
-    if (!s.compare("NEA4")) {
-      nas_cfg.prefered_ciphering_algorithm.push_back(_5g_ea_e::_5G_EA4);
-    }
-    if (!s.compare("NEA5")) {
-      nas_cfg.prefered_ciphering_algorithm.push_back(_5g_ea_e::_5G_EA5);
-    }
-    if (!s.compare("NEA6")) {
-      nas_cfg.prefered_ciphering_algorithm.push_back(_5g_ea_e::_5G_EA6);
-    }
-    if (!s.compare("NEA7")) {
-      nas_cfg.prefered_ciphering_algorithm.push_back(_5g_ea_e::_5G_EA7);
+    } else if (
+        !s.compare("NEA3") || !s.compare("NEA4") || !s.compare("NEA5") ||
+        !s.compare("NEA6") || !s.compare("NEA7")) {
+      Logger::config().warn(
+          "%s is not implemented and will be ignored in NAS encryption "
+          "algorithm list",
+          s.c_str());
     }
   }
 
@@ -1329,6 +1435,7 @@ void amf_config::display() {
 
   Logger::config().info(
       "    HTTP version...........: %d", support_features.http_version);
+
   Logger::config().info(
       "- Log Level ...............: %s",
       spdlog::level::to_string_view(amf_log_level));
