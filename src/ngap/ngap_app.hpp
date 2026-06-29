@@ -10,6 +10,7 @@
 #include <shared_mutex>
 
 #include "gNB_context.hpp"
+#include "gnb_context_store.hpp"
 #include "sctp_server.hpp"
 
 using namespace sctp;
@@ -122,13 +123,19 @@ class ngap_app : public sctp_application {
    */
   void remove_gnb_context(const long& gnb_id);
 
+  /*
+   * Remove the gNB Context
+   * @param [const std::shared_ptr<gnb_context>&] gc: the gNB context to remove
+   * @return void
+   */
+  void remove_gnb_context(const std::shared_ptr<gnb_context>& gc);
+
  protected:
   sctp_server sctp_s_38412;
   uint32_t ppid_;
-  std::map<sctp_assoc_id_t, std::shared_ptr<gnb_context>> assoc2gnb_context;
-  mutable std::shared_mutex m_assoc2gnb_context;
-  std::map<long, std::shared_ptr<gnb_context>> gnbid2gnb_context;
-  mutable std::shared_mutex m_gnbid2gnb_context;
+
+ private:
+  gnb_context_store gnb_context_store_;
 };
 
 }  // namespace oai::ngap

@@ -31,8 +31,6 @@ class amf_conv : public oai::utils::conv {
   // TODO: bitstring_2_int32
   static void to_lower(std::string& str);
   static void to_lower(bstring& b_str);
-  static std::string get_ue_context_key(
-      const uint32_t ran_ue_ngap_id, uint64_t amf_ue_ngap_id);
   static std::string get_serving_network_name(
       const std::string& mnc, const std::string& mcc);
   static std::string uint32_to_hex_string_full_format(uint32_t value);

@@ -7,6 +7,7 @@
 
 #include <boost/thread.hpp>
 #include <boost/thread/future.hpp>
+#include <functional>
 #include <map>
 #include <shared_mutex>
 #include <unordered_set>
@@ -24,6 +25,7 @@
 #include "itti_msg_amf_app.hpp"
 #include "itti_msg_sbi.hpp"
 #include "ue_context.hpp"
+#include "ue_context_store.hpp"
 #include "uint_generator.hpp"
 #include "StatusChange.h"
 
@@ -60,11 +62,7 @@ class amf_app {
       amf_event_subscriptions;
   mutable std::shared_mutex m_amf_event_subscriptions;
 
-  std::map<std::string, std::shared_ptr<ue_context>> ue_contexts;
-  mutable std::shared_mutex m_ue_contexts;
-
-  std::map<std::string, std::shared_ptr<ue_context>> supi2ue_ctx;
-  mutable std::shared_mutex m_supi2ue_ctx;
+  ue_context_store ue_context_store_;
 
   mutable std::shared_mutex m_sbi_response_handlers;
   std::map<uint32_t, boost::shared_ptr<boost::promise<nlohmann::json>>>
@@ -464,6 +462,93 @@ class amf_app {
    */
   void set_ue_context(
       const std::string& supi, const std::shared_ptr<ue_context>& uc);
+
+  /*
+   * Find the UE Context associated with an AMF UE NGAP ID
+   * @param [uint64_t] amf_ue_ngap_id: AMF UE NGAP ID
+   * @return the ue_context if found, otherwise return nullptr
+   */
+  std::shared_ptr<ue_context> find_ue_by_amf_ue_ngap_id(
+      uint64_t amf_ue_ngap_id) const;
+
+  /*
+   * Find the UE Context associated with a GUTI
+   * @param [const std::string&] guti: GUTI
+   * @return the ue_context if found, otherwise return nullptr
+   */
+  std::shared_ptr<ue_context> find_ue_by_guti(const std::string& guti) const;
+
+  /*
+   * Find the UE Context associated with <ran_ue_ngap_id, gnb_id>
+   * @param [uint32_t] ran_ue_ngap_id: RAN UE NGAP ID
+   * @param [uint32_t] gnb_id: gNB ID
+   * @return the ue_context if found, otherwise return nullptr
+   */
+  std::shared_ptr<ue_context> find_ue_by_ran_gnb(
+      uint32_t ran_ue_ngap_id, uint32_t gnb_id) const;
+
+  /*
+   * Bind a GUTI to a UE Context (erases the context's previously-bound GUTI)
+   * @param [const std::string&] guti: GUTI
+   * @param [const std::shared_ptr<ue_context>&] uc: pointer to UE context
+   * @return void
+   */
+  void bind_guti(
+      const std::string& guti, const std::shared_ptr<ue_context>& uc);
+
+  /*
+   * Bind <ran_ue_ngap_id, gnb_id> to a UE Context
+   * @param [uint32_t] ran_ue_ngap_id: RAN UE NGAP ID
+   * @param [uint32_t] gnb_id: gNB ID
+   * @param [const std::shared_ptr<ue_context>&] uc: pointer to UE context
+   * @return void
+   */
+  void bind_ran_gnb(
+      uint32_t ran_ue_ngap_id, uint32_t gnb_id,
+      const std::shared_ptr<ue_context>& uc);
+
+  /*
+   * Unbind a GUTI from the by-GUTI index
+   * @param [const std::string&] guti: GUTI
+   * @return void
+   */
+  void unbind_guti(const std::string& guti);
+
+  /*
+   * Unbind a SUPI from the by-SUPI index
+   * @param [const std::string&] supi: SUPI
+   * @return void
+   */
+  void unbind_supi(const std::string& supi);
+
+  /*
+   * Unbind <ran_ue_ngap_id, gnb_id> from the by-<ran,gnb> index
+   * @param [uint32_t] ran_ue_ngap_id: RAN UE NGAP ID
+   * @param [uint32_t] gnb_id: gNB ID
+   * @return void
+   */
+  void unbind_ran_gnb(uint32_t ran_ue_ngap_id, uint32_t gnb_id);
+
+  /*
+   * Apply fn to every UE Context (null entries are skipped). The callback
+   * runs while the store's shared lock is held; it must not call back into the
+   * store.
+   * @param [const std::function<void(const std::shared_ptr<ue_context>&)>&] fn
+   * @return void
+   */
+  void for_each_ue_context(
+      const std::function<void(const std::shared_ptr<ue_context>&)>& fn) const;
+
+  /*
+   * amf_ue_ngap_id reassignment: move the owner entry old_id -> new_id.
+   * Used when the ue_context is re-stamped with a new AMF UE NGAP ID
+   * (GUTI re-reg / uplink-NAS GUTI), NOT for handover.
+   * @param [uint64_t] old_amf_ue_ngap_id: current AMF UE NGAP ID
+   * @param [uint64_t] new_amf_ue_ngap_id: new AMF UE NGAP ID
+   * @return the surviving ue_context, or nullptr if old_amf_ue_ngap_id absent
+   */
+  std::shared_ptr<ue_context> rekey_ue_context(
+      uint64_t old_amf_ue_ngap_id, uint64_t new_amf_ue_ngap_id);
 
   /*
    * Get a PDU Session Context associated with a SUPI and a PDU Session ID
