@@ -6,6 +6,9 @@
 #define _UE_NGAP_CONTEXT_H_
 
 #include "amf.hpp"
+#include "sctp_server.hpp"  // namespace sctp, sctp_stream_id_t, sctp_assoc_id_t
+#include "NgapIesStruct.hpp"         // Tai_t, OCTET_STRING_t
+#include "Ngap_CauseRadioNetwork.h"  // Ngap_CauseRadioNetwork_t
 
 using namespace sctp;
 typedef enum {

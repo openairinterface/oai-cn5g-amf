@@ -6,6 +6,11 @@
 
 #include "amf.hpp"
 #include "logger.hpp"
+// Complete definitions of the nested sub-contexts are only required in this TU,
+// where the out-of-line destructor instantiates the shared_ptr<...>
+// destructors.
+#include "nas_context.hpp"
+#include "ue_ngap_context.hpp"
 
 //------------------------------------------------------------------------------
 ue_context::ue_context() {
@@ -13,7 +18,10 @@ ue_context::ue_context() {
   amf_ue_ngap_id        = INVALID_AMF_UE_NGAP_ID;
   gnb_id                = 0;
   supi                  = {};
+  guti                  = {};
   tmsi                  = 0;
+  nas_ctx               = nullptr;
+  ngap_ctx              = nullptr;
   rrc_estb_cause        = {};
   is_ue_context_request = false;
   cgi                   = {};
@@ -22,6 +30,11 @@ ue_context::ue_context() {
   nrf_uri               = std::nullopt;
   pcf_addr              = {};
 }
+
+//------------------------------------------------------------------------------
+// Defined out of line so that the shared_ptr<nas_context>/<ue_ngap_context>
+// member destructors are instantiated here, where the complete types are known.
+ue_context::~ue_context() {}
 
 //------------------------------------------------------------------------------
 bool ue_context::get_pdu_session_context(
@@ -50,7 +63,13 @@ void ue_context::add_pdu_session_context(
 
 //------------------------------------------------------------------------------
 void ue_context::copy_pdu_sessions(const std::shared_ptr<ue_context>& ue_ctx) {
-  pdu_sessions = ue_ctx->pdu_sessions;
+  std::map<std::uint8_t, std::shared_ptr<pdu_session_context>> snapshot;
+  {
+    std::shared_lock lock(ue_ctx->m_pdu_session);
+    snapshot = ue_ctx->pdu_sessions;
+  }
+  std::unique_lock lock(m_pdu_session);
+  pdu_sessions = std::move(snapshot);
 }
 
 //------------------------------------------------------------------------------
@@ -77,11 +96,15 @@ bool ue_context::remove_pdu_sessions_context(uint8_t pdu_session_id) {
 //------------------------------------------------------------------------------
 bool ue_context::set_up_cnx_state(
     uint8_t pdu_session_id, const up_cnx_state_e& state) {
-  std::shared_ptr<pdu_session_context> psc = {};
-  if (get_pdu_session_context(pdu_session_id, psc)) {
-    std::unique_lock lock(m_pdu_session);
-    psc->up_cnx_state = state;
-    return true;
+  std::unique_lock lock(m_pdu_session);
+  if (pdu_sessions.count(pdu_session_id) > 0) {
+    std::shared_ptr<pdu_session_context> psc = pdu_sessions.at(pdu_session_id);
+    if (psc != nullptr) {
+      psc->up_cnx_state = state;
+      return true;
+    }
   }
+  Logger::amf_app().warn(
+      "No PDU Session Context with PDU Session ID %d", pdu_session_id);
   return false;
 }

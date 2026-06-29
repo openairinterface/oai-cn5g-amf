@@ -142,54 +142,6 @@ class amf_n1 {
   bool remove_amf_ue_ngap_id_2_nas_context(const uint64_t& amf_ue_ngap_id);
 
   /*
-   * Store the mapping between SUPI and AMF UE NGAP ID
-   * @param [const std::string&] SUPI: UE SUPI
-   *@param [const uint64_t& ] amf_ue_ngap_id: AMF UE NGAP ID
-   * @return void
-   */
-  void set_supi_2_amf_id(
-      const std::string& supi, const uint64_t& amf_ue_ngap_id);
-
-  /*
-   * Get AMF UE NGAP ID
-   * @param [const std::string&] SUPI: UE SUPI
-   * @param [uint64_t& ] amf_ue_ngap_id: AMF UE NGAP ID
-   * @return true if success
-   */
-  bool supi_2_amf_id(const std::string& supi, uint64_t& amf_ue_ngap_id);
-
-  /*
-   * Remove AMF UE NGAP ID from the map with SUPI
-   * @param [const std::string&] SUPI: UE SUPI
-   * @return true if success
-   */
-  bool remove_supi_2_amf_id(const std::string& supi);
-
-  /*
-   * Store the mapping between SUPI and RAN UE NGAP ID
-   * @param [const std::string&] SUPI: UE SUPI
-   *@param [const uint32_t&] ran_ue_ngap_id: RAN UE NGAP ID
-   * @return void
-   */
-  void set_supi_2_ran_id(
-      const std::string& supi, const uint32_t& ran_ue_ngap_id);
-
-  /*
-   * Get RAN UE NGAP ID
-   * @param [const std::string&] SUPI: UE SUPI
-   * @param [uint32_t& ] ran_ue_ngap_id: RAN UE NGAP ID
-   * @return true if success
-   */
-  bool supi_2_ran_id(const std::string& supi, uint32_t& ran_ue_ngap_id);
-
-  /*
-   * Remove RAN UE NGAP ID from the map with SUPI
-   * @param [const std::string&] SUPI: UE SUPI
-   * @return true if success
-   */
-  bool remove_supi_2_ran_id(const std::string& supi);
-
-  /*
    * Get UE NAS context associated with an SUPI
    * @param [const std::string&] imsi: UE SUPI
    * @param [const std::shared_ptr<nas_context>&] nc: pointer to UE NAS context
@@ -983,8 +935,22 @@ class amf_n1 {
   amf_event event_sub;
 
  private:
-  // for Event Handling
+  /*
+   * Rekey the NAS ue_context on a 5G-GUTI re-registration / uplink-NAS
+   * GUTI.
+   * @param [const std::string&] guti: GUTI
+   * @param [uint64_t] old_amf_id: old amf_ue_ngap_id
+   * @param [uint64_t] new_amf_id: new amf_ue_ngap_id
+   * @param [uint32_t] old_ran: old ran_ue_ngap_id
+   * @param [uint32_t] new_ran: new ran_ue_ngap_id
+   * @return std::shared_ptr<ue_context>: the old context is now updated with
+   * new ids.
+   */
+  std::shared_ptr<ue_context> rekey_nas_owner_on_guti_rereg(
+      const std::string& guti, uint64_t old_amf_id, uint64_t new_amf_id,
+      uint32_t old_ran, uint32_t new_ran);
 
+  // for Event Handling
   bs2::connection ee_ue_location_report_connection;
   bs2::connection ee_ue_reachability_status_connection;
   bs2::connection ee_ue_registration_state_connection;
@@ -992,19 +958,7 @@ class amf_n1 {
   bs2::connection ee_ue_loss_of_connectivity_connection;
   bs2::connection ee_ue_communication_failure_connection;
 
-  std::map<long, std::shared_ptr<nas_context>>
-      amfueid2nas_context;  // amf ue ngap id
-  mutable std::shared_mutex m_amfueid2nas_context;
-
-  std::map<std::string, std::shared_ptr<nas_context>> supi2nas_context;
   mutable std::shared_mutex m_nas_context;
-  std::map<std::string, long> supi2amfId;
-  mutable std::shared_mutex m_supi2amfId;
-  std::map<std::string, uint32_t> supi2ranId;
-  mutable std::shared_mutex m_supi2ranId;
-
-  std::map<std::string, std::shared_ptr<nas_context>> guti2nas_context;
-  mutable std::shared_mutex m_guti2nas_context;
 
   static std::map<std::string, std::string> rand_record;
   mutable std::shared_mutex m_rand_record;
