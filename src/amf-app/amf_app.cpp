@@ -29,6 +29,7 @@
 #include "output_wrapper.hpp"
 #include "utils.hpp"
 #include "AccessAndMobilitySubscriptionData.h"
+#include "nas_context.hpp"
 #include "SmfSelectionSubscriptionData.h"
 #include "PolicyAssociation.h"
 #include "Amf3GppAccessRegistration.h"
@@ -38,6 +39,8 @@
 #include "PcfInfo.h"
 #include "PolicyUpdate.h"
 #include "AmRequestedValueRep.h"
+#include "ModificationNotification.h"
+#include "SdmSubscription.h"
 #include "UeContextInSmfData.h"
 #include "UeContextInfo.h"
 #include "ProvideLocInfo.h"
@@ -254,6 +257,13 @@ void amf_app_task(void*) {
             "Received SBI_AM_POLICY_ASSOCIATION_TERMINATION_NOTIFICATION");
         itti_dispatch<itti_sbi_am_policy_association_termination_notification>(
             msg, [&](auto& m) { amf_app_inst->handle_itti_message(m); });
+      } break;
+
+      case SBI_NUDM_SDM_NOTIFICATION: {
+        Logger::amf_app().debug("Received SBI_NUDM_SDM_NOTIFICATION");
+        itti_sbi_nudm_sdm_notification* m =
+            dynamic_cast<itti_sbi_nudm_sdm_notification*>(msg);
+        amf_app_inst->handle_itti_message(std::ref(*m));
       } break;
 
       case SBI_UE_CONTEXT_IN_SMF_DATA_RETRIEVAL_RESPONSE: {
@@ -1439,6 +1449,141 @@ void amf_app::handle_itti_message(
 }
 
 //------------------------------------------------------------------------------
+void amf_app::handle_itti_message(itti_sbi_nudm_sdm_notification& itti_msg) {
+  Logger::amf_app().debug(
+      "Handle SBI_NUDM_SDM_NOTIFICATION for SUPI %s", itti_msg.supi.c_str());
+
+  nlohmann::json response_data = {};
+
+  std::shared_ptr<ue_context> uc = get_ue_context(itti_msg.supi);
+  if (!uc) {
+    Logger::amf_app().warn(
+        "No UE context found for SUPI %s in SDM notification",
+        itti_msg.supi.c_str());
+    response_data[kSbiResponseHttpResponseCode] =
+        oai::common::sbi::http_status_code::NOT_FOUND;
+    if (itti_msg.promise_id > 0)
+      trigger_process_response(itti_msg.promise_id, response_data);
+    return;
+  }
+
+  // Retrieve the NAS context by SUPI so we can inspect CM state and
+  // trigger a Configuration Update Command when required.
+  std::shared_ptr<nas_context> nc = {};
+  if (amf_n1_inst) amf_n1_inst->supi_2_nas_context(itti_msg.supi, nc);
+
+  const auto& notify_items = itti_msg.notification.getNotifyItems();
+  Logger::amf_app().debug(
+      "SDM notification for SUPI %s: %lu changed resource(s)",
+      itti_msg.supi.c_str(), notify_items.size());
+
+  bool ue_is_connected = nc && (nc->_5gmm_state == _5GMM_REGISTERED) &&
+                         (nc->nas_status == CM_CONNECTED);
+
+  for (const auto& item : notify_items) {
+    const std::string& resource_id = item.getResourceId();
+    Logger::amf_app().debug(
+        "SDM notification: changed resource URI = %s", resource_id.c_str());
+
+    // Subscribed NSSAI change  (/nssai)
+    if (resource_id.find("/nssai") != std::string::npos) {
+      Logger::amf_app().info(
+          "NSSAI change notification for SUPI %s", itti_msg.supi.c_str());
+      if (nc) {
+        if (ue_is_connected) {
+          // Trigger a basic Configuration Update Command (TS 23.502 §4.2.4.2).
+          // The UE will re-register to pick up the updated NSSAI.
+          // Acknowledgement is requested so the AMF can track completion.
+          Logger::amf_app().info(
+              "Triggering Configuration Update Command for NSSAI update for "
+              "SUPI %s",
+              itti_msg.supi);
+          if (!amf_n1_inst->send_configuration_update_command(
+                  nc, true, std::nullopt, std::nullopt, std::nullopt)) {
+            Logger::amf_app().warn(
+                "Could not send Configuration Update Command for SUPI %s",
+                itti_msg.supi);
+            uc->pending_sdm_update = true;
+          }
+        } else {
+          Logger::amf_app().debug(
+              "UE %s is not in CM-CONNECTED/REGISTERED state — deferring "
+              "Configuration Update Command for NSSAI update, setting "
+              "pending_sdm_update",
+              itti_msg.supi);
+          uc->pending_sdm_update = true;
+        }
+      } else {
+        Logger::amf_app().warn(
+            "No NAS context for SUPI %s — cannot trigger Configuration Update "
+            "Command for NSSAI "
+            "change; setting pending_sdm_update",
+            itti_msg.supi);
+        uc->pending_sdm_update = true;
+      }
+      continue;
+    }
+
+    // AM data change  (/am-data)
+    if (resource_id.find("/am-data") != std::string::npos) {
+      Logger::amf_app().info(
+          "AM-data change notification for SUPI %s", itti_msg.supi);
+      if (nc && amf_cfg->support_features.enable_mps_indicator_update) {
+        // TODO: Add get_access_and_mobility_subscription_data
+        Logger::amf_app().debug(
+            "MPS indicator update enabled — notifying UE for SUPI %s",
+            itti_msg.supi);
+        if (ue_is_connected) {
+          amf_n1_inst->trigger_mps_indicator_update(
+              nc, nc->mps_priority_active);
+        } else {
+          uc->pending_sdm_update = true;
+        }
+      } else if (!ue_is_connected) {
+        uc->pending_sdm_update = true;
+      }
+      continue;
+    }
+
+    // UAS data change  (/uas-data) — only when enable_uas_uuaa_mm=true
+    if (resource_id.find("/uas-data") != std::string::npos) {
+      if (!amf_cfg->support_features.enable_uas_uuaa_mm) {
+        Logger::amf_app().debug(
+            "UAS-data notification for SUPI %s but enable_uas_uuaa_mm=false - "
+            "ignoring",
+            itti_msg.supi.c_str());
+        continue;
+      }
+      Logger::amf_app().info(
+          "UAS-data change notification for SUPI %s", itti_msg.supi);
+      // TODO: parse ChangeItem body into AerialUeSubscriptionInfo
+      //                 and update nc->uas_authorized accordingly.
+      if (ue_is_connected) {
+        Logger::amf_app().warn(
+            "UAS-data changed for connected UE %s, setting pending_sdm_update",
+            itti_msg.supi);
+      }
+      uc->pending_sdm_update = true;
+      continue;
+    }
+
+    // Unrecognised resource
+    Logger::amf_app().debug(
+        "SDM notification: unrecognised resource URI %s - ignoring",
+        resource_id);
+  }
+
+  response_data[kSbiResponseHttpResponseCode] =
+      oai::common::sbi::http_status_code::NO_CONTENT;
+
+  // Notify to the result
+  if (itti_msg.promise_id > 0) {
+    trigger_process_response(itti_msg.promise_id, response_data);
+    return;
+  }
+}
+
+//------------------------------------------------------------------------------
 void amf_app::handle_itti_message(
     itti_sbi_ue_context_in_smf_data_retrieval_response& r) {
   Logger::amf_app().debug(
@@ -1725,7 +1870,8 @@ void amf_app::register_3gpp_access(
 
 //------------------------------------------------------------------------------
 void amf_app::get_access_and_mobility_subscription_data(
-    const std::shared_ptr<ue_context>& uc) const {
+    const std::shared_ptr<ue_context>& uc,
+    const std::shared_ptr<nas_context>& nc) const {
   Logger::amf_app().debug(
       "Retrieving a UE's Access and Mobility Subscription Data from UDM");
 
@@ -1781,6 +1927,18 @@ void amf_app::get_access_and_mobility_subscription_data(
           try {
             from_json(result[kSbiResponseJsonData], am_data);
             is_result_available = true;
+            // Populate MPS priority from AM subscription data (TS 23.502
+            // §4.2.2.2.2 step 14b).
+            if (amf_cfg->support_features.enable_mps_indicator_update &&
+                nc != nullptr) {
+              bool mps_active =
+                  am_data.mpsPriorityIsSet() && am_data.isMpsPriority();
+              nc->mps_priority_active = mps_active;
+              Logger::amf_app().debug(
+                  "AM subscription data: mps_priority_active set to %s for "
+                  "UE (amf_ue_ngap_id= " AMF_UE_NGAP_ID_FMT ")",
+                  mps_active ? "true" : "false", nc->amf_ue_ngap_id);
+            }
             // TODO: store AM Data
           } catch (std::exception& e) {
             Logger::amf_app().warn(
@@ -1991,6 +2149,72 @@ void amf_app::perform_am_policy_association(
           TASK_AMF_APP, TASK_AMF_SBI);
 
   itti_msg->policy_assoc_req = policy_assc_request;
+
+  int ret = itti_inst->send_msg(itti_msg);
+  if (0 != ret) {
+    Logger::amf_app().error(
+        "Could not send ITTI message %s to task TASK_AMF_SBI",
+        itti_msg->get_msg_name());
+  }
+}
+
+//------------------------------------------------------------------------------
+void amf_app::subscribe_sdm_notifications(
+    const std::shared_ptr<ue_context>& uc) const {
+  Logger::amf_app().debug(
+      "Subscribe for UDM SDM notifications for SUPI %s", uc->supi.c_str());
+
+  std::vector<std::string> monitored_uris = {
+      amf_sbi_helper::get_udm_slice_selection_subscription_data_retrieval_uri(
+          amf_cfg->udm_addr, uc->supi),
+      amf_sbi_helper::get_udm_am_data_retrieval_uri(
+          amf_cfg->udm_addr, uc->supi)};
+
+  if (amf_cfg->support_features.enable_uas_uuaa_mm) {
+    // UAS-data resource (TS 29.503 §5.2.3)
+    monitored_uris.push_back(
+        amf_cfg->udm_addr.uri_root + amf_sbi_helper::UdmSdmBase +
+        amf_cfg->udm_addr.api_version + "/" + uc->supi + "/uas-data");
+  }
+
+  oai::_3gpp::model::SdmSubscription sdm_sub = {};
+  sdm_sub.setCallbackReference(
+      amf_sbi_helper::get_udm_sdm_notification_callback_uri(uc->supi));
+  sdm_sub.setNfInstanceId(amf_instance_id);
+  sdm_sub.setMonitoredResourceUris(monitored_uris);
+
+  // Create and send ITTI message to SBI task
+  std::shared_ptr<itti_sbi_sdm_subscribe> itti_msg =
+      std::make_shared<itti_sbi_sdm_subscribe>(TASK_AMF_APP, TASK_AMF_SBI);
+  itti_msg->supi    = uc->supi;
+  itti_msg->sdm_sub = sdm_sub;
+
+  int ret = itti_inst->send_msg(itti_msg);
+  if (0 != ret) {
+    Logger::amf_app().error(
+        "Could not send ITTI message %s to task TASK_AMF_SBI",
+        itti_msg->get_msg_name());
+  }
+}
+
+//------------------------------------------------------------------------------
+void amf_app::unsubscribe_sdm_notifications(
+    const std::shared_ptr<ue_context>& uc) const {
+  if (uc->udm_sdm_subscription_id.empty()) {
+    Logger::amf_app().debug(
+        "No UDM SDM subscription active for SUPI %s - skip unsubscribe",
+        uc->supi.c_str());
+    return;
+  }
+
+  Logger::amf_app().debug(
+      "Unsubscribing from UDM SDM notifications for SUPI %s (subscription %s)",
+      uc->supi.c_str(), uc->udm_sdm_subscription_id.c_str());
+
+  std::shared_ptr<itti_sbi_sdm_unsubscribe> itti_msg =
+      std::make_shared<itti_sbi_sdm_unsubscribe>(TASK_AMF_APP, TASK_AMF_SBI);
+  itti_msg->supi            = uc->supi;
+  itti_msg->subscription_id = uc->udm_sdm_subscription_id;
 
   int ret = itti_inst->send_msg(itti_msg);
   if (0 != ret) {

@@ -11,6 +11,8 @@
 #include "nas_security_context.hpp"
 #include "Struct.hpp"
 #include <cstdint>
+#include <optional>
+#include <vector>
 
 typedef enum {
   _5GMM_STATE_MIN     = 0,
@@ -32,7 +34,7 @@ typedef enum {
 
 // ---- NAS procedure type tracking (replaces boolean flags) ----
 // Per §5.1.3.2.3: the network side has no sub-states; track active procedure
-// instead. (3GPP TS 24.501 v16.14.0 §5.1.3.2.3 defines only 4 main states on
+// instead. (3GPP TS 24.501 V17.10.1 §5.1.3.2.3 defines only 4 main states on
 // the network side)
 
 enum class nas_procedure_type_e : uint8_t {
@@ -64,7 +66,7 @@ struct nas_procedure_context_t {
   nas_procedure_type_e specific_procedure;  // The active specific procedure
   nas_procedure_type_e
       common_procedure;  // The active common procedure nested within specific
-  _5gmm_state_t prior_state;     // 5GMM state before entering CPI (B-1/B-2 fix)
+  _5gmm_state_t prior_state;     // 5GMM state before entering CPI
   bool dereg_switch_off;         // From DEREGISTRATION REQUEST "switch off" IE
   uint8_t dereg_cause;           // 5GMM cause from DEREGISTRATION REQUEST
   uint8_t retransmission_count;  // For the active procedure's timer
@@ -80,6 +82,20 @@ struct nas_timer_instance_t {
 
 static constexpr size_t kNasTimerCount =
     7;  // T3550, T3560, T3570, T3522, T3555, T3513, T3565
+
+// ---------------------------------------------------------------------------
+// Pending UCU record (TS 24.501 §5.4.4)
+// Stored while a Configuration Update Command with ACK bit set is in-flight
+// (state UcuAwaitAck).  Cleared when Configuration Update Complete is
+// received, or on T3555 final expiry (abort).
+// ---------------------------------------------------------------------------
+struct pending_ucu_t {
+  std::vector<uint8_t> cuc_pdu;  // Encoded (protected) CUC NAS PDU
+  uint8_t retry_count;           // Times CUC has been (re-)sent
+  bool ack_requested;            // true when ACK bit was set in CUI IE
+
+  pending_ucu_t() : retry_count(0), ack_requested(false) {}
+};
 
 class nas_context {
  public:
@@ -113,6 +129,34 @@ class nas_context {
   std::optional<std::string> guti;
 
   std::uint8_t _5gmm_capability[13];
+
+  // NAS Rel 17.10 UE capability bits (TS 24.501 table 9.11.3.1.1 octet 7).
+  // Default false = feature unsupported
+  bool nas_ue_supports_nssrg                = false;
+  bool nas_ue_supports_nsag                 = false;
+  bool nas_ue_supports_uas                  = false;
+  bool nas_ue_supports_mps_indicator_update = false;
+
+  // UAS/UUAA-MM authorization state (TS 24.501 §4.22.2, §4.22.3)
+  bool uas_authorized = false;
+
+  // NSSRG state (TS 24.501 §4.6.2.2, §5.5.1.2, §5.5.1.3, §9.11.3.82)
+  bool nssrg_restriction_applied = false;
+  // Per-S-NSSAI subscribed NSSRG lists, keyed by (SST, SD).
+  std::vector<std::pair<oai::nas::SNSSAI_t, std::vector<std::string>>>
+      subscribed_nssrg_lists;
+
+  // MPS state — (TS 24.501 §4.5.2, §4.5.2A, §5.4.4.2, §8.2.19.35,
+  //             §9.11.3.91)
+  bool mps_priority_active = false;
+
+  // Network Slice AS Group (NSAG) state — (TS 24.501 §4.6.2.6, §5.5.1.2,
+  // §5.4.4.2, §9.11.3.87)
+  std::vector<uint8_t> subscribed_nsag_info;
+  // True after NSAG information has been delivered to this UE (either via
+  // Registration Accept or Configuration Update Command).
+  bool nsag_info_applied = false;
+
   oai::nas::UeSecurityCapability ue_security_capability;
 
   std::vector<oai::nas::SNSSAI_t> requested_nssai;
@@ -155,6 +199,9 @@ class nas_context {
   bool get_kamf(uint8_t index, uint8_t (&k)[AUTH_VECTOR_LENGTH_OCTETS]) const;
   static std::string fivegmm_state_to_string(const _5gmm_state_t& state);
   static std::string cm_state_to_string(const cm_state_t& state);
+
+  // Pending UCU record — present while an acknowledged CUC is in-flight.
+  std::optional<pending_ucu_t> pending_ucu_;
 };
 
 #endif

@@ -934,6 +934,51 @@ class amf_n1 {
 
   amf_event event_sub;
 
+  /*
+   * Build and send a Configuration Update Command (CUC) to the UE.
+   * @param [std::shared_ptr<nas_context>&] nc: pointer to the UE NAS context
+   * @param [bool] ack_requested: whether to request UE acknowledgement
+   * @param [const std::optional<oai::nas::NssrgInformation>&] nssrg_ie:
+   *        optional NSSRG Information IE to include in the CUC
+   * @param [const std::optional<oai::nas::NsagInformation>&] nsag_ie:
+   *        optional NSAG Information IE to include in the CUC
+   * @param [const std::optional<oai::nas::PriorityIndicator>&] priority_ie:
+   *        optional Priority Indicator IE to include in the CUC
+   * @return true if the CUC was encoded and sent successfully
+   */
+  bool send_configuration_update_command(
+      std::shared_ptr<nas_context>& nc, bool ack_requested,
+      const std::optional<oai::nas::NssrgInformation>& nssrg_ie,
+      const std::optional<oai::nas::NsagInformation>& nsag_ie,
+      const std::optional<oai::nas::PriorityIndicator>& priority_ie);
+
+  /*
+   * Trigger an MPS indicator update via CUC (TS 24.501 §4.5.2 + §4.5.2A).
+   * Per TS 24.501 §4.5.2 and §4.5.2A.
+   * @param [std::shared_ptr<nas_context>] nc: pointer to the UE NAS context
+   * @param [bool] new_mps_priority: new desired MPS priority/access-identity-1
+   *        validity state (true = valid, false = not valid)
+   * @return void
+   */
+  void trigger_mps_indicator_update(
+      std::shared_ptr<nas_context> nc, bool new_mps_priority);
+
+  /*
+   * Handle Configuration Update Complete message (TS 24.501 §8.2.20)
+   * @param [const uint32_t] ran_ue_ngap_id: RAN UE NGAP ID
+   * @param [const uint64_t] amf_ue_ngap_id: AMF UE NGAP ID
+   * @param [bstring] nas_msg: NAS Configuration Update Complete message
+   * @param [uint8_t&] cause: 5GMM cause on failure
+   * @return true if the message was processed successfully
+   */
+  bool configuration_update_complete_handle(
+      const uint32_t ran_ue_ngap_id, const uint64_t amf_ue_ngap_id,
+      bstring nas_msg, uint8_t& cause);
+
+  void set_subscribed_nsag_info(
+      const std::vector<oai::_3gpp::model::NsagInfo>& nsag_infos,
+      std::vector<uint8_t>& subscribed_nsag_info);
+
  private:
   /*
    * Rekey the NAS ue_context on a 5G-GUTI re-registration / uplink-NAS
