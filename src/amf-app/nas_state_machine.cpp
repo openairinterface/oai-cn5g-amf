@@ -109,7 +109,7 @@ nas_state_machine::nas_state_machine() {
 }
 
 // ============================================================
-// build_transition_table — full 3GPP TS 24.501 v16.14.0 transition table
+// build_transition_table — full 3GPP TS 24.501 V17.10.1 transition table
 // ============================================================
 void nas_state_machine::build_transition_table() {
   using E = nas_event_e;

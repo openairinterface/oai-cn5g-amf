@@ -14,6 +14,7 @@
 #include "AuthenticationRequest.hpp"
 #include "AuthenticationResponse.hpp"
 #include "ConfigurationUpdateCommand.hpp"
+#include "ConfigurationUpdateComplete.hpp"
 #include "ConfirmationData.h"
 #include "ConfirmationDataResponse.h"
 #include "DeregistrationAccept.hpp"
@@ -805,6 +806,18 @@ void amf_n1::uplink_nas_msg_handle(
 
         } else {
           Logger::amf_n1().debug("No NAS context available");
+        }
+      } break;
+
+      case kConfigurationUpdateComplete: {
+        Logger::amf_n1().debug(
+            "Received Configuration Update Complete message, handling...");
+        if (!configuration_update_complete_handle(
+                ran_ue_ngap_id, amf_ue_ngap_id, plain_msg, cause)) {
+          // No reject message defined for this path per TS 24.501 §5.4.4.
+          // complete_common_procedure cleans up the active
+          // CONFIGURATION_UPDATE.
+          nas_procedure_manager_.complete_common_procedure(*nc);
         }
       } break;
 
@@ -2060,6 +2073,25 @@ bool amf_n1::registration_request_handle(
     Logger::amf_n1().warn("No Optional IE 5GMMCapability available");
   }
   nc->_5gmm_capability[0] = _5g_mm_cap;
+
+  // Extract Release 17 capability bits from the full IE (octet 7).
+  nc->nas_ue_supports_nssrg                = false;
+  nc->nas_ue_supports_nsag                 = false;
+  nc->nas_ue_supports_uas                  = false;
+  nc->nas_ue_supports_mps_indicator_update = false;
+  auto cap_ie = registration_request->Get5gmmCapabilityIe();
+  if (cap_ie.has_value()) {
+    nc->nas_ue_supports_nssrg = cap_ie.value().SupportsNssrg();
+    nc->nas_ue_supports_nsag  = cap_ie.value().SupportsNsag();
+    nc->nas_ue_supports_uas   = cap_ie.value().SupportsUas();
+    nc->nas_ue_supports_mps_indicator_update =
+        cap_ie.value().SupportsMpsIndicatorUpdate();
+    Logger::amf_n1().debug(
+        "5GMM Capability Rel-17: NSSRG=%d NSAG=%d UAS=%d MPSIU=%d",
+        nc->nas_ue_supports_nssrg ? 1 : 0, nc->nas_ue_supports_nsag ? 1 : 0,
+        nc->nas_ue_supports_uas ? 1 : 0,
+        nc->nas_ue_supports_mps_indicator_update ? 1 : 0);
+  }
 
   // Get UE Security Capability IE (optional), not included for periodic
   // registration updating procedure
@@ -3580,10 +3612,10 @@ bool amf_n1::security_mode_complete_handle(
     amf_app_inst->register_3gpp_access(uc);
 
   // Step 14b. Figure 4.2.2.2.2-1: Registration procedure@3GPP TS 23.502
-  // Retrieving the Access and Mobility Subscription data from UDM
+  // Retrieving the Access and Mobility Subscription data from UDM.
   if (amf_cfg->support_features
           .enable_access_and_mobility_subscription_data_retrieval)
-    amf_app_inst->get_access_and_mobility_subscription_data(uc);
+    amf_app_inst->get_access_and_mobility_subscription_data(uc, nc);
 
   // Step 14b. Figure 4.2.2.2.2-1: Registration procedure@3GPP TS 23.502
   // Retrieving SMF Selection Subscription data from UDM
@@ -3603,6 +3635,14 @@ bool amf_n1::security_mode_complete_handle(
   // Step 16: Perform an AM Policy Association Establishment/Modification
   if (amf_cfg->support_features.enable_am_policy_association)
     amf_app_inst->perform_am_policy_association(uc);
+
+  // Step 14b (TS 23.502 §4.2.2.2.2): Nudm_SDM_Subscribe — subscribe for
+  // subscriber-data change notifications so the AMF can send a Configuration
+  // Update Command when the UDM pushes an SDM notification.
+  if (amf_cfg->support_features
+          .enable_access_and_mobility_subscription_data_retrieval) {
+    amf_app_inst->subscribe_sdm_notifications(uc);
+  }
 
   // Process Uplink Data Status / PDU Session status
   uint16_t uplink_data_status              = 0x0000;
@@ -3952,11 +3992,6 @@ bool amf_n1::registration_complete_handle(
     }
   }
 
-  // TODO: Configuration Update Command message causes issue for UERANSIM
-  // (it does not accept the first PDU Session Establishment Accept, then it
-  // will send a second PDU Session Establishment Request and accept the
-  // second PDU Session Establishment Accept) Therefore, we disable this
-  // temporarily to make it work with UERANSIM
   Logger::amf_n1().debug(
       "Do not sending Configuration Update Command in this version!");
   /*
@@ -4148,8 +4183,15 @@ bool amf_n1::nas_message_integrity_protected(
       Logger::amf_n1().debug("Result for NIA2, mac32: 0x%x", mac32);
       return true;
     } break;
+
+    default: {
+      // NIA3-NIA7 are not implemented; reject to prevent silent bypass
+      Logger::amf_n1().error(
+          "Unsupported NAS integrity algorithm 0x%x; rejecting message",
+          nsc.nas_algs.integrity & 0x0f);
+      return false;
+    }
   }
-  return true;
 }
 
 //------------------------------------------------------------------------------
@@ -4211,6 +4253,14 @@ bool amf_n1::nas_message_cipher_protected(
       output_nas = blk2bstr(ciphered, len);
       free(ciphered);
     } break;
+
+    default: {
+      // NEA3-NEA7 are not implemented; reject to prevent silent bypass
+      Logger::amf_n1().error(
+          "Unsupported NAS encryption algorithm 0x%x; rejecting message",
+          nsc.nas_algs.encryption & 0x0f);
+      return false;
+    }
   }
   return true;
 }
@@ -4412,6 +4462,11 @@ bool amf_n1::ue_initiate_de_registration_handle(
 
   // TODO: AMF-nitiated AM Policy Association Termination (if exist)
   // TODO: AMF-initiated UE Policy Association Termination (if exist)
+
+  // Nudm_SDM_Unsubscribe (TS 29.503 §5.2.3.3.4): delete SDM subscription
+  // when the UE deregisters so UDM stops sending change notifications.
+  if (uc && !uc->udm_sdm_subscription_id.empty())
+    amf_app_inst->unsubscribe_sdm_notifications(uc);
 
   // Check Deregistration type
   uint8_t dereg_type = 0;
@@ -4655,7 +4710,6 @@ void amf_n1::ul_nas_transport_handle(
       case kN1SmInformation: {
         // Get payload container
         ul_nas->GetPayloadContainer(sm_msg);
-
         auto itti_msg =
             std::make_shared<itti_nsmf_pdusession_create_sm_context>(
                 TASK_AMF_N1, TASK_AMF_SBI);
@@ -5820,6 +5874,94 @@ void amf_n1::initialize_registration_accept(
   registration_accept->SetRejectedNssai(rejected_nssais);
   registration_accept->SetConfiguredNssai(
       allowed_nssais);  // TODO: use Allowed NSSAIs for now
+
+  // NSSRG
+  if (amf_cfg->support_features.enable_nssrg) {
+    if (nc->nas_ue_supports_nssrg && !nc->subscribed_nssrg_lists.empty()) {
+      Logger::amf_n1().debug(
+          "Applying NSSRG-based access restriction for UE %lu "
+          "(NSSRG data present for %zu S-NSSAI(s))",
+          nc->amf_ue_ngap_id, nc->subscribed_nssrg_lists.size());
+      nc->nssrg_restriction_applied = true;
+    } else if (!nc->nas_ue_supports_nssrg) {
+      Logger::amf_n1().debug(
+          "UE %lu does not support NSSRG - skipping NSSRG IE",
+          nc->amf_ue_ngap_id);
+    } else {
+      Logger::amf_n1().debug(
+          "Enable_nssrg=true but no NSSRG subscription data for "
+          "UE %lu - skipping NSSRG IE",
+          nc->amf_ue_ngap_id);
+    }
+  }
+
+  // Encode NSSRG Information IE in Registration Accept.
+  if (amf_cfg->support_features.enable_nssrg && nc->nas_ue_supports_nssrg &&
+      !nc->subscribed_nssrg_lists.empty()) {
+    oai::nas::NssrgInformation nssrg_ie(kIeiNssrgInformation);
+    std::vector<uint8_t> nssrg_content;
+    for (const auto& entry : nc->subscribed_nssrg_lists) {
+      if (entry.second.empty()) continue;
+      nssrg_content.push_back(entry.first.sst);
+      uint8_t count =
+          static_cast<uint8_t>(std::min(entry.second.size(), size_t(255)));
+      nssrg_content.push_back(count);
+      for (size_t i = 0; i < count; ++i) {
+        // NSSRG value is a 16-bit integer string (e.g. "1", "65535")
+        try {
+          uint16_t val = static_cast<uint16_t>(std::stoul(entry.second[i]));
+          nssrg_content.push_back(static_cast<uint8_t>((val >> 8) & 0xFF));
+          nssrg_content.push_back(static_cast<uint8_t>(val & 0xFF));
+        } catch (...) {
+          // Non-numeric NSSRG identifier - skip safely
+          nssrg_content.push_back(0x00);
+          nssrg_content.push_back(0x00);
+        }
+      }
+    }
+    if (!nssrg_content.empty()) {
+      nssrg_ie.SetValue(nssrg_content);
+      registration_accept->SetNssrgInformation(nssrg_ie);
+      Logger::amf_n1().debug(
+          "Added NssrgInformation IE (%zu content bytes) to "
+          "Registration Accept for UE %lu",
+          nssrg_content.size(), nc->amf_ue_ngap_id);
+    }
+  }
+
+  // Encode NSAG Information IE in Registration Accept.
+  if (amf_cfg->support_features.enable_nsag) {
+    if (!nc->nas_ue_supports_nsag) {
+      // Never send NSAG to non-supporting UEs
+      Logger::amf_n1().debug(
+          "UE %lu does not support NSAG - skipping NsagInformation IE",
+          nc->amf_ue_ngap_id);
+    } else if (nc->subscribed_nsag_info.empty()) {
+      Logger::amf_n1().debug(
+          "Enable_nsag=true but no NSAG data available for UE %lu "
+          "- skipping NsagInformation IE",
+          nc->amf_ue_ngap_id);
+    } else if (
+        nc->subscribed_nsag_info.size() <
+        kNsagInformationMinimumContentLength) {
+      Logger::amf_n1().warn(
+          "Subscribed_nsag_info for UE %lu is %lu bytes (minimum %u "
+          "required per §9.11.3.87) - skipping malformed NsagInformation IE",
+          nc->amf_ue_ngap_id, nc->subscribed_nsag_info.size(),
+          kNsagInformationMinimumContentLength);
+    } else {
+      // Encode NsagInformation IE with IEI 0x7C
+      oai::nas::NsagInformation nsag_ie(kIeiNsagInformationRegistrationAccept);
+      nsag_ie.SetValue(nc->subscribed_nsag_info);
+      registration_accept->SetNsagInformation(nsag_ie);
+      nc->nsag_info_applied = true;
+      Logger::amf_n1().debug(
+          "Added NsagInformation IE (IEI=0x7C, %lu content bytes) to "
+          "Registration Accept for UE %lu",
+          nc->subscribed_nsag_info.size(), nc->amf_ue_ngap_id);
+    }
+  }
+
   return;
 }
 
@@ -6021,9 +6163,41 @@ bool amf_n1::reroute_registration_request(
     SubscribedSnssai subscribed_snssai = {};
     subscribed_snssai.setSubscribedSnssai(n);
     subscribed_snssai.setDefaultIndication(true);
+    // Attach per-S-NSSAI NSSRG lists when enable_nssrg is active
+    if (amf_cfg->support_features.enable_nssrg) {
+      for (const auto& nssrg_entry : nc->subscribed_nssrg_lists) {
+        if (nssrg_entry.first.sst == static_cast<uint8_t>(n.getSst()) &&
+            (nssrg_entry.first.sd == SD_NO_VALUE ||
+             nssrg_entry.first.sd == static_cast<uint32_t>(n.getSdInt()))) {
+          if (!nssrg_entry.second.empty()) {
+            subscribed_snssai.setSubscribedNsSrgList(nssrg_entry.second);
+          }
+          break;
+        }
+      }
+    }
     subscribed_snssais.push_back(subscribed_snssai);
   }
   slice_info.setSubscribedNssai(subscribed_snssais);
+
+  // Populate NSSRG indicator fields in the NSSF request.
+  if (amf_cfg->support_features.enable_nssrg) {
+    slice_info.setUeSupNssrgInd(nc->nas_ue_supports_nssrg);
+    // Suppress NSSRG in NSSF output when UE does not support NSSRG
+    slice_info.setSuppressNssrgInd(!nc->nas_ue_supports_nssrg);
+    Logger::amf_n1().debug(
+        "UeSupNssrgInd=%s suppressNssrgInd=%s in NSSF request",
+        nc->nas_ue_supports_nssrg ? "true" : "false",
+        !nc->nas_ue_supports_nssrg ? "true" : "false");
+  }
+
+  // Populate NSAG indicator field in the NSSF request.
+  if (amf_cfg->support_features.enable_nsag) {
+    slice_info.setNsagSupported(nc->nas_ue_supports_nsag);
+    Logger::amf_n1().debug(
+        "NsagSupported=%s in NSSF request",
+        nc->nas_ue_supports_nsag ? "true" : "false");
+  }
 
   // Requested NSSAIs
   std::vector<Snssai> requested_nssais;
@@ -6042,6 +6216,22 @@ bool amf_n1::reroute_registration_request(
         "Could not get the Network Slice Selection information from NSSF");
     reroute_result = false;
     return false;
+  }
+
+  // Extract NSAG information from NSSF response.
+  if (amf_cfg->support_features.enable_nsag && nc->nas_ue_supports_nsag &&
+      authorized_network_slice_info.nsagInfosIsSet()) {
+    set_subscribed_nsag_info(
+        authorized_network_slice_info.getNsagInfos(), nc->subscribed_nsag_info);
+    Logger::amf_n1().debug(
+        "Stored %zu bytes of NSAG information from NSSF response for UE %lu",
+        nc->subscribed_nsag_info.size(), nc->amf_ue_ngap_id);
+  } else if (
+      amf_cfg->support_features.enable_nsag && nc->nas_ue_supports_nsag &&
+      !authorized_network_slice_info.nsagInfosIsSet()) {
+    Logger::amf_n1().debug(
+        "NSSF response does not contain nsagInfos for UE %lu",
+        nc->amf_ue_ngap_id);
   }
 
   // Find the appropriate target AMF and send N1MessageNotify to the AMF
@@ -6292,6 +6482,48 @@ bool amf_n1::get_slice_selection_subscription_data(
         */
         nc->subscribed_snssai.push_back(tmp);
       }
+
+      // Retrieve per-S-NSSAI NSSRG lists from UDM subscription data.
+      if (amf_cfg->support_features.enable_nssrg &&
+          nssai.additionalSnssaiDataIsSet()) {
+        auto additional_data = nssai.getAdditionalSnssaiData();
+        nc->subscribed_nssrg_lists.clear();
+        for (const auto& kv : additional_data) {
+          const auto& add_data = kv.second;
+          if (!add_data.subscribedNsSrgListIsSet()) continue;
+          // Parse SST (and optional SD) from the key string
+          // Key format per OpenAPI: "<sst-hex>" or "<sst-hex>-<sd-hex>"
+          oai::nas::SNSSAI_t snssai_key = {};
+          const std::string& key        = kv.first;
+          auto dash_pos                 = key.find('-');
+          try {
+            if (dash_pos == std::string::npos) {
+              snssai_key.sst =
+                  static_cast<uint8_t>(std::stoul(key, nullptr, 16));
+              snssai_key.sd = SD_NO_VALUE;
+            } else {
+              snssai_key.sst = static_cast<uint8_t>(
+                  std::stoul(key.substr(0, dash_pos), nullptr, 16));
+              snssai_key.sd = std::stoul(key.substr(dash_pos + 1), nullptr, 16);
+            }
+          } catch (...) {
+            Logger::amf_n1().warn(
+                "NSSRG: could not parse S-NSSAI key \"%s\", skipping",
+                key.c_str());
+            continue;
+          }
+          auto nssrg_list = add_data.getSubscribedNsSrgList();
+          Logger::amf_n1().debug(
+              "NSSRG: storing %zu NSSRG value(s) for S-NSSAI "
+              "(SST 0x%x, SD 0x%x)",
+              nssrg_list.size(), snssai_key.sst, snssai_key.sd);
+          nc->subscribed_nssrg_lists.emplace_back(snssai_key, nssrg_list);
+        }
+        Logger::amf_n1().debug(
+            "NSSRG: retained NSSRG lists for %zu S-NSSAI(s)",
+            nc->subscribed_nssrg_lists.size());
+      }
+
       return true;
 
     } else {
@@ -7106,24 +7338,314 @@ void amf_n1::handle_t3522_expiry(
 }
 
 // ---------------------------------------------------------------------------
-// T3555 — Configuration Update Command retransmit  (§5.4.4.6)
-// TODO: implement retransmit once Configuration Update Command encoding is
-//       available; for now only the final-expiry state update is stubbed.
+bool amf_n1::send_configuration_update_command(
+    std::shared_ptr<nas_context>& nc, bool ack_requested,
+    const std::optional<oai::nas::NssrgInformation>& nssrg_ie,
+    const std::optional<oai::nas::NsagInformation>& nsag_ie,
+    const std::optional<oai::nas::PriorityIndicator>& priority_ie) {
+  Logger::amf_n1().debug(
+      "Preparing Configuration Update Command (CUC), ack=%s for UE %lu",
+      ack_requested ? "true" : "false", nc->amf_ue_ngap_id);
+
+  // NSSRG
+  bool include_nssrg = nssrg_ie.has_value() &&
+                       amf_cfg->support_features.enable_nssrg &&
+                       nc->nas_ue_supports_nssrg;
+
+  // NSAG IE
+  bool include_nsag = nsag_ie.has_value() &&
+                      amf_cfg->support_features.enable_nsag &&
+                      nc->nas_ue_supports_nsag;
+
+  // Skip malformed/too-short NSAG content
+  if (include_nsag && nsag_ie.value().GetValue().size() <
+                          kNsagInformationMinimumContentLength) {
+    Logger::amf_n1().warn(
+        "CUC with NsagInformation for UE %lu: NsagInformation content is %zu "
+        "bytes (minimum %u "
+        "per §9.11.3.87) — skipping malformed IE in CUC",
+        nc->amf_ue_ngap_id, nsag_ie.value().GetValue().size(),
+        kNsagInformationMinimumContentLength);
+    include_nsag = false;
+  }
+
+  // TS 24.501 §4.6.2.6: Acknowledgement is mandatory when NSAG
+  if (include_nsag && !ack_requested) {
+    Logger::amf_n1().warn(
+        "CUC with NsagInformation for UE %lu: ack_requested=false "
+        "overridden to true per TS 24.501 §4.6.2.6",
+        nc->amf_ue_ngap_id);
+    ack_requested = true;
+  }
+
+  // Priority
+  bool include_priority =
+      priority_ie.has_value() &&
+      amf_cfg->support_features.enable_mps_indicator_update &&
+      nc->nas_ue_supports_mps_indicator_update;
+
+  if (!nc->security_ctx.has_value()) {
+    Logger::amf_n1().error(
+        "Send_configuration_update_command: no security context for "
+        "UE %lu",
+        nc->amf_ue_ngap_id);
+    return false;
+  }
+
+  // Build ConfigurationUpdateCommand message
+  auto cuc = std::make_unique<oai::nas::ConfigurationUpdateCommand>();
+
+  // Configuration Update Indication IE
+  oai::nas::ConfigurationUpdateIndication cui(false, ack_requested);
+  cuc->SetConfigurationUpdateIndication(cui);
+
+  // NSSRG Information IE
+  if (include_nssrg) {
+    cuc->SetNssrgInformation(nssrg_ie.value());
+    Logger::amf_n1().debug(
+        "NssrgInformation IE included in CUC for UE %lu", nc->amf_ue_ngap_id);
+  }
+
+  // NSAG Information IE
+  if (include_nsag) {
+    oai::nas::NsagInformation cuc_nsag_ie(kIeiNsagInformationCuc);
+    cuc_nsag_ie.SetValue(nsag_ie.value().GetValue());
+    cuc->SetNsagInformation(cuc_nsag_ie);
+    Logger::amf_n1().debug(
+        "NsagInformation IE (IEI=0x73, %zu bytes) included in CUC "
+        "for UE %lu",
+        nsag_ie.value().GetValue().size(), nc->amf_ue_ngap_id);
+  }
+
+  // Priority Indicator IE
+  if (include_priority) {
+    cuc->SetPriorityIndicator(priority_ie.value().GetMpsi());
+    Logger::amf_n1().debug(
+        "MPS: Priority Indicator IE (MPSI=%u, IEI=0xE-) included in CUC "
+        "for UE %lu",
+        priority_ie.value().GetMpsi(), nc->amf_ue_ngap_id);
+  }
+
+  // Encode into a raw buffer
+  uint32_t msg_len  = cuc->GetLength();
+  uint8_t* buf_heap = new uint8_t[msg_len]();
+  int encoded_size  = cuc->Encode(buf_heap, static_cast<int>(msg_len));
+  if (encoded_size == KEncodeDecodeError) {
+    Logger::amf_n1().error(
+        "Configuration Update Command: encoding error for UE %lu",
+        nc->amf_ue_ngap_id);
+    delete[] buf_heap;
+    return false;
+  }
+  oai::utils::output_wrapper::print_buffer(
+      "amf_n1", "Configuration Update Command message buffer", buf_heap,
+      encoded_size);
+
+  // Apply NAS security protection
+  bstring protected_nas = nullptr;
+  encode_nas_message_protected(
+      nc->security_ctx.value(), false, kIntegrityProtectedAndCiphered,
+      NAS_MESSAGE_DOWNLINK, buf_heap, encoded_size, protected_nas);
+  delete[] buf_heap;
+
+  if (!protected_nas) {
+    Logger::amf_n1().error(
+        "Configuration Update Command: security protection failed for UE "
+        "%lu",
+        nc->amf_ue_ngap_id);
+    return false;
+  }
+
+  if (ack_requested) {
+    pending_ucu_t ucu = {};
+    ucu.ack_requested = true;
+    ucu.retry_count   = 0;
+    ucu.cuc_pdu.assign(
+        reinterpret_cast<uint8_t*>(bdata(protected_nas)),
+        reinterpret_cast<uint8_t*>(bdata(protected_nas)) +
+            blength(protected_nas));
+    nc->pending_ucu_                              = ucu;
+    nc->nas_message_for_current_procedure_running = kConfigurationUpdateCommand;
+    nas_procedure_manager_.start_common_procedure(
+        *nc, nas_procedure_type_e::CONFIGURATION_UPDATE);
+    itti_send_dl_nas_buffer_to_task_n2(
+        protected_nas, nc->ran_ue_ngap_id, nc->amf_ue_ngap_id);
+    nas_timer_manager_.start_timer(
+        nas_timer_type_e::T3555, nc, nc->amf_ue_ngap_id);
+    Logger::amf_n1().debug(
+        "T3555 started — awaiting Configuration Update Complete from UE %lu",
+        nc->amf_ue_ngap_id);
+  } else {
+    nc->pending_ucu_ = std::nullopt;
+    itti_send_dl_nas_buffer_to_task_n2(
+        protected_nas, nc->ran_ue_ngap_id, nc->amf_ue_ngap_id);
+    Logger::amf_n1().debug(
+        "Configuration Update Command (no-ack) sent to UE %lu",
+        nc->amf_ue_ngap_id);
+  }
+
+  oai::utils::utils::bdestroy_wrapper(&protected_nas);
+  return true;
+}
+
+// ---------------------------------------------------------------------------
+void amf_n1::trigger_mps_indicator_update(
+    std::shared_ptr<nas_context> nc, bool new_mps_priority) {
+  if (!amf_cfg->support_features.enable_mps_indicator_update) {
+    Logger::amf_n1().debug(
+        "MPS indicator update disabled - skipping for UE %lu",
+        nc->amf_ue_ngap_id);
+    return;
+  }
+
+  if (nc->mps_priority_active == new_mps_priority) {
+    // No state change — nothing to send
+    Logger::amf_n1().debug(
+        "MPS priority unchanged (%s) for "
+        "UE %lu - no CUC needed",
+        new_mps_priority ? "active" : "inactive", nc->amf_ue_ngap_id);
+    return;
+  }
+
+  if (!nc->nas_ue_supports_mps_indicator_update) {
+    // Per TS 24.501 §4.5.2A: UE that does not support MPSIU must re-register
+    // to receive the updated MPS state. The AMF cannot push a CUC for this.
+    Logger::amf_n1().info(
+        "UE %lu does not support MPSIU - "
+        "MPS change requires new registration (per TS 24.501 §4.5.2A)",
+        nc->amf_ue_ngap_id);
+    return;
+  }
+
+  // Update state and send CUC with Priority Indicator IE
+  nc->mps_priority_active = new_mps_priority;
+  Logger::amf_n1().info(
+      "Sending CUC Priority Indicator (MPSI=%u) "
+      "to UE %lu (TS 24.501 §5.4.4.2, §8.2.19.35)",
+      new_mps_priority ? 1u : 0u, nc->amf_ue_ngap_id);
+
+  // Build Priority Indicator IE: MPSI=1 → 0xE1; MPSI=0 → 0xE0
+  oai::nas::PriorityIndicator priority_ie(
+      kPriorityIndicatorIei, new_mps_priority ? 1 : 0);
+
+  // Per §5.4.4.2: acknowledgement is optional for MPS updates;
+  // use ack_requested=false (lower-priority update).
+  send_configuration_update_command(
+      nc, false, std::nullopt, std::nullopt,
+      std::optional<oai::nas::PriorityIndicator>(priority_ie));
+}
+
+// ---------------------------------------------------------------------------
+bool amf_n1::configuration_update_complete_handle(
+    const uint32_t ran_ue_ngap_id, const uint64_t amf_ue_ngap_id,
+    bstring nas_msg, uint8_t& cause) {
+  Logger::amf_n1().debug(
+      "Received Configuration Update Complete message, processing");
+
+  std::shared_ptr<nas_context> nc;
+  if (!amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) {
+    Logger::amf_n1().error(
+        "Configuration Update Complete: NAS context not found for "
+        "UE %lu",
+        amf_ue_ngap_id);
+    cause = k5gmmCauseUeIdentityCannotBeDerived;
+    return false;
+  }
+
+  // Decode the Configuration Update Complete message
+  auto cuc_complete = std::make_unique<oai::nas::ConfigurationUpdateComplete>();
+  int decoded_size  = cuc_complete->Decode(
+      reinterpret_cast<uint8_t*>(bdata(nas_msg)), blength(nas_msg));
+  if (decoded_size == KEncodeDecodeError) {
+    Logger::amf_n1().warn(
+        "Error decoding Configuration Update Complete for UE %lu",
+        amf_ue_ngap_id);
+    cause = k5gmmCauseProtocolErrorUnspecified;
+    return false;
+  }
+
+  // Stop T3555 — this is a successful acknowledgement, not a T3555 expiry
+  nas_timer_manager_.stop_timer(nas_timer_type_e::T3555, nc);
+
+  // Apply and clear pending UCU context updates
+  if (nc->pending_ucu_.has_value()) {
+    nc->pending_ucu_ = std::nullopt;
+    Logger::amf_n1().debug(
+        "Pending UCU cleared after successful acknowledgement from UE %lu",
+        amf_ue_ngap_id);
+  }
+
+  // Complete the CONFIGURATION_UPDATE common procedure
+  nas_procedure_manager_.complete_common_procedure(*nc);
+
+  Logger::amf_n1().debug(
+      "Configuration Update Complete acknowledged by UE %lu", amf_ue_ngap_id);
+  return true;
+}
+
 // ---------------------------------------------------------------------------
 void amf_n1::handle_t3555_expiry(
     timer_id_t timer_id, std::string amf_ue_ngap_id_str) {
   Logger::amf_n1().debug(
-      "T3555 (Configuration Update Command) expiry for UE %s — "
-      "retransmit not yet implemented",
+      "T3555 (Configuration Update Command) expiry for UE %s",
       amf_ue_ngap_id_str.c_str());
-  // TODO implement T3555 retransmit / final-expiry handling
+
+  uint64_t amf_ue_ngap_id = INVALID_AMF_UE_NGAP_ID;
+  std::shared_ptr<nas_context> nc;
+  if (!resolve_nas_context_for_timer(
+          amf_ue_ngap_id_str, amf_ue_ngap_id, nc, this))
+    return;
+
+  // If no pending UCU is stored, the timer fired spuriously (e.g. after a
+  // successful Configuration Update Complete was already processed).
+  if (!nc->pending_ucu_.has_value()) {
+    Logger::amf_n1().debug(
+        "T3555 expiry ignored - no pending UCU for UE %lu (already completed?)",
+        amf_ue_ngap_id);
+    return;
+  }
+
+  bool needs_retx = nas_timer_manager_.handle_expiry(
+      nas_timer_type_e::T3555, nc, amf_ue_ngap_id);
+
+  if (needs_retx) {
+    // Retransmit the stored CUC PDU
+    pending_ucu_t& ucu = nc->pending_ucu_.value();
+    ucu.retry_count++;
+    Logger::amf_n1().debug(
+        "T3555 retransmit #%u for UE %lu", ucu.retry_count, amf_ue_ngap_id);
+
+    if (!ucu.cuc_pdu.empty()) {
+      bstring retx_pdu =
+          blk2bstr(ucu.cuc_pdu.data(), static_cast<int>(ucu.cuc_pdu.size()));
+      itti_send_dl_nas_buffer_to_task_n2(
+          retx_pdu, nc->ran_ue_ngap_id, amf_ue_ngap_id);
+      oai::utils::utils::bdestroy_wrapper(&retx_pdu);
+    } else {
+      Logger::amf_n1().warn(
+          "T3555 retransmit: pending UCU PDU is empty for UE %lu",
+          amf_ue_ngap_id);
+    }
+  } else {
+    // §5.4.4.6a: final expiry — abort UCU
+    Logger::amf_n1().warn(
+        "T3555 final expiry for UE %lu — aborting Configuration Update",
+        amf_ue_ngap_id);
+
+    // Handle T3555_FINAL_EXPIRY state machine event
+    handle_nas_event(nc, oai::amf::nas::nas_event_e::T3555_FINAL_EXPIRY);
+
+    // Clear pending UCU and restore prior state
+    nc->pending_ucu_ = std::nullopt;
+    nas_procedure_manager_.abort_common_procedure(*nc);
+
+    Logger::amf_n1().warn(
+        "T3555 final expiry: pending UCU cleared, Configuration Update "
+        "aborted for UE %lu",
+        amf_ue_ngap_id);
+  }
 }
 
-// ---------------------------------------------------------------------------
-// T3513 — Paging retransmit  (§5.6.2.2.1)
-// T3513 has discretionary retransmit (max_retransmissions = 0) — no
-// final-expiry state change required by the spec; the paging attempt simply
-// fails silently from the AMF perspective.
 // ---------------------------------------------------------------------------
 void amf_n1::handle_t3513_expiry(
     timer_id_t timer_id, std::string amf_ue_ngap_id_str) {
@@ -7143,4 +7665,184 @@ void amf_n1::handle_t3565_expiry(
       "implemented",
       amf_ue_ngap_id_str.c_str());
   // TODO: implement T3565 Notification retransmit handling
+}
+
+void amf_n1::set_subscribed_nsag_info(
+    const std::vector<oai::_3gpp::model::NsagInfo>& nsag_infos,
+    std::vector<uint8_t>& subscribed_nsag_info) {
+  size_t num_entries = nsag_infos.size();
+
+  // Enforce maximum 32 NSAG entries per TS 24.501 §9.11.3.87
+  if (num_entries > kNsagInformationMaxEntries) {
+    Logger::amf_n1().warn(
+        "NSSF returned %zu NSAG entries; truncating to %u (max per "
+        "TS 24.501 §9.11.3.87)",
+        num_entries, kNsagInformationMaxEntries);
+    num_entries = kNsagInformationMaxEntries;
+  }
+
+  // Count entries with TAI list — maximum 4 allowed per §9.11.3.87
+  size_t tai_entry_count = 0;
+  for (size_t i = 0; i < num_entries; ++i) {
+    if (nsag_infos[i].taiListIsSet() && !nsag_infos[i].getTaiList().empty())
+      ++tai_entry_count;
+  }
+  if (tai_entry_count > 4) {
+    Logger::amf_n1().warn(
+        "%zu NSAG entries have TAI list; maximum is 4 per "
+        "TS 24.501 §9.11.3.87 - extra TAI lists will be omitted",
+        tai_entry_count);
+  }
+
+  // Encode NSAG entries (TS 24.501 §9.11.3.87)
+  auto encode_snssai_bytes =
+      [](const oai::_3gpp::model::Snssai& s) -> std::vector<uint8_t> {
+    std::vector<uint8_t> v;
+    bool has_sd = s.sdIsSet() &&
+                  (static_cast<uint32_t>(s.getSdInt()) != SD_DEFAULT_VALUE_INT);
+    uint8_t content_len = has_sd ? 4 : 1;  // SST + optional 3-byte SD
+    v.push_back(content_len);
+    v.push_back(static_cast<uint8_t>(s.getSst() & 0xFF));
+    if (has_sd) {
+      uint32_t sd = static_cast<uint32_t>(s.getSdInt());
+      v.push_back(static_cast<uint8_t>((sd >> 16) & 0xFF));
+      v.push_back(static_cast<uint8_t>((sd >> 8) & 0xFF));
+      v.push_back(static_cast<uint8_t>(sd & 0xFF));
+    }
+    return v;
+  };
+
+  // Encode a TAI list as §9.11.3.9 type-00 sub-entries.
+  auto encode_tai_list_bytes =
+      [](const std::vector<oai::_3gpp::model::Tai>& tais)
+      -> std::vector<uint8_t> {
+    std::vector<uint8_t> v;
+    for (const auto& tai : tais) {
+      // Type-00 sub-entry: type/count byte = 0x00 (type=00, count=1–1=0),
+      // then 3-byte PLMN, then 3-byte TAC.
+      v.push_back(0x00);  // type-00, one TAI
+
+      const auto& plmn       = tai.getPlmnId();
+      const std::string& mcc = plmn.getMcc();  // e.g. "208"
+      const std::string& mnc = plmn.getMnc();  // e.g. "93" or "093"
+      // PLMN encoding (TS 24.008 §10.5.1.13):
+      //   octet 1: MCC digit 2 | (MCC digit 1 << 4)
+      //   octet 2: MNC digit 3 (or 0xF for 2-digit MNC) | (MCC digit 3 << 4)
+      //   octet 3: MNC digit 2 | (MNC digit 1 << 4)
+      if (mcc.size() < 3) {
+        // Malformed PLMN — skip this TAI
+        return {};
+      }
+      uint8_t mcc1 = static_cast<uint8_t>(mcc[0] - '0');
+      uint8_t mcc2 = static_cast<uint8_t>(mcc[1] - '0');
+      uint8_t mcc3 = static_cast<uint8_t>(mcc[2] - '0');
+      uint8_t mnc1 = 0, mnc2 = 0, mnc3 = 0xF;
+      if (mnc.size() >= 2) {
+        mnc1 = static_cast<uint8_t>(mnc[0] - '0');
+        mnc2 = static_cast<uint8_t>(mnc[1] - '0');
+      }
+      if (mnc.size() >= 3) {
+        mnc3 = static_cast<uint8_t>(mnc[2] - '0');
+      }
+      v.push_back(static_cast<uint8_t>((mcc2 << 4) | mcc1));
+      v.push_back(static_cast<uint8_t>((mnc3 << 4) | mcc3));
+      v.push_back(static_cast<uint8_t>((mnc2 << 4) | mnc1));
+
+      // TAC: 3-byte hex string per model (e.g. "000001")
+      const std::string& tac_str = tai.getTac();
+      uint32_t tac_val           = 0;
+      try {
+        tac_val = static_cast<uint32_t>(std::stoul(tac_str, nullptr, 16));
+      } catch (...) {
+        // Malformed TAC — skip this entry
+        return {};
+      }
+      v.push_back(static_cast<uint8_t>((tac_val >> 16) & 0xFF));
+      v.push_back(static_cast<uint8_t>((tac_val >> 8) & 0xFF));
+      v.push_back(static_cast<uint8_t>(tac_val & 0xFF));
+    }
+    return v;
+  };
+
+  std::vector<uint8_t> nsag_raw;
+  size_t tai_encoded    = 0;
+  size_t wire_entry_cnt = 0;
+
+  for (size_t i = 0;
+       i < num_entries && wire_entry_cnt < kNsagInformationMaxEntries; ++i) {
+    const auto& entry   = nsag_infos[i];
+    const auto& ids     = entry.getNsagIds();
+    const auto& snssais = entry.getSnssaiList();
+
+    // S-NSSAI list bytes
+    std::vector<uint8_t> snssai_list_bytes;
+    for (const auto& s : snssais) {
+      auto s_bytes = encode_snssai_bytes(s);
+      snssai_list_bytes.insert(
+          snssai_list_bytes.end(), s_bytes.begin(), s_bytes.end());
+    }
+    uint8_t snssai_list_len =
+        static_cast<uint8_t>(std::min(snssai_list_bytes.size(), size_t(255)));
+
+    // TAI list bytes
+    std::vector<uint8_t> tai_bytes;
+    bool encode_tai = entry.taiListIsSet() && !entry.getTaiList().empty() &&
+                      (tai_encoded < 4);
+    if (encode_tai) {
+      tai_bytes = encode_tai_list_bytes(entry.getTaiList());
+      if (tai_bytes.empty()) {
+        Logger::amf_n1().warn(
+            "Entry %zu TAI list encoding failed — omitting TAI list", i);
+        encode_tai = false;
+      } else {
+        ++tai_encoded;
+        Logger::amf_n1().debug(
+            "Entry %zu TAI list encoded (%zu bytes for %zu TAIs)", i,
+            tai_bytes.size(), entry.getTaiList().size());
+      }
+    } else if (
+        entry.taiListIsSet() && !entry.getTaiList().empty() &&
+        tai_encoded >= 4) {
+      Logger::amf_n1().warn(
+          "Entry %zu TAI list omitted (4-entry limit reached)", i);
+    }
+
+    // NSAG ID
+    for (size_t j = 0;
+         j < ids.size() && wire_entry_cnt < kNsagInformationMaxEntries; ++j) {
+      uint8_t nsag_id = static_cast<uint8_t>(ids[j] & 0xFF);
+
+      // Compute entry_length:
+      //   1 (nsag_id) + 1 (snssai_list_len) + snssai_list_len
+      //   + 1 (priority) + optional (1 + tai_bytes.size())
+      uint8_t entry_length = static_cast<uint8_t>(1 + 1 + snssai_list_len + 1);
+      if (encode_tai && !tai_bytes.empty()) {
+        entry_length = static_cast<uint8_t>(
+            entry_length + 1 + std::min(tai_bytes.size(), size_t(255)));
+      }
+
+      nsag_raw.push_back(entry_length);
+      nsag_raw.push_back(nsag_id);
+      nsag_raw.push_back(snssai_list_len);
+      nsag_raw.insert(
+          nsag_raw.end(), snssai_list_bytes.begin(),
+          snssai_list_bytes.begin() + snssai_list_len);
+
+      // TODO: use per-entry NSAG priority when NsagInfo model exposes it
+      nsag_raw.push_back(0x01);  // priority 1 (highest)
+
+      if (encode_tai && !tai_bytes.empty()) {
+        uint8_t tai_list_len =
+            static_cast<uint8_t>(std::min(tai_bytes.size(), size_t(255)));
+        nsag_raw.push_back(tai_list_len);
+        nsag_raw.insert(
+            nsag_raw.end(), tai_bytes.begin(),
+            tai_bytes.begin() + tai_list_len);
+      }
+
+      ++wire_entry_cnt;
+    }
+  }
+
+  subscribed_nsag_info = std::move(nsag_raw);
 }

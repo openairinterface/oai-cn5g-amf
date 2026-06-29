@@ -27,6 +27,7 @@
 #include "ue_context.hpp"
 #include "utils.hpp"
 #include "Guami.h"
+#include "SdmSubscription.h"
 #include "string.hpp"
 
 using namespace oai::config;
@@ -244,6 +245,21 @@ void amf_sbi_task(void*) {
             "handling ...");
         itti_dispatch<itti_sbi_ue_context_in_smf_data_retrieval>(
             msg, [&](auto& m) { amf_sbi_inst->handle_itti_message(m); });
+      } break;
+
+      case SBI_SDM_SUBSCRIBE: {
+        Logger::amf_sbi().info("Receive SDM Subscribe message, handling ...");
+        itti_sbi_sdm_subscribe* m = dynamic_cast<itti_sbi_sdm_subscribe*>(msg);
+        if (!m) break;
+        amf_sbi_inst->handle_itti_message(std::ref(*m));
+      } break;
+
+      case SBI_SDM_UNSUBSCRIBE: {
+        Logger::amf_sbi().info("Receive SDM Unsubscribe message, handling ...");
+        itti_sbi_sdm_unsubscribe* m =
+            dynamic_cast<itti_sbi_sdm_unsubscribe*>(msg);
+        if (!m) break;
+        amf_sbi_inst->handle_itti_message(std::ref(*m));
       } break;
 
       case TERMINATE: {
@@ -2148,6 +2164,85 @@ void amf_sbi::get_network_slice_information(
   Logger::amf_sbi().debug(
       "NS Selection, response from NSSF, json data: \n %s",
       response_data.dump().c_str());
+}
+
+//------------------------------------------------------------------------------
+void amf_sbi::handle_itti_message(itti_sbi_sdm_subscribe& itti_msg) {
+  Logger::amf_sbi().debug(
+      "Send Nudm_SDM_Subscribe towards UDM for SUPI %s", itti_msg.supi.c_str());
+
+  // Construct the UDM SDM subscriptions endpoint URL
+  // Pattern: {udm_uri_root}/nudm-sdm/{api_version}/{supi}/sdm-subscriptions
+  std::string uri = amf_cfg->udm_addr.uri_root + amf_sbi_helper::UdmSdmBase +
+                    amf_cfg->udm_addr.api_version + "/" + itti_msg.supi +
+                    "/sdm-subscriptions";
+
+  nlohmann::json json_body = {};
+  to_json(json_body, itti_msg.sdm_sub);
+  std::string body = json_body.dump();
+
+  oai::http::response http_response = {};
+  send_http_request(uri, oai::common::sbi::method_e::POST, body, http_response);
+
+  if (http_response.status_code ==
+      oai::common::sbi::http_status_code::CREATED) {
+    // Extract the subscription ID from the Location header
+    std::string subscription_id = {};
+    if (auto loc_it = http_response.headers.find("location");
+        loc_it != http_response.headers.end()) {
+      subscription_id = loc_it->second;
+      Logger::amf_sbi().info(
+          "UDM SDM subscription created for SUPI %s, location: %s",
+          itti_msg.supi.c_str(), subscription_id.c_str());
+    }
+
+    // Store the subscription ID in the UE context for later unsubscribe
+    std::shared_ptr<ue_context> uc =
+        amf_app_inst->get_ue_context(itti_msg.supi);
+    if (uc) {
+      uc->udm_sdm_subscription_id = subscription_id;
+    }
+  } else {
+    Logger::amf_sbi().warn(
+        "UDM SDM subscription failed for SUPI %s, HTTP status %u",
+        itti_msg.supi.c_str(), http_response.status_code);
+  }
+}
+
+//------------------------------------------------------------------------------
+void amf_sbi::handle_itti_message(itti_sbi_sdm_unsubscribe& itti_msg) {
+  Logger::amf_sbi().debug(
+      "Send Nudm_SDM_Unsubscribe towards UDM for SUPI %s (subscription %s)",
+      itti_msg.supi.c_str(), itti_msg.subscription_id.c_str());
+
+  if (itti_msg.subscription_id.empty()) {
+    Logger::amf_sbi().warn(
+        "Empty subscription_id for SUPI %s — skipping unsubscribe",
+        itti_msg.supi.c_str());
+    return;
+  }
+
+  // The subscription_id is the full Location URI returned by UDM.
+  // DELETE {subscription_id} (TS 29.503 §5.2.3.3.4)
+  oai::http::response http_response = {};
+  send_http_request(
+      itti_msg.subscription_id, oai::common::sbi::method_e::DELETE, {},
+      http_response);
+
+  if (http_response.status_code ==
+          oai::common::sbi::http_status_code::NO_CONTENT ||
+      http_response.status_code == oai::common::sbi::http_status_code::OK) {
+    Logger::amf_sbi().info(
+        "UDM SDM unsubscription successful for SUPI %s", itti_msg.supi.c_str());
+    // Clear the stored subscription ID
+    std::shared_ptr<ue_context> uc =
+        amf_app_inst->get_ue_context(itti_msg.supi);
+    if (uc) uc->udm_sdm_subscription_id.clear();
+  } else {
+    Logger::amf_sbi().warn(
+        "UDM SDM unsubscription failed for SUPI %s, HTTP status %u",
+        itti_msg.supi.c_str(), http_response.status_code);
+  }
 }
 
 //------------------------------------------------------------------------------

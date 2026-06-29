@@ -22,6 +22,7 @@
 #include "uint_generator.hpp"
 #include "PolicyUpdate.h"
 #include "TerminationNotification.h"
+#include "ModificationNotification.h"
 #include "SubscriptionData.h"
 #include "UeContextInfoClass.h"
 #include "RequestLocInfo.h"
@@ -95,6 +96,11 @@ class amf_http2_server {
   void terminate_policy_notification_handler(
       const std::string& ue_context_id,
       const TerminationNotification& termination_notification,
+      const response& res);
+
+  void nudm_sdm_notification_handler(
+      const std::string& supi,
+      const oai::_3gpp::model::ModificationNotification& notification,
       const response& res);
 
   void provide_domain_selection_info_handler(

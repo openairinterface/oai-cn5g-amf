@@ -49,6 +49,28 @@ constexpr auto AMF_CONFIG_SUPPORT_FEATURES_ENABLE_AM_POLICY_ASSOCIATION =
     "enable_am_policy_association";
 constexpr auto AMF_CONFIG_SUPPORT_FEATURES_ENABLE_AM_POLICY_ASSOCIATION_LABEL =
     "Enable AM Policy Association";
+
+// NAS Rel 17.10 features (default false)
+constexpr auto AMF_CONFIG_SUPPORT_FEATURES_ENABLE_NSSRG       = "enable_nssrg";
+constexpr auto AMF_CONFIG_SUPPORT_FEATURES_ENABLE_NSSRG_LABEL = "Enable NSSRG";
+constexpr auto AMF_CONFIG_SUPPORT_FEATURES_ENABLE_NSAG        = "enable_nsag";
+constexpr auto AMF_CONFIG_SUPPORT_FEATURES_ENABLE_NSAG_LABEL  = "Enable NSAG";
+constexpr auto AMF_CONFIG_SUPPORT_FEATURES_ENABLE_MPS_INDICATOR_UPDATE =
+    "enable_mps_indicator_update";
+constexpr auto AMF_CONFIG_SUPPORT_FEATURES_ENABLE_MPS_INDICATOR_UPDATE_LABEL =
+    "Enable MPS Indicator Update";
+constexpr auto AMF_CONFIG_SUPPORT_FEATURES_ENABLE_UAS_UUAA_MM =
+    "enable_uas_uuaa_mm";
+constexpr auto AMF_CONFIG_SUPPORT_FEATURES_ENABLE_UAS_UUAA_MM_LABEL =
+    "Enable UAS/UUAA-MM";
+constexpr auto AMF_CONFIG_SUPPORT_FEATURES_ENABLE_LOCAL_5GSM_DECODE =
+    "enable_local_5gsm_decode";
+constexpr auto AMF_CONFIG_SUPPORT_FEATURES_ENABLE_LOCAL_5GSM_DECODE_LABEL =
+    "Enable Local 5GSM Decode";
+constexpr auto AMF_CONFIG_SUPPORT_FEATURES_ENABLE_UE_POLICY_DELIVERY =
+    "enable_ue_policy_delivery";
+constexpr auto AMF_CONFIG_SUPPORT_FEATURES_ENABLE_UE_POLICY_DELIVERY_LABEL =
+    "Enable UE Policy Delivery";
 constexpr auto AMF_CONFIG_RELATIVE_CAPACITY       = "relative_capacity";
 constexpr auto AMF_CONFIG_RELATIVE_CAPACITY_LABEL = "Relative Capacity";
 constexpr auto AMF_CONFIG_STATISTICS_TIMER_INTERVAL =
@@ -156,6 +178,12 @@ class amf_support_features : public config_type {
   option_config_value
       m_enable_access_and_mobility_subscription_data_retrieval{};
   option_config_value m_enable_am_policy_association{};
+  option_config_value m_enable_nssrg{};
+  option_config_value m_enable_nsag{};
+  option_config_value m_enable_mps_indicator_update{};
+  option_config_value m_enable_uas_uuaa_mm{};
+  option_config_value m_enable_local_5gsm_decode{};
+  option_config_value m_enable_ue_policy_delivery{};
 
  public:
   explicit amf_support_features();
@@ -170,6 +198,12 @@ class amf_support_features : public config_type {
   [[nodiscard]] bool
   get_option_enable_access_and_mobility_subscription_data_retrieval() const;
   [[nodiscard]] bool get_option_enable_am_policy_association() const;
+  [[nodiscard]] bool get_option_enable_nssrg() const;
+  [[nodiscard]] bool get_option_enable_nsag() const;
+  [[nodiscard]] bool get_option_enable_mps_indicator_update() const;
+  [[nodiscard]] bool get_option_enable_uas_uuaa_mm() const;
+  [[nodiscard]] bool get_option_enable_local_5gsm_decode() const;
+  [[nodiscard]] bool get_option_enable_ue_policy_delivery() const;
 };
 
 class guami : public config_type {
@@ -279,6 +313,12 @@ typedef struct support_features_s {
   bool enable_pcf;
   bool enable_access_and_mobility_subscription_data_retrieval;
   bool enable_am_policy_association;
+  bool enable_nssrg;
+  bool enable_nsag;
+  bool enable_mps_indicator_update;
+  bool enable_uas_uuaa_mm;
+  bool enable_local_5gsm_decode;
+  bool enable_ue_policy_delivery;
 
   uint8_t http_version;
   nlohmann::json to_json() const {
@@ -293,7 +333,14 @@ typedef struct support_features_s {
         this->enable_access_and_mobility_subscription_data_retrieval;
     json_data["enable_am_policy_association"] =
         this->enable_am_policy_association;
-    json_data["http_version"] = this->http_version;
+    json_data["enable_nssrg"] = this->enable_nssrg;
+    json_data["enable_nsag"]  = this->enable_nsag;
+    json_data["enable_mps_indicator_update"] =
+        this->enable_mps_indicator_update;
+    json_data["enable_uas_uuaa_mm"]        = this->enable_uas_uuaa_mm;
+    json_data["enable_local_5gsm_decode"]  = this->enable_local_5gsm_decode;
+    json_data["enable_ue_policy_delivery"] = this->enable_ue_policy_delivery;
+    json_data["http_version"]              = this->http_version;
     return json_data;
   }
 
@@ -331,6 +378,28 @@ typedef struct support_features_s {
       if (json_data.find("enable_am_policy_association") != json_data.end()) {
         this->enable_am_policy_association =
             json_data["enable_am_policy_association"].get<bool>();
+      }
+      // NAS Rel 17.10 features
+      if (json_data.find("enable_nssrg") != json_data.end()) {
+        this->enable_nssrg = json_data["enable_nssrg"].get<bool>();
+      }
+      if (json_data.find("enable_nsag") != json_data.end()) {
+        this->enable_nsag = json_data["enable_nsag"].get<bool>();
+      }
+      if (json_data.find("enable_mps_indicator_update") != json_data.end()) {
+        this->enable_mps_indicator_update =
+            json_data["enable_mps_indicator_update"].get<bool>();
+      }
+      if (json_data.find("enable_uas_uuaa_mm") != json_data.end()) {
+        this->enable_uas_uuaa_mm = json_data["enable_uas_uuaa_mm"].get<bool>();
+      }
+      if (json_data.find("enable_local_5gsm_decode") != json_data.end()) {
+        this->enable_local_5gsm_decode =
+            json_data["enable_local_5gsm_decode"].get<bool>();
+      }
+      if (json_data.find("enable_ue_policy_delivery") != json_data.end()) {
+        this->enable_ue_policy_delivery =
+            json_data["enable_ue_policy_delivery"].get<bool>();
       }
       if (json_data.find("http_version") != json_data.end()) {
         this->http_version = json_data["http_version"].get<int>();
