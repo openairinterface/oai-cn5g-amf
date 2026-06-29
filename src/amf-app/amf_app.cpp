@@ -2142,6 +2142,23 @@ void amf_app::perform_am_policy_association(
   std::string support_features = {};
   policy_assc_request.setSuppFeat(support_features);
 
+  // Set Access Type (3GPP Access)
+  oai::_3gpp::model::AccessType access_type = {};
+  access_type.setValue(
+      oai::_3gpp::model::AccessType::eAccessType::_3GPP_ACCESS);
+  policy_assc_request.setAccessType(access_type);
+
+  // Set Serving PLMN from TAI
+  oai::_3gpp::model::PlmnIdNid serving_plmn = {};
+  serving_plmn.setMcc(uc->tai.mcc);
+  serving_plmn.setMnc(uc->tai.mnc);
+  policy_assc_request.setServingPlmn(serving_plmn);
+
+  Logger::amf_app().debug(
+      "AM Policy Association: AccessType=3GPP_ACCESS, ServingPlmn (MCC=%s, "
+      "MNC=%s)",
+      uc->tai.mcc.c_str(), uc->tai.mnc.c_str());
+
   // Send request to SBI to trigger AM Policy Associtiation with PCF
 
   std::shared_ptr<itti_sbi_am_policy_association> itti_msg =
