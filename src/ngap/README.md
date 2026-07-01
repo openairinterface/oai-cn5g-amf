@@ -6,6 +6,6 @@
 ```
 $ cd oai-cn5g-amf/src/ngap
 $ export ASN1C_PREFIX=Ngap_
-$ asn1c ASN1C_PREFIX=Ngap_ -pdu=all -fcompound-names -fno-include-deps -findirect-choice  -no-gen-example -gen-APER -gen-UPER -no-gen-JER -no-gen-BER  -D libngap ./asn_r16/*.asn1
+$ asn1c ASN1C_PREFIX=Ngap_ -pdu=all -fcompound-names -fno-include-deps -findirect-choice  -no-gen-example -gen-APER -gen-UPER -no-gen-JER -no-gen-BER  -D libngap ./asn_r17/*.asn1
 
 ```
