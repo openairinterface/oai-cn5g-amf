@@ -1627,6 +1627,22 @@ void amf_n2::handle_itti_message(
       remove_ran_ue_ngap_id_2_ngap_context(ran_ue_ngap_id, gc->gnb_id);
       return;
     } else {
+      // If a Configuration
+      // Update Command carrying a 5G-GUTI is in flight when the N1 connection
+      // is lost (this Release Complete), BOTH the old and the new 5G-GUTI must
+      // remain valid/resolvable until the old one is considered invalid. Phase
+      // 5 binds the new GUTI at send time and only unbinds the old GUTI on
+      // COMPLETE, so both bindings are still live here. This CM-IDLE transition
+      // must NOT unbind either GUTI or clear pending_ucu_ — leave the pending
+      // UCU intact so T3555 governs its terminal fate (§5.4.4.6a) and the UE
+      // stays reachable under either GUTI in the meantime.
+      if (amf_n1_inst->has_pending_ucu_with_guti(nc)) {
+        Logger::amf_n2().debug(
+            "N1 connection lost with a 5G-GUTI Configuration Update in flight "
+            "(amf_ue_ngap_id " AMF_UE_NGAP_ID_FMT
+            "); keeping both old and new 5G-GUTI valid (§5.4.4.6b)",
+            amf_ue_ngap_id);
+      }
       amf_n1_inst->set_5gcm_state(nc, CM_IDLE);
       // Start/reset the Mobile Reachable Timer
       timer_id_t tid = itti_inst->timer_setup(

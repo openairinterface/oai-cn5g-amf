@@ -1406,6 +1406,10 @@ bool amf_n1::service_request_handle(
     oai::utils::utils::bdestroy_wrapper(&protected_nas);
   }
 
+  // UE is now CM-CONNECTED — run shared post-connection UCU
+  // handling (paging-response GUTI reallocation + deferred SDM update).
+  handle_post_connection_ucu(nc, uc);
+
   nas_procedure_manager_.complete_specific_procedure(*nc);
   return true;
 }
@@ -1872,6 +1876,10 @@ bool amf_n1::service_request_handle(
 
     oai::utils::utils::bdestroy_wrapper(&protected_nas);
   }
+
+  // UE is now CM-CONNECTED — run shared post-connection UCU
+  // handling (paging-response GUTI reallocation + deferred SDM update).
+  handle_post_connection_ucu(nc, uc);
 
   nas_procedure_manager_.complete_specific_procedure(*nc);
 
@@ -2376,12 +2384,18 @@ bool amf_n1::registration_request_handle(
 
     case kMobilityRegistrationUpdating: {
       Logger::amf_n1().debug("Handling Mobility Registration Update...");
+      // §5.4.4.6d: a mobility registration update collides with an on-going
+      // Configuration Update — abort the UCU before progressing.
+      if (nc->pending_ucu_.has_value()) abort_pending_ucu(nc);
       return run_mobility_registration_update_procedure(
           nc, uplink_data_status_opt, pdu_session_status_opt, cause);
     } break;
 
     case kPeriodicRegistrationUpdating: {
       Logger::amf_n1().debug("Handling Periodic Registration Update...");
+      // §5.4.4.6d: a (periodic) registration update collides with an on-going
+      // Configuration Update — abort the UCU before progressing.
+      if (nc->pending_ucu_.has_value()) abort_pending_ucu(nc);
       if (is_messagecontainer)
         return run_periodic_registration_update_procedure(nc, nas_msg, cause);
       else {
@@ -3809,8 +3823,15 @@ bool amf_n1::security_mode_complete_handle(
   // Step 14b. Figure 4.2.2.2.2-1: Registration procedure@3GPP TS 23.502
   // Retrieving the Access and Mobility Subscription data from UDM.
   if (amf_cfg->support_features
-          .enable_access_and_mobility_subscription_data_retrieval)
-    amf_app_inst->get_access_and_mobility_subscription_data(uc, nc);
+          .enable_access_and_mobility_subscription_data_retrieval) {
+    std::optional<bool> fetched_mps = std::nullopt;
+    amf_app_inst->get_access_and_mobility_subscription_data(
+        uc, nc, fetched_mps);
+    // The fetch no longer mutates nc; seed the
+    // registration-time MPS state here from the returned value.
+    if (fetched_mps.has_value() && nc != nullptr)
+      nc->mps_priority_active = fetched_mps.value();
+  }
 
   // Step 14b. Figure 4.2.2.2.2-1: Registration procedure@3GPP TS 23.502
   // Retrieving SMF Selection Subscription data from UDM
@@ -4509,6 +4530,11 @@ bool amf_n1::ue_initiate_de_registration_handle(
     cause = k5gmmCauseUeIdentityCannotBeDerived;
     return false;
   }
+
+  // §5.4.4.6c: a UE-originating de-registration collides with an on-going
+  // Configuration Update — abort the UCU (stop T3555, roll back the
+  // uncommitted new GUTI, clear pending state) before progressing dereg.
+  if (nc->pending_ucu_.has_value()) abort_pending_ucu(nc);
 
   // Decode NAS message
   auto dereg_request =
@@ -7631,9 +7657,12 @@ void amf_n1::handle_t3522_expiry(
 // ---------------------------------------------------------------------------
 bool amf_n1::send_configuration_update_command(
     std::shared_ptr<nas_context>& nc, bool ack_requested,
-    const std::optional<oai::nas::NssrgInformation>& nssrg_ie,
-    const std::optional<oai::nas::NsagInformation>& nsag_ie,
-    const std::optional<oai::nas::PriorityIndicator>& priority_ie) {
+    const ucu_params_t& params) {
+  const std::optional<oai::nas::NssrgInformation>& nssrg_ie = params.nssrg;
+  const std::optional<oai::nas::NsagInformation>& nsag_ie   = params.nsag;
+  const std::optional<oai::nas::PriorityIndicator>& priority_ie =
+      params.priority;
+
   Logger::amf_n1().debug(
       "Preparing Configuration Update Command (CUC), ack=%s for UE %lu",
       ack_requested ? "true" : "false", nc->amf_ue_ngap_id);
@@ -7687,7 +7716,8 @@ bool amf_n1::send_configuration_update_command(
   auto cuc = std::make_unique<oai::nas::ConfigurationUpdateCommand>();
 
   // Configuration Update Indication IE
-  oai::nas::ConfigurationUpdateIndication cui(false, ack_requested);
+  oai::nas::ConfigurationUpdateIndication cui(
+      params.registration_requested, ack_requested);
   cuc->SetConfigurationUpdateIndication(cui);
 
   // NSSRG Information IE
@@ -7715,6 +7745,68 @@ bool amf_n1::send_configuration_update_command(
         "MPS: Priority Indicator IE (MPSI=%u, IEI=0xE-) included in CUC "
         "for UE %lu",
         priority_ie.value().GetMpsi(), nc->amf_ue_ngap_id);
+  }
+
+  // Other IEs
+  if (params.new_5g_guti) {
+    const auto& g = params.new_5g_guti.value();
+    cuc->Set5gGuti(
+        std::get<0>(g), std::get<1>(g), std::get<2>(g), std::get<3>(g),
+        std::get<4>(g), std::get<5>(g));
+    Logger::amf_n1().debug(
+        "5G-GUTI IE included in CUC for UE %lu", nc->amf_ue_ngap_id);
+  }
+  if (params.tai_list) {
+    cuc->SetTaiList(params.tai_list.value());
+    Logger::amf_n1().debug(
+        "TAI list IE included in CUC for UE %lu", nc->amf_ue_ngap_id);
+  }
+  if (params.allowed_nssai) {
+    cuc->SetAllowedNssai(params.allowed_nssai.value());
+    Logger::amf_n1().debug(
+        "Allowed NSSAI IE included in CUC for UE %lu", nc->amf_ue_ngap_id);
+  }
+  if (params.configured_nssai) {
+    cuc->SetConfiguredNssai(params.configured_nssai.value());
+    Logger::amf_n1().debug(
+        "Configured NSSAI IE included in CUC for UE %lu", nc->amf_ue_ngap_id);
+  }
+  if (params.rejected_nssai) {
+    cuc->SetRejectedNssai(params.rejected_nssai.value());
+    Logger::amf_n1().debug(
+        "Rejected NSSAI IE included in CUC for UE %lu", nc->amf_ue_ngap_id);
+  }
+  if (params.service_area_list) {
+    cuc->SetServiceAreaList(params.service_area_list.value());
+    Logger::amf_n1().debug(
+        "Service area list IE included in CUC for UE %lu", nc->amf_ue_ngap_id);
+  }
+  if (params.ladn) {
+    cuc->SetLadnInformation(params.ladn.value());
+    Logger::amf_n1().debug(
+        "LADN information IE included in CUC for UE %lu", nc->amf_ue_ngap_id);
+  }
+  if (params.mico) {
+    cuc->SetMicoIndication(
+        params.mico.value().first, params.mico.value().second);
+    Logger::amf_n1().debug(
+        "MICO indication IE included in CUC for UE %lu", nc->amf_ue_ngap_id);
+  }
+  if (params.network_slicing) {
+    cuc->SetNetworkSlicingIndication(
+        params.network_slicing.value().first,
+        params.network_slicing.value().second);
+    Logger::amf_n1().debug(
+        "Network slicing indication IE included in CUC for UE %lu",
+        nc->amf_ue_ngap_id);
+  }
+  if (params.registration_result) {
+    const auto& r = params.registration_result.value();
+    cuc->Set5gsRegistrationResult(
+        std::get<0>(r), std::get<1>(r), std::get<2>(r), std::get<3>(r));
+    Logger::amf_n1().debug(
+        "5GS registration result IE included in CUC for UE %lu",
+        nc->amf_ue_ngap_id);
   }
 
   // Encode into a raw buffer
@@ -7748,6 +7840,15 @@ bool amf_n1::send_configuration_update_command(
   }
 
   if (ack_requested) {
+    if (nc->pending_ucu_.has_value()) {
+      Logger::amf_n1().warn(
+          "Configuration Update Command: a UCU is already on-going for UE "
+          "%lu — refusing to overwrite on-going state",
+          nc->amf_ue_ngap_id);
+      // protected_nas was allocated above; free it before the guard return.
+      oai::utils::utils::bdestroy_wrapper(&protected_nas);
+      return false;
+    }
     pending_ucu_t ucu = {};
     ucu.ack_requested = true;
     ucu.retry_count   = 0;
@@ -7755,7 +7856,16 @@ bool amf_n1::send_configuration_update_command(
         reinterpret_cast<uint8_t*>(bdata(protected_nas)),
         reinterpret_cast<uint8_t*>(bdata(protected_nas)) +
             blength(protected_nas));
-    nc->pending_ucu_                              = ucu;
+    nc->pending_ucu_                         = ucu;
+    nc->pending_ucu_->registration_requested = params.registration_requested;
+    nc->pending_ucu_->has_guti               = params.new_5g_guti.has_value();
+    nc->pending_ucu_->new_guti = params.new_guti_str;  // may be nullopt
+    nc->pending_ucu_->old_guti = params.old_guti;      // may be nullopt
+    nc->pending_ucu_->release_n1_on_complete = params.release_n1_on_complete;
+    nc->pending_ucu_->nssai_affecting =
+        params.allowed_nssai.has_value() ||
+        params.configured_nssai.has_value() ||
+        (params.network_slicing && params.network_slicing->second /*nssci*/);
     nc->nas_message_for_current_procedure_running = kConfigurationUpdateCommand;
     nas_procedure_manager_.start_common_procedure(
         *nc, nas_procedure_type_e::CONFIGURATION_UPDATE);
@@ -7780,13 +7890,13 @@ bool amf_n1::send_configuration_update_command(
 }
 
 // ---------------------------------------------------------------------------
-void amf_n1::trigger_mps_indicator_update(
+bool amf_n1::trigger_mps_indicator_update(
     std::shared_ptr<nas_context> nc, bool new_mps_priority) {
   if (!amf_cfg->support_features.enable_mps_indicator_update) {
     Logger::amf_n1().debug(
         "MPS indicator update disabled - skipping for UE %lu",
         nc->amf_ue_ngap_id);
-    return;
+    return true;
   }
 
   if (nc->mps_priority_active == new_mps_priority) {
@@ -7795,7 +7905,7 @@ void amf_n1::trigger_mps_indicator_update(
         "MPS priority unchanged (%s) for "
         "UE %lu - no CUC needed",
         new_mps_priority ? "active" : "inactive", nc->amf_ue_ngap_id);
-    return;
+    return true;
   }
 
   if (!nc->nas_ue_supports_mps_indicator_update) {
@@ -7805,11 +7915,9 @@ void amf_n1::trigger_mps_indicator_update(
         "UE %lu does not support MPSIU - "
         "MPS change requires new registration (per TS 24.501 §4.5.2A)",
         nc->amf_ue_ngap_id);
-    return;
+    return true;
   }
 
-  // Update state and send CUC with Priority Indicator IE
-  nc->mps_priority_active = new_mps_priority;
   Logger::amf_n1().info(
       "Sending CUC Priority Indicator (MPSI=%u) "
       "to UE %lu (TS 24.501 §5.4.4.2, §8.2.19.35)",
@@ -7819,11 +7927,17 @@ void amf_n1::trigger_mps_indicator_update(
   oai::nas::PriorityIndicator priority_ie(
       kPriorityIndicatorIei, new_mps_priority ? 1 : 0);
 
-  // Per §5.4.4.2: acknowledgement is optional for MPS updates;
-  // use ack_requested=false (lower-priority update).
-  send_configuration_update_command(
-      nc, false, std::nullopt, std::nullopt,
-      std::optional<oai::nas::PriorityIndicator>(priority_ie));
+  // TS 24.501 §5.4.4.2: acknowledgement shall be requested
+  ucu_params_t p;
+  p.priority = std::optional<oai::nas::PriorityIndicator>(priority_ie);
+  if (!send_configuration_update_command(nc, /*ack_requested=*/true, p)) {
+    return false;
+  }
+
+  // Commit the new MPS state ONLY after a successful send (moved here so a
+  // failed CUC never leaves the field diverged from the UE).
+  nc->mps_priority_active = new_mps_priority;
+  return true;
 }
 
 // ---------------------------------------------------------------------------
@@ -7860,281 +7974,576 @@ bool amf_n1::configuration_update_complete_handle(
 
   // Apply and clear pending UCU context updates
   if (nc->pending_ucu_.has_value()) {
-    nc->pending_ucu_ = std::nullopt;
-    Logger::amf_n1().debug(
-        "Pending UCU cleared after successful acknowledgement from UE %lu",
-        amf_ue_ngap_id);
-  }
+    auto& ucu = nc->pending_ucu_.value();
+    if (ucu.new_guti.has_value()) {
+      // new 5G-GUTI becomes valid, old becomes invalid.
+      if (ucu.old_guti.has_value())
+        amf_app_inst->unbind_guti(ucu.old_guti.value());
+      nc->guti = ucu.new_guti;  // new valid
 
-  // Complete the CONFIGURATION_UPDATE common procedure
-  nas_procedure_manager_.complete_common_procedure(*nc);
+      // TS 24.501 §5.4.4.4: a registration-requested CUC that carried allowed/
+      // configured NSSAI or a slicing-subscription change (nssai_affecting)
+      // must release N1 on COMPLETE to force the UE to re-register — as well as
+      // the explicit GUTI-reallocation case (release_n1_on_complete).
+      bool do_release = ucu.release_n1_on_complete ||
+                        (ucu.registration_requested && ucu.nssai_affecting);
+      uint64_t amf_id = amf_ue_ngap_id;
+      uint32_t ran_id = ran_ue_ngap_id;
 
-  Logger::amf_n1().debug(
-      "Configuration Update Complete acknowledged by UE %lu", amf_ue_ngap_id);
-  return true;
-}
+<<<<<<< HEAD
+      Logger::amf_n1().debug(
+          "Configuration Update Complete acknowledged by UE %lu",
+          amf_ue_ngap_id);
+      return true;
+    }
 
-// ---------------------------------------------------------------------------
-void amf_n1::handle_t3555_expiry(
-    timer_id_t timer_id, std::string amf_ue_ngap_id_str) {
-  Logger::amf_n1().debug(
-      "T3555 (Configuration Update Command) expiry for UE %s",
-      amf_ue_ngap_id_str.c_str());
+    // ---------------------------------------------------------------------------
+    void amf_n1::handle_t3555_expiry(
+        timer_id_t timer_id, std::string amf_ue_ngap_id_str) {
+      Logger::amf_n1().debug(
+          "T3555 (Configuration Update Command) expiry for UE %s",
+          amf_ue_ngap_id_str.c_str());
 
-  uint64_t amf_ue_ngap_id = INVALID_AMF_UE_NGAP_ID;
-  std::shared_ptr<nas_context> nc;
-  if (!resolve_nas_context_for_timer(
-          amf_ue_ngap_id_str, amf_ue_ngap_id, nc, this))
-    return;
+      uint64_t amf_ue_ngap_id = INVALID_AMF_UE_NGAP_ID;
+      std::shared_ptr<nas_context> nc;
+      if (!resolve_nas_context_for_timer(
+              amf_ue_ngap_id_str, amf_ue_ngap_id, nc, this))
+        return;
 
-  // If no pending UCU is stored, the timer fired spuriously (e.g. after a
-  // successful Configuration Update Complete was already processed).
-  if (!nc->pending_ucu_.has_value()) {
-    Logger::amf_n1().debug(
-        "T3555 expiry ignored - no pending UCU for UE %lu (already "
-        "completed?)",
-        amf_ue_ngap_id);
-    return;
-  }
+      // If no pending UCU is stored, the timer fired spuriously (e.g. after a
+      // successful Configuration Update Complete was already processed).
+      if (!nc->pending_ucu_.has_value()) {
+        Logger::amf_n1().debug(
+            "T3555 expiry ignored - no pending UCU for UE %lu (already "
+            "completed?)",
+            amf_ue_ngap_id);
+        return;
+      }
 
-  bool needs_retx = nas_timer_manager_.handle_expiry(
-      nas_timer_type_e::T3555, nc, amf_ue_ngap_id);
+      bool needs_retx = nas_timer_manager_.handle_expiry(
+          nas_timer_type_e::T3555, nc, amf_ue_ngap_id);
 
-  if (needs_retx) {
-    // Retransmit the stored CUC PDU
-    pending_ucu_t& ucu = nc->pending_ucu_.value();
-    ucu.retry_count++;
-    Logger::amf_n1().debug(
-        "T3555 retransmit #%u for UE %lu", ucu.retry_count, amf_ue_ngap_id);
+      if (needs_retx) {
+        // Retransmit the stored CUC PDU
+        pending_ucu_t& ucu = nc->pending_ucu_.value();
+        ucu.retry_count++;
+        Logger::amf_n1().debug(
+            "T3555 retransmit #%u for UE %lu", ucu.retry_count, amf_ue_ngap_id);
 
-    if (!ucu.cuc_pdu.empty()) {
-      bstring retx_pdu =
-          blk2bstr(ucu.cuc_pdu.data(), static_cast<int>(ucu.cuc_pdu.size()));
-      itti_send_dl_nas_buffer_to_task_n2(
-          retx_pdu, nc->ran_ue_ngap_id, amf_ue_ngap_id);
-      oai::utils::utils::bdestroy_wrapper(&retx_pdu);
-    } else {
+        if (!ucu.cuc_pdu.empty()) {
+          bstring retx_pdu = blk2bstr(
+              ucu.cuc_pdu.data(), static_cast<int>(ucu.cuc_pdu.size()));
+          itti_send_dl_nas_buffer_to_task_n2(
+              retx_pdu, nc->ran_ue_ngap_id, amf_ue_ngap_id);
+          oai::utils::utils::bdestroy_wrapper(&retx_pdu);
+        } else {
       Logger::amf_n1().warn(
           "T3555 retransmit: pending UCU PDU is empty for UE %lu",
+      nc->pending_ucu_ = std::nullopt;
+      Logger::amf_n1().debug(
+          "Pending UCU committed & cleared after successful acknowledgement "
+          "from "
+          "UE %lu",
           amf_ue_ngap_id);
-    }
-  } else {
-    // §5.4.4.6a: final expiry — abort UCU
-    Logger::amf_n1().warn(
-        "T3555 final expiry for UE %lu — aborting Configuration Update",
-        amf_ue_ngap_id);
 
-    // Handle T3555_FINAL_EXPIRY state machine event
-    handle_nas_event(nc, oai::amf::nas::nas_event_e::T3555_FINAL_EXPIRY);
+      // Complete the CONFIGURATION_UPDATE common procedure
+      nas_procedure_manager_.complete_common_procedure(*nc);
 
-    // Clear pending UCU and restore prior state
-    nc->pending_ucu_ = std::nullopt;
-    nas_procedure_manager_.abort_common_procedure(*nc);
-
-    Logger::amf_n1().warn(
-        "T3555 final expiry: pending UCU cleared, Configuration Update "
-        "aborted for UE %lu",
-        amf_ue_ngap_id);
-  }
-}
-
-// ---------------------------------------------------------------------------
-void amf_n1::handle_t3513_expiry(
-    timer_id_t timer_id, std::string amf_ue_ngap_id_str) {
-  Logger::amf_n1().debug(
-      "T3513 (Paging) expiry for UE %s — retransmit not yet implemented",
-      amf_ue_ngap_id_str.c_str());
-  // TODO: implement T3513 paging retransmit handling
-}
-
-// ---------------------------------------------------------------------------
-// T3565 — Notification retransmit  (§5.6.3)
-// ---------------------------------------------------------------------------
-void amf_n1::handle_t3565_expiry(
-    timer_id_t timer_id, std::string amf_ue_ngap_id_str) {
-  Logger::amf_n1().debug(
-      "T3565 (Notification) expiry for UE %s — retransmit not yet "
-      "implemented",
-      amf_ue_ngap_id_str.c_str());
-  // TODO: implement T3565 Notification retransmit handling
-}
-
-void amf_n1::set_subscribed_nsag_info(
-    const std::vector<oai::_3gpp::model::NsagInfo>& nsag_infos,
-    std::vector<uint8_t>& subscribed_nsag_info) {
-  size_t num_entries = nsag_infos.size();
-
-  // Enforce maximum 32 NSAG entries per TS 24.501 §9.11.3.87
-  if (num_entries > kNsagInformationMaxEntries) {
-    Logger::amf_n1().warn(
-        "NSSF returned %zu NSAG entries; truncating to %u (max per "
-        "TS 24.501 §9.11.3.87)",
-        num_entries, kNsagInformationMaxEntries);
-    num_entries = kNsagInformationMaxEntries;
-  }
-
-  // Count entries with TAI list — maximum 4 allowed per §9.11.3.87
-  size_t tai_entry_count = 0;
-  for (size_t i = 0; i < num_entries; ++i) {
-    if (nsag_infos[i].taiListIsSet() && !nsag_infos[i].getTaiList().empty())
-      ++tai_entry_count;
-  }
-  if (tai_entry_count > 4) {
-    Logger::amf_n1().warn(
-        "%zu NSAG entries have TAI list; maximum is 4 per "
-        "TS 24.501 §9.11.3.87 - extra TAI lists will be omitted",
-        tai_entry_count);
-  }
-
-  // Encode NSAG entries (TS 24.501 §9.11.3.87)
-  auto encode_snssai_bytes =
-      [](const oai::_3gpp::model::Snssai& s) -> std::vector<uint8_t> {
-    std::vector<uint8_t> v;
-    bool has_sd = s.sdIsSet() &&
-                  (static_cast<uint32_t>(s.getSdInt()) != SD_DEFAULT_VALUE_INT);
-    uint8_t content_len = has_sd ? 4 : 1;  // SST + optional 3-byte SD
-    v.push_back(content_len);
-    v.push_back(static_cast<uint8_t>(s.getSst() & 0xFF));
-    if (has_sd) {
-      uint32_t sd = static_cast<uint32_t>(s.getSdInt());
-      v.push_back(static_cast<uint8_t>((sd >> 16) & 0xFF));
-      v.push_back(static_cast<uint8_t>((sd >> 8) & 0xFF));
-      v.push_back(static_cast<uint8_t>(sd & 0xFF));
-    }
-    return v;
-  };
-
-  // Encode a TAI list as §9.11.3.9 type-00 sub-entries.
-  auto encode_tai_list_bytes =
-      [](const std::vector<oai::_3gpp::model::Tai>& tais)
-      -> std::vector<uint8_t> {
-    std::vector<uint8_t> v;
-    for (const auto& tai : tais) {
-      // Type-00 sub-entry: type/count byte = 0x00 (type=00, count=1–1=0),
-      // then 3-byte PLMN, then 3-byte TAC.
-      v.push_back(0x00);  // type-00, one TAI
-
-      const auto& plmn       = tai.getPlmnId();
-      const std::string& mcc = plmn.getMcc();  // e.g. "208"
-      const std::string& mnc = plmn.getMnc();  // e.g. "93" or "093"
-      // PLMN encoding (TS 24.008 §10.5.1.13):
-      //   octet 1: MCC digit 2 | (MCC digit 1 << 4)
-      //   octet 2: MNC digit 3 (or 0xF for 2-digit MNC) | (MCC digit 3 << 4)
-      //   octet 3: MNC digit 2 | (MNC digit 1 << 4)
-      if (mcc.size() < 3) {
-        // Malformed PLMN — skip this TAI
-        return {};
+      // Conditional N1 release
+      // Release the N1 signalling connection so the UE performs a Mobility
+      // Registration Update. Single release path also reused by G3 (GUTI
+      // reallocation) via release_n1_on_complete; never before COMPLETE
+      // arrives.
+      if (do_release) {
+            release_n1_signalling_connection(
+                amf_id, ran_id, Ngap_CauseNas_normal_release);
       }
-      uint8_t mcc1 = static_cast<uint8_t>(mcc[0] - '0');
-      uint8_t mcc2 = static_cast<uint8_t>(mcc[1] - '0');
-      uint8_t mcc3 = static_cast<uint8_t>(mcc[2] - '0');
-      uint8_t mnc1 = 0, mnc2 = 0, mnc3 = 0xF;
-      if (mnc.size() >= 2) {
-        mnc1 = static_cast<uint8_t>(mnc[0] - '0');
-        mnc2 = static_cast<uint8_t>(mnc[1] - '0');
-      }
-      if (mnc.size() >= 3) {
-        mnc3 = static_cast<uint8_t>(mnc[2] - '0');
-      }
-      v.push_back(static_cast<uint8_t>((mcc2 << 4) | mcc1));
-      v.push_back(static_cast<uint8_t>((mnc3 << 4) | mcc3));
-      v.push_back(static_cast<uint8_t>((mnc2 << 4) | mnc1));
 
-      // TAC: 3-byte hex string per model (e.g. "000001")
-      const std::string& tac_str = tai.getTac();
-      uint32_t tac_val           = 0;
-      try {
-        tac_val = static_cast<uint32_t>(std::stoul(tac_str, nullptr, 16));
-      } catch (...) {
-        // Malformed TAC — skip this entry
-        return {};
-      }
-      v.push_back(static_cast<uint8_t>((tac_val >> 16) & 0xFF));
-      v.push_back(static_cast<uint8_t>((tac_val >> 8) & 0xFF));
-      v.push_back(static_cast<uint8_t>(tac_val & 0xFF));
-    }
-    return v;
-  };
+      Logger::amf_n1().debug(
+          "Configuration Update Complete acknowledged by UE %lu",
+          amf_ue_ngap_id);
+      return true;
+        }
 
-  std::vector<uint8_t> nsag_raw;
-  size_t tai_encoded    = 0;
-  size_t wire_entry_cnt = 0;
+        // No pending UCU (e.g. no-ack CUC): still complete the common
+        // procedure.
+        nas_procedure_manager_.complete_common_procedure(*nc);
 
-  for (size_t i = 0;
-       i < num_entries && wire_entry_cnt < kNsagInformationMaxEntries; ++i) {
-    const auto& entry   = nsag_infos[i];
-    const auto& ids     = entry.getNsagIds();
-    const auto& snssais = entry.getSnssaiList();
-
-    // S-NSSAI list bytes
-    std::vector<uint8_t> snssai_list_bytes;
-    for (const auto& s : snssais) {
-      auto s_bytes = encode_snssai_bytes(s);
-      snssai_list_bytes.insert(
-          snssai_list_bytes.end(), s_bytes.begin(), s_bytes.end());
-    }
-    uint8_t snssai_list_len =
-        static_cast<uint8_t>(std::min(snssai_list_bytes.size(), size_t(255)));
-
-    // TAI list bytes
-    std::vector<uint8_t> tai_bytes;
-    bool encode_tai = entry.taiListIsSet() && !entry.getTaiList().empty() &&
-                      (tai_encoded < 4);
-    if (encode_tai) {
-      tai_bytes = encode_tai_list_bytes(entry.getTaiList());
-      if (tai_bytes.empty()) {
-        Logger::amf_n1().warn(
-            "Entry %zu TAI list encoding failed — omitting TAI list", i);
-        encode_tai = false;
-      } else {
-        ++tai_encoded;
         Logger::amf_n1().debug(
-            "Entry %zu TAI list encoded (%zu bytes for %zu TAIs)", i,
-            tai_bytes.size(), entry.getTaiList().size());
-      }
-    } else if (
-        entry.taiListIsSet() && !entry.getTaiList().empty() &&
-        tai_encoded >= 4) {
-      Logger::amf_n1().warn(
-          "Entry %zu TAI list omitted (4-entry limit reached)", i);
-    }
-
-    // NSAG ID
-    for (size_t j = 0;
-         j < ids.size() && wire_entry_cnt < kNsagInformationMaxEntries; ++j) {
-      uint8_t nsag_id = static_cast<uint8_t>(ids[j] & 0xFF);
-
-      // Compute entry_length:
-      //   1 (nsag_id) + 1 (snssai_list_len) + snssai_list_len
-      //   + 1 (priority) + optional (1 + tai_bytes.size())
-      uint8_t entry_length = static_cast<uint8_t>(1 + 1 + snssai_list_len + 1);
-      if (encode_tai && !tai_bytes.empty()) {
-        entry_length = static_cast<uint8_t>(
-            entry_length + 1 + std::min(tai_bytes.size(), size_t(255)));
+            "Configuration Update Complete acknowledged by UE %lu",
+            amf_ue_ngap_id);
+        return true;
       }
 
-      nsag_raw.push_back(entry_length);
-      nsag_raw.push_back(nsag_id);
-      nsag_raw.push_back(snssai_list_len);
-      nsag_raw.insert(
-          nsag_raw.end(), snssai_list_bytes.begin(),
-          snssai_list_bytes.begin() + snssai_list_len);
+      // ---------------------------------------------------------------------------
+      void amf_n1::release_n1_signalling_connection(
+          uint64_t amf_ue_ngap_id, uint32_t ran_ue_ngap_id, long cause_nas) {
+        // AN Release (TS 24.501 §5.4.4): request TASK_AMF_N2 to release the UE
+        // context so the N1 NAS signalling connection is torn down. Mirrors the
+        // canonical normal-release template in send_registration_accept.
+        Logger::amf_n1().debug(
+            "Sending ITTI UE Context Release Command to TASK_AMF_N2 for UE %lu",
+            amf_ue_ngap_id);
 
-      // TODO: use per-entry NSAG priority when NsagInfo model exposes it
-      nsag_raw.push_back(0x01);  // priority 1 (highest)
+        auto itti_msg_cxt_release =
+            std::make_shared<itti_ue_context_release_command>(
+                TASK_AMF_N1, TASK_AMF_N2);
+        itti_msg_cxt_release->amf_ue_ngap_id = amf_ue_ngap_id;
+        itti_msg_cxt_release->ran_ue_ngap_id = ran_ue_ngap_id;
+        itti_msg_cxt_release->cause.setChoiceOfCause(Ngap_Cause_PR_nas);
+        itti_msg_cxt_release->cause.set(cause_nas);
 
-      if (encode_tai && !tai_bytes.empty()) {
-        uint8_t tai_list_len =
-            static_cast<uint8_t>(std::min(tai_bytes.size(), size_t(255)));
-        nsag_raw.push_back(tai_list_len);
-        nsag_raw.insert(
-            nsag_raw.end(), tai_bytes.begin(),
-            tai_bytes.begin() + tai_list_len);
+        int ret = itti_inst->send_msg(itti_msg_cxt_release);
+        if (0 != ret) {
+          Logger::amf_n1().error(
+              "Could not send ITTI message %s to task TASK_AMF_N2",
+              itti_msg_cxt_release->get_msg_name());
+        }
       }
 
-      ++wire_entry_cnt;
-    }
-  }
+      // ---------------------------------------------------------------------------
+      bool amf_n1::trigger_guti_reallocation(
+          std::shared_ptr<nas_context> nc, bool release_after) {
+        if (!nc) return false;
 
-  subscribed_nsag_info = std::move(nsag_raw);
-}
+        // Generate a fresh 5G-TMSI / GUTI for this UE
+        std::string mcc, mnc;
+        uint32_t tmsi = 0;
+        if (!amf_app_inst->generate_5g_guti(
+                nc->ran_ue_ngap_id, nc->amf_ue_ngap_id, mcc, mnc, tmsi)) {
+          Logger::amf_n1().error(
+              "GUTI reallocation: generate_5g_guti failed for UE %lu, abort",
+              nc->amf_ue_ngap_id);
+          return false;
+        }
+
+        std::string new_guti = amf_conv::tmsi_to_guti(
+            mcc, mnc, amf_cfg->guami.region_id, amf_cfg->guami.amf_set_id,
+            amf_cfg->guami.amf_pointer, amf_conv::tmsi_to_string(tmsi));
+
+        auto uc = amf_app_inst->get_ue_context(
+            nc->ran_ue_ngap_id, nc->amf_ue_ngap_id);
+        std::string old_guti = nc->guti.value_or("");
+
+        // Bind the NEW GUTI now so both old and new resolve
+        // while the CUC is in flight. The OLD GUTI is unbound only on COMPLETE
+        //  or the new one rolled back on abort.
+        if (uc) {
+          uc->guti = new_guti;
+          amf_app_inst->bind_guti(new_guti, uc);
+        }
+        nc->guti = std::make_optional<std::string>(new_guti);
+
+        // Carry all state via params so the send path stamps pending_ucu_.
+        ucu_params_t p;
+        p.new_5g_guti = std::make_tuple(
+            mcc, mnc, amf_cfg->guami.region_id, amf_cfg->guami.amf_set_id,
+            amf_cfg->guami.amf_pointer, tmsi);
+        p.new_guti_str           = new_guti;
+        p.old_guti               = old_guti.empty() ? std::nullopt :
+                                                      std::optional<std::string>{old_guti};
+        p.release_n1_on_complete = release_after;
+
+        if (!send_configuration_update_command(nc, /*ack_requested=*/true, p)) {
+          // Pre-pending failure rollback: the send path returned false at
+          // one of the three exits BEFORE pending_ucu_ was created (no security
+          // ctx, encode fail, protection fail), so nothing downstream will
+          // clean up the NEW GUTI we bound above. Undo the early bind so the
+          // OLD GUTI stays the only valid one and nothing leaks.
+          Logger::amf_n1().warn(
+              "GUTI reallocation: CUC send failed for UE %lu, rolling back new "
+              "GUTI",
+              nc->amf_ue_ngap_id);
+          amf_app_inst->unbind_guti(new_guti);
+          // uc->guti is a plain std::string (empty = unset); nc->guti is
+          // optional.
+          if (uc) uc->guti = old_guti;
+          nc->guti = old_guti.empty() ? std::nullopt :
+                                        std::optional<std::string>{old_guti};
+          return false;  // no pending state, no T3555 — safe to retry on a
+                         // later trigger
+        }
+        // On success, the send path stamped pending_ucu_ and started T3555;
+        // commit / unbind-old happens on COMPLETE.
+        return true;
+      }
+
+      // ---------------------------------------------------------------------------
+      void amf_n1::handle_post_connection_ucu(
+          std::shared_ptr<nas_context> nc, std::shared_ptr<ue_context> uc) {
+        if (!nc) return;
+
+        // Paging-response Service Request → mandatory 5G-GUTI
+        // reallocation before N1 release (TS 24.501 §5.4.4.1).
+        // paging_response_pending is the authoritative signal;
+        // ServiceRequest::GetServiceType would be a secondary guard.
+        // CIoT note: the deferred NGAP UE-context-resume GUTI trigger (§5.4.4.1
+        // case b) is not implemented here — this AMF has no CIoT-suspend path.
+        bool ucu_sent = false;
+        if (nc->paging_response_pending) {
+          nc->paging_response_pending = false;
+          ucu_sent = trigger_guti_reallocation(nc, /*release_after=*/true);
+        }
+
+        // Consume a deferred SDM/subscription update. The flag has
+        // dual meaning — idle-deferred (UE was not connected) or send-failed
+        // retry — both resolved now that the UE is CM-CONNECTED. Re-set only if
+        // the retry send fails.
+        //
+        // If a GUTI-realloc CUC was
+        // sent this invocation, do NOT send a second CUC (it would clobber
+        // pending_ucu_ + re-arm T3555, losing the mandatory §5.4.4.1 N1 release
+        // and the old-GUTI unbind). Re-defer the SDM update so it is delivered
+        // on a later CM-CONNECTED entry; leave pending_sdm_update set.
+        if (ucu_sent && uc && uc->pending_sdm_update) {
+          Logger::amf_n1().debug(
+              "Deferring SDM/subscription CUC for UE %lu — GUTI reallocation "
+              "CUC "
+              "in "
+              "flight this connection; will retry on next connection",
+              nc->amf_ue_ngap_id);
+        }
+        if (!ucu_sent && uc && uc->pending_sdm_update) {
+          uc->pending_sdm_update = false;
+          ucu_params_t p;
+          p.registration_requested = true;  // NSSAI re-registration case
+          // Repopulate Allowed/Configured NSSAI from the NAS context (mirrors
+          // the registration-accept NSSAI population). nc stores SNSSAI_t ==
+          // SNSSAI_s.
+          if (!nc->allowed_nssai.empty()) p.allowed_nssai = nc->allowed_nssai;
+          if (!nc->configured_nssai.empty())
+            p.configured_nssai = nc->configured_nssai;
+          if (!send_configuration_update_command(nc, /*ack_requested=*/true, p))
+            uc->pending_sdm_update = true;  // re-defer on failure
+        }
+      }
+
+      // ---------------------------------------------------------------------------
+      // Roll back the uncommitted new 5G-GUTI bound at CUC send
+      // time. The old GUTI was never unbound (commit happens only on
+      // COMPLETE), so restoring it keeps the UE reachable. Shared by the T3555
+      // terminal-abort branch and abort_pending_ucu so the two paths cannot
+      // diverge. Reads nc->pending_ucu_ BEFORE the caller clears it. No-op if
+      // there is no pending UCU or the pending UCU carried no new GUTI
+      // (non-GUTI CUC).
+      void amf_n1::rollback_uncommitted_guti(
+          std::shared_ptr<nas_context> & nc) {
+        if (!nc || !nc->pending_ucu_.has_value()) return;
+        auto& ucu = nc->pending_ucu_.value();
+        if (!ucu.new_guti.has_value()) return;  // nothing to roll back
+
+        amf_app_inst->unbind_guti(ucu.new_guti.value());
+        auto uc = amf_app_inst->get_ue_context(
+            nc->ran_ue_ngap_id, nc->amf_ue_ngap_id);
+        // uc->guti is a plain std::string (empty = unset); nc->guti is
+        // optional.
+        if (ucu.old_guti.has_value()) {
+          if (uc) uc->guti = ucu.old_guti.value();  // restore old GUTI on uc
+          nc->guti = ucu.old_guti;                  // nc keeps the old GUTI
+        }
+      }
+
+      // ---------------------------------------------------------------------------
+      // Abort an in-flight Configuration Update procedure on a
+      // collision (§5.4.4.6c de-registration / §5.4.4.6d mobility registration
+      // update). Stops T3555, rolls back the uncommitted new GUTI, clears
+      // pending_ucu_ and aborts the active common procedure. Safe/idempotent:
+      // it is a no-op when no UCU is in flight, stop_timer is safe when the
+      // timer is not running, and abort_common_procedure is a no-op when no
+      // common procedure is active — so it never double-stops or
+      // double-completes.
+      bool amf_n1::has_pending_ucu_with_guti(
+          const std::shared_ptr<nas_context>& nc) const {
+        // §5.4.4.6b: true when a GUTI-carrying Configuration Update is in
+        // flight (has_guti was stamped on the pending UCU at send time).
+        return nc && nc->pending_ucu_.has_value() && nc->pending_ucu_->has_guti;
+      }
+
+      // ---------------------------------------------------------------------------
+      void amf_n1::abort_pending_ucu(std::shared_ptr<nas_context> & nc) {
+        if (!nc || !nc->pending_ucu_.has_value()) return;
+        Logger::amf_n1().info(
+            "Aborting in-flight Configuration Update for UE %lu (collision)",
+            nc->amf_ue_ngap_id);
+        nas_timer_manager_.stop_timer(nas_timer_type_e::T3555, nc);
+        // Roll back the uncommitted new GUTI BEFORE clearing pending_ucu_.
+        rollback_uncommitted_guti(nc);
+        nc->pending_ucu_ = std::nullopt;
+        nas_procedure_manager_.abort_common_procedure(*nc);
+      }
+
+      // ---------------------------------------------------------------------------
+      void amf_n1::handle_t3555_expiry(
+          timer_id_t timer_id, std::string amf_ue_ngap_id_str) {
+        Logger::amf_n1().debug(
+            "T3555 (Configuration Update Command) expiry for UE %s",
+            amf_ue_ngap_id_str.c_str());
+
+        uint64_t amf_ue_ngap_id = INVALID_AMF_UE_NGAP_ID;
+        std::shared_ptr<nas_context> nc;
+        if (!resolve_nas_context_for_timer(
+                amf_ue_ngap_id_str, amf_ue_ngap_id, nc, this))
+          return;
+
+        // If no pending UCU is stored, the timer fired spuriously (e.g. after a
+        // successful Configuration Update Complete was already processed).
+        if (!nc->pending_ucu_.has_value()) {
+          Logger::amf_n1().debug(
+              "T3555 expiry ignored - no pending UCU for UE %lu (already "
+              "completed?)",
+              amf_ue_ngap_id);
+          return;
+        }
+
+        bool needs_retx = nas_timer_manager_.handle_expiry(
+            nas_timer_type_e::T3555, nc, amf_ue_ngap_id);
+
+        if (needs_retx) {
+          // Retransmit the stored CUC PDU
+          pending_ucu_t& ucu = nc->pending_ucu_.value();
+          ucu.retry_count++;
+          Logger::amf_n1().debug(
+              "T3555 retransmit #%u for UE %lu", ucu.retry_count,
+              amf_ue_ngap_id);
+
+          if (!ucu.cuc_pdu.empty()) {
+            bstring retx_pdu = blk2bstr(
+                ucu.cuc_pdu.data(), static_cast<int>(ucu.cuc_pdu.size()));
+            itti_send_dl_nas_buffer_to_task_n2(
+                retx_pdu, nc->ran_ue_ngap_id, amf_ue_ngap_id);
+            oai::utils::utils::bdestroy_wrapper(&retx_pdu);
+          } else {
+            Logger::amf_n1().warn(
+                "T3555 retransmit: pending UCU PDU is empty for UE %lu",
+                amf_ue_ngap_id);
+          }
+        } else {
+          // §5.4.4.6a: final expiry — abort UCU
+          Logger::amf_n1().warn(
+              "T3555 final expiry for UE %lu — aborting Configuration Update",
+              amf_ue_ngap_id);
+
+          // Handle T3555_FINAL_EXPIRY state machine event
+          handle_nas_event(nc, oai::amf::nas::nas_event_e::T3555_FINAL_EXPIRY);
+
+          // §5.4.4.6a terminal expiry — the reallocation failed. Roll back the
+          // uncommitted new 5G-GUTI so the old GUTI
+          // remains the only valid one and no dangling GUTI→UE binding leaks.
+          // Must read pending_ucu_ BEFORE the clear below.
+          rollback_uncommitted_guti(nc);
+
+          // Clear pending UCU and restore prior state
+          nc->pending_ucu_ = std::nullopt;
+          nas_procedure_manager_.abort_common_procedure(*nc);
+
+          Logger::amf_n1().warn(
+              "T3555 final expiry: pending UCU cleared, Configuration Update "
+              "aborted for UE %lu",
+              amf_ue_ngap_id);
+        }
+      }
+
+      // ---------------------------------------------------------------------------
+      void amf_n1::handle_t3513_expiry(
+          timer_id_t timer_id, std::string amf_ue_ngap_id_str) {
+        Logger::amf_n1().debug(
+            "T3513 (Paging) expiry for UE %s — retransmit not yet implemented",
+            amf_ue_ngap_id_str.c_str());
+        // TODO: implement T3513 paging retransmit handling
+      }
+
+      // ---------------------------------------------------------------------------
+      // T3565 — Notification retransmit  (§5.6.3)
+      // ---------------------------------------------------------------------------
+      void amf_n1::handle_t3565_expiry(
+          timer_id_t timer_id, std::string amf_ue_ngap_id_str) {
+        Logger::amf_n1().debug(
+            "T3565 (Notification) expiry for UE %s — retransmit not yet "
+            "implemented",
+            amf_ue_ngap_id_str.c_str());
+        // TODO: implement T3565 Notification retransmit handling
+      }
+
+      void amf_n1::set_subscribed_nsag_info(
+          const std::vector<oai::_3gpp::model::NsagInfo>& nsag_infos,
+          std::vector<uint8_t>& subscribed_nsag_info) {
+        size_t num_entries = nsag_infos.size();
+
+        // Enforce maximum 32 NSAG entries per TS 24.501 §9.11.3.87
+        if (num_entries > kNsagInformationMaxEntries) {
+          Logger::amf_n1().warn(
+              "NSSF returned %zu NSAG entries; truncating to %u (max per "
+              "TS 24.501 §9.11.3.87)",
+              num_entries, kNsagInformationMaxEntries);
+          num_entries = kNsagInformationMaxEntries;
+        }
+
+        // Count entries with TAI list — maximum 4 allowed per §9.11.3.87
+        size_t tai_entry_count = 0;
+        for (size_t i = 0; i < num_entries; ++i) {
+          if (nsag_infos[i].taiListIsSet() &&
+              !nsag_infos[i].getTaiList().empty())
+            ++tai_entry_count;
+        }
+        if (tai_entry_count > 4) {
+          Logger::amf_n1().warn(
+              "%zu NSAG entries have TAI list; maximum is 4 per "
+              "TS 24.501 §9.11.3.87 - extra TAI lists will be omitted",
+              tai_entry_count);
+        }
+
+        // Encode NSAG entries (TS 24.501 §9.11.3.87)
+        auto encode_snssai_bytes =
+            [](const oai::_3gpp::model::Snssai& s) -> std::vector<uint8_t> {
+          std::vector<uint8_t> v;
+          bool has_sd = s.sdIsSet() && (static_cast<uint32_t>(s.getSdInt()) !=
+                                        SD_DEFAULT_VALUE_INT);
+          uint8_t content_len = has_sd ? 4 : 1;  // SST + optional 3-byte SD
+          v.push_back(content_len);
+          v.push_back(static_cast<uint8_t>(s.getSst() & 0xFF));
+          if (has_sd) {
+            uint32_t sd = static_cast<uint32_t>(s.getSdInt());
+            v.push_back(static_cast<uint8_t>((sd >> 16) & 0xFF));
+            v.push_back(static_cast<uint8_t>((sd >> 8) & 0xFF));
+            v.push_back(static_cast<uint8_t>(sd & 0xFF));
+          }
+          return v;
+        };
+
+        // Encode a TAI list as §9.11.3.9 type-00 sub-entries.
+        auto encode_tai_list_bytes =
+            [](const std::vector<oai::_3gpp::model::Tai>& tais)
+            -> std::vector<uint8_t> {
+          std::vector<uint8_t> v;
+          for (const auto& tai : tais) {
+            // Type-00 sub-entry: type/count byte = 0x00 (type=00, count=1–1=0),
+            // then 3-byte PLMN, then 3-byte TAC.
+            v.push_back(0x00);  // type-00, one TAI
+
+            const auto& plmn       = tai.getPlmnId();
+            const std::string& mcc = plmn.getMcc();  // e.g. "208"
+            const std::string& mnc = plmn.getMnc();  // e.g. "93" or "093"
+            // PLMN encoding (TS 24.008 §10.5.1.13):
+            //   octet 1: MCC digit 2 | (MCC digit 1 << 4)
+            //   octet 2: MNC digit 3 (or 0xF for 2-digit MNC) | (MCC digit 3 <<
+            //   4) octet 3: MNC digit 2 | (MNC digit 1 << 4)
+            if (mcc.size() < 3) {
+              // Malformed PLMN — skip this TAI
+              return {};
+            }
+            uint8_t mcc1 = static_cast<uint8_t>(mcc[0] - '0');
+            uint8_t mcc2 = static_cast<uint8_t>(mcc[1] - '0');
+            uint8_t mcc3 = static_cast<uint8_t>(mcc[2] - '0');
+            uint8_t mnc1 = 0, mnc2 = 0, mnc3 = 0xF;
+            if (mnc.size() >= 2) {
+              mnc1 = static_cast<uint8_t>(mnc[0] - '0');
+              mnc2 = static_cast<uint8_t>(mnc[1] - '0');
+            }
+            if (mnc.size() >= 3) {
+              mnc3 = static_cast<uint8_t>(mnc[2] - '0');
+            }
+            v.push_back(static_cast<uint8_t>((mcc2 << 4) | mcc1));
+            v.push_back(static_cast<uint8_t>((mnc3 << 4) | mcc3));
+            v.push_back(static_cast<uint8_t>((mnc2 << 4) | mnc1));
+
+            // TAC: 3-byte hex string per model (e.g. "000001")
+            const std::string& tac_str = tai.getTac();
+            uint32_t tac_val           = 0;
+            try {
+              tac_val = static_cast<uint32_t>(std::stoul(tac_str, nullptr, 16));
+            } catch (...) {
+              // Malformed TAC — skip this entry
+              return {};
+            }
+            v.push_back(static_cast<uint8_t>((tac_val >> 16) & 0xFF));
+            v.push_back(static_cast<uint8_t>((tac_val >> 8) & 0xFF));
+            v.push_back(static_cast<uint8_t>(tac_val & 0xFF));
+          }
+          return v;
+        };
+
+        std::vector<uint8_t> nsag_raw;
+        size_t tai_encoded    = 0;
+        size_t wire_entry_cnt = 0;
+
+        for (size_t i = 0;
+             i < num_entries && wire_entry_cnt < kNsagInformationMaxEntries;
+             ++i) {
+          const auto& entry   = nsag_infos[i];
+          const auto& ids     = entry.getNsagIds();
+          const auto& snssais = entry.getSnssaiList();
+
+          // S-NSSAI list bytes
+          std::vector<uint8_t> snssai_list_bytes;
+          for (const auto& s : snssais) {
+            auto s_bytes = encode_snssai_bytes(s);
+            snssai_list_bytes.insert(
+                snssai_list_bytes.end(), s_bytes.begin(), s_bytes.end());
+          }
+          uint8_t snssai_list_len = static_cast<uint8_t>(
+              std::min(snssai_list_bytes.size(), size_t(255)));
+
+          // TAI list bytes
+          std::vector<uint8_t> tai_bytes;
+          bool encode_tai = entry.taiListIsSet() &&
+                            !entry.getTaiList().empty() && (tai_encoded < 4);
+          if (encode_tai) {
+            tai_bytes = encode_tai_list_bytes(entry.getTaiList());
+            if (tai_bytes.empty()) {
+              Logger::amf_n1().warn(
+                  "Entry %zu TAI list encoding failed — omitting TAI list", i);
+              encode_tai = false;
+            } else {
+              ++tai_encoded;
+              Logger::amf_n1().debug(
+                  "Entry %zu TAI list encoded (%zu bytes for %zu TAIs)", i,
+                  tai_bytes.size(), entry.getTaiList().size());
+            }
+          } else if (
+              entry.taiListIsSet() && !entry.getTaiList().empty() &&
+              tai_encoded >= 4) {
+            Logger::amf_n1().warn(
+                "Entry %zu TAI list omitted (4-entry limit reached)", i);
+          }
+
+          // NSAG ID
+          for (size_t j = 0;
+               j < ids.size() && wire_entry_cnt < kNsagInformationMaxEntries;
+               ++j) {
+            uint8_t nsag_id = static_cast<uint8_t>(ids[j] & 0xFF);
+
+            // Compute entry_length:
+            //   1 (nsag_id) + 1 (snssai_list_len) + snssai_list_len
+            //   + 1 (priority) + optional (1 + tai_bytes.size())
+            uint8_t entry_length =
+                static_cast<uint8_t>(1 + 1 + snssai_list_len + 1);
+            if (encode_tai && !tai_bytes.empty()) {
+              entry_length = static_cast<uint8_t>(
+                  entry_length + 1 + std::min(tai_bytes.size(), size_t(255)));
+            }
+
+            nsag_raw.push_back(entry_length);
+            nsag_raw.push_back(nsag_id);
+            nsag_raw.push_back(snssai_list_len);
+            nsag_raw.insert(
+                nsag_raw.end(), snssai_list_bytes.begin(),
+                snssai_list_bytes.begin() + snssai_list_len);
+
+            // TODO: use per-entry NSAG priority when NsagInfo model exposes it
+            nsag_raw.push_back(0x01);  // priority 1 (highest)
+
+            if (encode_tai && !tai_bytes.empty()) {
+              uint8_t tai_list_len =
+                  static_cast<uint8_t>(std::min(tai_bytes.size(), size_t(255)));
+              nsag_raw.push_back(tai_list_len);
+              nsag_raw.insert(
+                  nsag_raw.end(), tai_bytes.begin(),
+                  tai_bytes.begin() + tai_list_len);
+            }
+
+            ++wire_entry_cnt;
+          }
+        }
+
+        subscribed_nsag_info = std::move(nsag_raw);
+      }

@@ -94,6 +94,15 @@ struct pending_ucu_t {
   uint8_t retry_count;           // Times CUC has been (re-)sent
   bool ack_requested;            // true when ACK bit was set in CUI IE
 
+  bool registration_requested = false;  // CUI red bit was set
+  bool nssai_affecting =
+      false;  // carried Allowed/Configured NSSAI or slicing-sub changed
+  bool has_guti = false;  // 5G-GUTI IE was included (§5.4.4.6b dual-validity)
+  std::optional<std::string>
+      new_guti;  // pending new GUTI string (commit on COMPLETE)
+  std::optional<std::string> old_guti;  // GUTI to invalidate on COMPLETE
+  bool release_n1_on_complete = false;  // send AN Release after commit
+
   pending_ucu_t() : retry_count(0), ack_requested(false) {}
 };
 
@@ -153,6 +162,12 @@ class nas_context {
   // MPS state — (TS 24.501 §4.5.2, §4.5.2A, §5.4.4.2, §8.2.19.35,
   //             §9.11.3.91)
   bool mps_priority_active = false;
+
+  // Set true when the AMF pages this UE (network-triggered
+  // service request / N1N2 notification). Consumed on the UE's paging-response
+  // Service Request to trigger a mandatory 5G-GUTI reallocation before the N1
+  // NAS signalling connection is released (TS 24.501 §5.4.4.1).
+  bool paging_response_pending = false;
 
   // Network Slice AS Group (NSAG) state — (TS 24.501 §4.6.2.6, §5.5.1.2,
   // §5.4.4.2, §9.11.3.87)

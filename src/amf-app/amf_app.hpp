@@ -369,12 +369,17 @@ class amf_app {
   /*
    * Retrieve a UE's Access and Mobility Subscription Data from UDM.
    * @param [const std::shared_ptr<ue_context>&] uc: UE context
-   * @param [const std::shared_ptr<nas_context>&] nc: NAS context (MPS field)
-   * @return void
+   * @param [const std::shared_ptr<nas_context>&] nc: NAS context
+   * @param [std::optional<bool>&] mps_priority_out: out-param set to the
+   * freshly fetched MPS priority when the fetch succeeds and MPS handling is
+   *        enabled; left as std::nullopt otherwise. This function does NOT
+   *        mutate nc->mps_priority_active.
+   * @return bool: true if the fetch succeeded, false otherwise
    */
-  void get_access_and_mobility_subscription_data(
+  bool get_access_and_mobility_subscription_data(
       const std::shared_ptr<ue_context>& uc,
-      const std::shared_ptr<nas_context>& nc) const;
+      const std::shared_ptr<nas_context>& nc,
+      std::optional<bool>& mps_priority_out) const;
 
   /*
    * Request to retrieve a SMF Selection Subcription Data from UDM

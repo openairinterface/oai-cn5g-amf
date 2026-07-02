@@ -7,6 +7,7 @@
 
 #include <map>
 #include <shared_mutex>
+#include <tuple>
 
 #include "3gpp_24.501.hpp"
 #include "3gpp_29.503.h"
@@ -40,6 +41,33 @@ namespace amf_application {
  *                         MUST be dropped (never processed).
  */
 enum class nas_integrity_result { verified, no_integrity_ia0, error };
+
+struct ucu_params_t {
+  bool registration_requested = false;
+  std::optional<oai::nas::NssrgInformation> nssrg;
+  std::optional<oai::nas::NsagInformation> nsag;
+  std::optional<oai::nas::PriorityIndicator> priority;
+  // 5G-GUTI: mcc, mnc, region, set, pointer, tmsi
+  std::optional<std::tuple<
+      std::string, std::string, uint8_t, uint16_t, uint8_t, uint32_t>>
+      new_5g_guti;
+  std::optional<std::vector<oai::nas::p_tai_t>> tai_list;
+  std::optional<std::vector<oai::nas::SNSSAI_s>> allowed_nssai;
+  std::optional<std::vector<oai::nas::SNSSAI_s>> configured_nssai;
+  std::optional<std::vector<oai::nas::RejectedSNssai>> rejected_nssai;
+  std::optional<std::vector<oai::nas::service_area_list_ie_t>>
+      service_area_list;
+  std::optional<oai::nas::LadnInformation> ladn;
+  std::optional<std::pair<bool, bool>> mico;             // sprti, raai
+  std::optional<std::pair<bool, bool>> network_slicing;  // dcni, nssci
+  std::optional<std::tuple<bool, bool, bool, uint8_t>>
+      registration_result;              // emergency, nssaa, sms, value
+  std::optional<std::string> old_guti;  // GUTI to invalidate on COMPLETE
+  std::optional<std::string>
+      new_guti_str;                     // resolved new GUTI string to commit
+  bool release_n1_on_complete = false;  // G2/G3: AN Release after COMPLETE
+};
+>>>>>>> 7af1376e (Update ConfigurationUpdateCommand)
 
 class amf_n1 {
  public:
@@ -625,6 +653,16 @@ class amf_n1 {
       std::shared_ptr<nas_context>& nc, const cm_state_t& state);
 
   /*
+   * Report whether a Configuration Update Command carrying
+   * a 5G-GUTI is currently in flight for this UE. Used by amf_n2's UE Context
+   * Release Complete (connection-loss) handler to preserve old+new 5G-GUTI
+   * dual-validity — it must not tear down either GUTI while this is true.
+   * @param [const std::shared_ptr<nas_context>&] nc: pointer to the NAS context
+   * @return bool: true iff nc->pending_ucu_ has a GUTI-carrying UCU in flight
+   */
+  bool has_pending_ucu_with_guti(const std::shared_ptr<nas_context>& nc) const;
+
+  /*
    * Get the 5G CM state
    * @param [const std::shared_ptr<nas_context>&] nc: Pointer to the NAS context
    * @param [cm_state_t&] state: 5G CM state
@@ -987,19 +1025,14 @@ class amf_n1 {
    * Build and send a Configuration Update Command (CUC) to the UE.
    * @param [std::shared_ptr<nas_context>&] nc: pointer to the UE NAS context
    * @param [bool] ack_requested: whether to request UE acknowledgement
-   * @param [const std::optional<oai::nas::NssrgInformation>&] nssrg_ie:
-   *        optional NSSRG Information IE to include in the CUC
-   * @param [const std::optional<oai::nas::NsagInformation>&] nsag_ie:
-   *        optional NSAG Information IE to include in the CUC
-   * @param [const std::optional<oai::nas::PriorityIndicator>&] priority_ie:
-   *        optional Priority Indicator IE to include in the CUC
+   * @param [const ucu_params_t&] params: optional IEs / flags to include in the
+   *        CUC (registration-requested bit, NSSRG/NSAG/Priority, A&MM IEs, and
+   *        Phase 3/5 state-transfer fields stamped into pending_ucu_).
    * @return true if the CUC was encoded and sent successfully
    */
   bool send_configuration_update_command(
       std::shared_ptr<nas_context>& nc, bool ack_requested,
-      const std::optional<oai::nas::NssrgInformation>& nssrg_ie,
-      const std::optional<oai::nas::NsagInformation>& nsag_ie,
-      const std::optional<oai::nas::PriorityIndicator>& priority_ie);
+      const ucu_params_t& params = {});
 
   /*
    * Trigger an MPS indicator update via CUC (TS 24.501 §4.5.2 + §4.5.2A).
@@ -1007,9 +1040,12 @@ class amf_n1 {
    * @param [std::shared_ptr<nas_context>] nc: pointer to the UE NAS context
    * @param [bool] new_mps_priority: new desired MPS priority/access-identity-1
    *        validity state (true = valid, false = not valid)
-   * @return void
+   * @return bool: true on success or no-op (no change / MPSIU unsupported /
+   *        feature disabled); false if a genuine change failed to send (the
+   *        caller should re-defer). nc->mps_priority_active is committed ONLY
+   *        after a successful send.
    */
-  void trigger_mps_indicator_update(
+  bool trigger_mps_indicator_update(
       std::shared_ptr<nas_context> nc, bool new_mps_priority);
 
   /*
@@ -1024,11 +1060,73 @@ class amf_n1 {
       const uint32_t ran_ue_ngap_id, const uint64_t amf_ue_ngap_id,
       bstring nas_msg, uint8_t& cause);
 
+  /*
+   * Release the N1 NAS signalling connection ("AN Release", TS 24.501 §5.4.4)
+   * by sending an ITTI itti_ue_context_release_command from TASK_AMF_N1 to
+   * TASK_AMF_N2. N2 turns it into an NGAP UeContextReleaseCommand.
+   * @param [uint64_t] amf_ue_ngap_id: AMF UE NGAP ID
+   * @param [uint32_t] ran_ue_ngap_id: RAN UE NGAP ID
+   * @param [long] cause_nas: NGAP NAS cause (e.g. Ngap_CauseNas_normal_release)
+   * @return void
+   */
+  void release_n1_signalling_connection(
+      uint64_t amf_ue_ngap_id, uint32_t ran_ue_ngap_id, long cause_nas);
+
+  /*
+   * Trigger a mandatory 5G-GUTI reallocation via a CUC (ack
+   * requested) after a paging-response Service Request (TS 24.501 §5.4.4.1).
+   * Generates a new 5G-GUTI, binds it immediately (§5.4.4.6b dual-validity;
+   * the old GUTI is unbound only on COMPLETE), and requests N1 release after
+   * COMPLETE when release_after is true. If the CUC send fails before any
+   * pending_ucu_ state is created, the new GUTI is unbound and the old GUTI
+   * restored (pre-pending rollback).
+   * @param [std::shared_ptr<nas_context>] nc: pointer to the UE NAS context
+   * @param [bool] release_after: release the N1 connection after COMPLETE
+   * @return bool: true if a CUC was actually sent and pending_ucu_/T3555 were
+   *   stamped; false on generate/send failure (state rolled back, safe retry)
+   */
+  bool trigger_guti_reallocation(
+      std::shared_ptr<nas_context> nc, bool release_after);
+
   void set_subscribed_nsag_info(
       const std::vector<oai::_3gpp::model::NsagInfo>& nsag_infos,
       std::vector<uint8_t>& subscribed_nsag_info);
 
  private:
+  /*
+   * Shared post-connection-setup UCU handling, invoked from
+   * BOTH service_request_handle overloads once the UE is CM-CONNECTED. Consumes
+   * nc->paging_response_pending (→ trigger_guti_reallocation, §5.4.4.1) and
+   * uc->pending_sdm_update (→ deferred NSSAI re-registration CUC, §5.4.4.2).
+   * @param [std::shared_ptr<nas_context>] nc: pointer to the UE NAS context
+   * @param [std::shared_ptr<ue_context>] uc: pointer to the UE context
+   * @return void
+   */
+  void handle_post_connection_ucu(
+      std::shared_ptr<nas_context> nc, std::shared_ptr<ue_context> uc);
+
+  /*
+   * Roll back the uncommitted new
+   * 5G-GUTI that was bound at CUC send time when an in-flight UCU is
+   * aborted. Unbinds nc->pending_ucu_->new_guti and restores the old GUTI on
+   * both uc->guti (plain string) and nc->guti (optional). Must be called BEFORE
+   * pending_ucu_ is cleared. No-op if no pending UCU or no new GUTI. Shared by
+   * the T3555 terminal-abort branch and abort_pending_ucu.
+   * @param [std::shared_ptr<nas_context>&] nc: pointer to the UE NAS context
+   * @return void
+   */
+  void rollback_uncommitted_guti(std::shared_ptr<nas_context>& nc);
+
+  /*
+   * Abort an in-flight Configuration Update procedure. Stops T3555, rolls back
+   * the uncommitted new GUTI (rollback_uncommitted_guti), clears pending_ucu_
+   * and aborts the active common procedure. Idempotent / safe to call when no
+   * UCU is in flight.
+   * @param [std::shared_ptr<nas_context>&] nc: pointer to the UE NAS context
+   * @return void
+   */
+  void abort_pending_ucu(std::shared_ptr<nas_context>& nc);
+
   /*
    * Rekey the NAS ue_context on a 5G-GUTI re-registration / uplink-NAS
    * GUTI.

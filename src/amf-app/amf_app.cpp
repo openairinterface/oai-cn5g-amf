@@ -524,6 +524,15 @@ void amf_app::handle_itti_message(
       dl_msg->ran_ue_ngap_id = uc->ran_ue_ngap_id;
     }
 
+    // Mark that this UE was paged so that the UE's subsequent
+    // paging-response Service Request triggers a mandatory 5G-GUTI reallocation
+    // before releasing the N1 connection (TS 24.501 §5.4.4.1)
+    std::shared_ptr<nas_context> nc = {};
+    if (amf_n1_inst && amf_n1_inst->supi_2_nas_context(itti_msg.supi, nc) &&
+        nc) {
+      nc->paging_response_pending = true;
+    }
+
     int ret = itti_inst->send_msg(dl_msg);
     if (ret != RETURNok) {
       Logger::amf_app().error(
@@ -1500,8 +1509,20 @@ void amf_app::handle_itti_message(itti_sbi_nudm_sdm_notification& itti_msg) {
               "Triggering Configuration Update Command for NSSAI update for "
               "SUPI %s",
               itti_msg.supi);
-          if (!amf_n1_inst->send_configuration_update_command(
-                  nc, true, std::nullopt, std::nullopt, std::nullopt)) {
+          // §5.4.4.2: an NSSAI change is registration-requested and
+          // carries the current Allowed/Configured NSSAI so the UE re-registers
+          // with the updated slice set. Populate from the NAS context's stored
+          // Allowed NSSAI (set at registration, nas_context::allowed_nssai).
+          // TODO : recompute Allowed/Rejected/Configured NSSAI against
+          // the freshly-notified subscription via get_common_NSSAI rather than
+          // replaying the stored list
+          ucu_params_t p;
+          p.registration_requested = true;
+          if (!nc->allowed_nssai.empty()) {
+            p.allowed_nssai    = nc->allowed_nssai;
+            p.configured_nssai = nc->allowed_nssai;
+          }
+          if (!amf_n1_inst->send_configuration_update_command(nc, true, p)) {
             Logger::amf_app().warn(
                 "Could not send Configuration Update Command for SUPI %s",
                 itti_msg.supi);
@@ -1531,13 +1552,21 @@ void amf_app::handle_itti_message(itti_sbi_nudm_sdm_notification& itti_msg) {
       Logger::amf_app().info(
           "AM-data change notification for SUPI %s", itti_msg.supi);
       if (nc && amf_cfg->support_features.enable_mps_indicator_update) {
-        // TODO: Add get_access_and_mobility_subscription_data
         Logger::amf_app().debug(
             "MPS indicator update enabled — notifying UE for SUPI %s",
             itti_msg.supi);
         if (ue_is_connected) {
-          amf_n1_inst->trigger_mps_indicator_update(
-              nc, nc->mps_priority_active);
+          // Fetch fresh AM data via the out-param (the fetch no
+          // longer mutates nc->mps_priority_active). trigger_ compares the
+          // fetched value against the still-old stored field, sends the CUC and
+          // commits the field ONLY on a genuine change AND a successful send.
+          std::optional<bool> fetched_mps = std::nullopt;
+          if (get_access_and_mobility_subscription_data(uc, nc, fetched_mps) &&
+              fetched_mps.has_value()) {
+            if (!amf_n1_inst->trigger_mps_indicator_update(
+                    nc, fetched_mps.value()))
+              uc->pending_sdm_update = true;
+          }
         } else {
           uc->pending_sdm_update = true;
         }
@@ -1871,9 +1900,10 @@ void amf_app::register_3gpp_access(
 }
 
 //------------------------------------------------------------------------------
-void amf_app::get_access_and_mobility_subscription_data(
+bool amf_app::get_access_and_mobility_subscription_data(
     const std::shared_ptr<ue_context>& uc,
-    const std::shared_ptr<nas_context>& nc) const {
+    const std::shared_ptr<nas_context>& nc,
+    std::optional<bool>& mps_priority_out) const {
   Logger::amf_app().debug(
       "Retrieving a UE's Access and Mobility Subscription Data from UDM");
 
@@ -1935,9 +1965,9 @@ void amf_app::get_access_and_mobility_subscription_data(
                 nc != nullptr) {
               bool mps_active =
                   am_data.mpsPriorityIsSet() && am_data.isMpsPriority();
-              nc->mps_priority_active = mps_active;
+              mps_priority_out = mps_active;
               Logger::amf_app().debug(
-                  "AM subscription data: mps_priority_active set to %s for "
+                  "AM subscription data: fetched mps_priority=%s for "
                   "UE (amf_ue_ngap_id= " AMF_UE_NGAP_ID_FMT ")",
                   mps_active ? "true" : "false", nc->amf_ue_ngap_id);
             }
@@ -1967,7 +1997,11 @@ void amf_app::get_access_and_mobility_subscription_data(
   if (!is_result_available) {
     Logger::amf_app().warn(
         "Could not get Access and Mobility Subscription Data from UDM");
+    // Fetch failed/timed out: leave mps_priority_out as std::nullopt.
+    mps_priority_out = std::nullopt;
   }
+
+  return is_result_available;
 }
 
 //------------------------------------------------------------------------------
