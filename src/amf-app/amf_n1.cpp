@@ -2270,6 +2270,7 @@ std::shared_ptr<ue_context> amf_n1::rekey_nas_owner_on_guti_rereg(
     uc_old->gnb_id   = uc_new->gnb_id;
   }
   uc_old->ran_ue_ngap_id = new_ran_ue_ngap_id;
+  uc_old->amf_ue_ngap_id = new_amf_ue_ngap_id;
 
   // Rekey the context
   if (old_amf_ue_ngap_id != new_amf_ue_ngap_id) {

@@ -482,9 +482,10 @@ bool amf_app::update_pdu_sessions_context(
     const oai::_3gpp::model::SmContextStatusNotification& statusNotification) {
   std::shared_ptr<ue_context> uc = get_ue_context(supi);
   if (!uc) return false;
-  auto pdu_session_status = statusNotification.getStatus().getEnumValue();
-  if (pdu_session_status == oai::_3gpp::model::SmContextStatus_anyOf::
-                                eSmContextStatus_anyOf::RELEASED) {
+  //auto pdu_session_status = statusNotification.getStatus().getEnumValue();
+  auto pdu_session_status = statusNotification.getStatusInfo().getResourceStatus().getEnumValue();
+    if (pdu_session_status == oai::_3gpp::model::ResourceStatus_anyOf::
+                                eResourceStatus_anyOf::RELEASED) {
     if (uc->remove_pdu_sessions_context(pdu_session_id)) return true;
   }
   return false;
