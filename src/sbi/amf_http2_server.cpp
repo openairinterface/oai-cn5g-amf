@@ -527,7 +527,7 @@ void amf_http2_server::start() {
                   "pdu_session_id %s", pdu_session_id_str.c_str());
 
               uint8_t pdu_session_id = 0;
-              if (oai::utils::conv::string_to_int8(
+              if (!oai::utils::conv::string_to_int8(
                       pdu_session_id_str, pdu_session_id)) {
                 Logger::amf_server().debug("Invalid PDU Session ID value");
                 return send_response(
