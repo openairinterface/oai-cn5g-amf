@@ -692,11 +692,13 @@ void amf_n1::uplink_nas_msg_handle(
 
   std::shared_ptr<nas_context> nc = {};
 
+  if (!amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) {
+    Logger::amf_n1().error("No NAS context available for this UE, ignoring...");
+    return;
+  }
   if (message_type != kAuthenticationFailure) {
     // Reset the failure counter
-    if (amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) {
-      nc->registration_attempt_counter = 0;
-    }
+    nc->registration_attempt_counter = 0;
   }
 
   uint8_t cause = k5gmmCauseProtocolErrorUnspecified;
@@ -4360,10 +4362,11 @@ bool amf_n1::ue_initiate_de_registration_handle(
   // Send request to SMF to release the established PDU sessions if needed
   // Get list of PDU sessions
   std::vector<std::shared_ptr<pdu_session_context>> sessions_ctx;
-  // Use the validated IDs from the incoming message (already checked above via
-  // check_nas_event/amf_ue_id_2_nas_context). The UE context store is keyed by
-  // amf_ue_ngap_id; relying on nc->amf_ue_ngap_id here would miss the context
-  // after a GUTI re-registration rekey, dropping the de-registration silently.
+  // Use the validated IDs from the incoming message (already checked above
+  // via check_nas_event/amf_ue_id_2_nas_context). The UE context store is
+  // keyed by amf_ue_ngap_id; relying on nc->amf_ue_ngap_id here would miss
+  // the context after a GUTI re-registration rekey, dropping the
+  // de-registration silently.
   std::shared_ptr<ue_context> uc =
       amf_app_inst->get_ue_context(ran_ue_ngap_id, amf_ue_ngap_id);
 
@@ -7611,7 +7614,8 @@ void amf_n1::handle_t3555_expiry(
   // successful Configuration Update Complete was already processed).
   if (!nc->pending_ucu_.has_value()) {
     Logger::amf_n1().debug(
-        "T3555 expiry ignored - no pending UCU for UE %lu (already completed?)",
+        "T3555 expiry ignored - no pending UCU for UE %lu (already "
+        "completed?)",
         amf_ue_ngap_id);
     return;
   }
