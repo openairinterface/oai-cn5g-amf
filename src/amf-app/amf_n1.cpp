@@ -410,6 +410,16 @@ void amf_n1::handle_itti_message(itti_uplink_nas_data_ind& nas_data_ind) {
 
       set_supi_2_nas_context(nc->supi, nc);
 
+      // Update NAS context within UE Context
+      std::shared_ptr<ue_context> uc = amf_app_inst->get_ue_context(nc->supi);
+      if (uc) {
+        uc->amf_ue_ngap_id = amf_ue_ngap_id;
+        uc->nas_ctx        = nc;
+      } else {
+        Logger::amf_n1().error(
+            "No existing ue_context with SUPI %s", nc->supi.c_str());
+      }
+
       // Update UE statistics
       ue_info_t ue_item;
       ue_item.cm_status       = CM_CONNECTED;
@@ -2270,6 +2280,7 @@ std::shared_ptr<ue_context> amf_n1::rekey_nas_owner_on_guti_rereg(
     uc_old->gnb_id   = uc_new->gnb_id;
   }
   uc_old->ran_ue_ngap_id = new_ran_ue_ngap_id;
+  uc_old->amf_ue_ngap_id = new_amf_ue_ngap_id;
 
   // Rekey the context
   if (old_amf_ue_ngap_id != new_amf_ue_ngap_id) {
