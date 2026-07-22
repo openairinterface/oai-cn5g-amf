@@ -48,6 +48,11 @@ class ue_context {
   bool remove_pdu_sessions_context(uint8_t pdu_session_id);
   bool set_up_cnx_state(uint8_t pdu_session_id, const up_cnx_state_e& state);
 
+  std::shared_ptr<nas_context> get_nas_ctx() const;
+  void set_nas_ctx(const std::shared_ptr<nas_context>& nc);
+  std::shared_ptr<ue_ngap_context> get_ngap_ctx() const;
+  void set_ngap_ctx(const std::shared_ptr<ue_ngap_context>& unc);
+
  public:
   uint32_t ran_ue_ngap_id;  // 32bits
   uint64_t amf_ue_ngap_id;  // 40 bits
@@ -55,10 +60,6 @@ class ue_context {
   std::string supi;
   std::string guti;  // GUTI (empty = unset)
   uint32_t tmsi;
-
-  // Nested sub-contexts
-  std::shared_ptr<nas_context> nas_ctx{};
-  std::shared_ptr<ue_ngap_context> ngap_ctx{};
 
   uint8_t rrc_estb_cause;
   bool is_ue_context_request;
@@ -84,6 +85,11 @@ class ue_context {
   // Set when an SDM notification arrives while the UE is CM-IDLE so that
   // a Configuration Update Command can be sent on the next NAS connection.
   bool pending_sdm_update = false;
+
+ private:
+  std::shared_ptr<nas_context> nas_ctx{};
+  std::shared_ptr<ue_ngap_context> ngap_ctx{};
+  mutable std::shared_mutex m_ctx_;
 };
 
 #endif

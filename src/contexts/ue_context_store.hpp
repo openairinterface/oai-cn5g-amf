@@ -65,6 +65,18 @@ class ue_context_store {
 
   // Find by SUPI. Returns nullptr if absent or expired
   std::shared_ptr<ue_context> find_by_supi(const std::string& supi) const {
+    {
+      std::shared_lock lock(m_);
+      auto it = by_supi_.find(supi);
+      if (it == by_supi_.end()) {
+        return nullptr;
+      }
+      if (auto uc = it->second.lock()) {
+        return uc;
+      }
+    }
+
+    // Erase the null entry if exist
     std::unique_lock lock(m_);
     auto it = by_supi_.find(supi);
     if (it != by_supi_.end()) {
@@ -93,6 +105,18 @@ class ue_context_store {
 
   // Find by GUTI. Returns nullptr if absent or expired
   std::shared_ptr<ue_context> find_by_guti(const std::string& guti) const {
+    {
+      std::shared_lock lock(m_);
+      auto it = by_guti_.find(guti);
+      if (it == by_guti_.end()) {
+        return nullptr;
+      }
+      if (auto uc = it->second.lock()) {
+        return uc;
+      }
+    }
+
+    // Erase the null entry if exist
     std::unique_lock lock(m_);
     auto it = by_guti_.find(guti);
     if (it != by_guti_.end()) {
@@ -127,8 +151,21 @@ class ue_context_store {
   // Find by <ran_ue_ngap_id, gnb_id>. Returns nullptr if absent or expired
   std::shared_ptr<ue_context> find_by_ran_gnb(
       uint32_t ran_ue_ngap_id, uint32_t gnb_id) const {
+    const ran_gnb_key_t key{ran_ue_ngap_id, gnb_id};
+    {
+      std::shared_lock lock(m_);
+      auto it = by_ran_gnb_.find(key);
+      if (it == by_ran_gnb_.end()) {
+        return nullptr;
+      }
+      if (auto uc = it->second.lock()) {
+        return uc;
+      }
+    }
+
+    // Erase the null entry if exist
     std::unique_lock lock(m_);
-    auto it = by_ran_gnb_.find(ran_gnb_key_t{ran_ue_ngap_id, gnb_id});
+    auto it = by_ran_gnb_.find(key);
     if (it != by_ran_gnb_.end()) {
       if (auto uc = it->second.lock()) {
         return uc;

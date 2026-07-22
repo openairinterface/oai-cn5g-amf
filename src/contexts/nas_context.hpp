@@ -101,6 +101,10 @@ class nas_context {
  public:
   nas_context();
   ~nas_context();
+  nas_context(const nas_context&) = delete;
+  nas_context(nas_context&&)      = delete;
+  nas_context& operator=(const nas_context&) = delete;
+  nas_context& operator=(nas_context&&) = delete;
   bool ctx_avaliability_ind;
   uint64_t amf_ue_ngap_id;
   uint32_t ran_ue_ngap_id;

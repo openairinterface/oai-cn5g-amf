@@ -24,6 +24,14 @@
 #include "nas_context.hpp"
 #include "ngap_utils.hpp"
 #include "pdu_session_context.hpp"
+#include "ErrorIndication.hpp"
+
+extern "C" {
+#include "Ngap_Cause.h"
+#include "Ngap_ErrorIndication.h"
+#include "Ngap_ProtocolIE-Field.h"
+#include "Ngap_ProtocolIE-ID.h"
+}
 
 using namespace sctp;
 using namespace oai::ngap;
@@ -78,6 +86,7 @@ int ngap_handle_ng_setup_response(
     struct Ngap_NGAP_PDU* message_p) {
   Logger::ngap().debug("Handling NG Setup Response (AMF->AN)");
   // TODO:
+  ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, message_p);
   return RETURNok;
 }
 
@@ -87,6 +96,7 @@ int ngap_handle_ng_setup_failure(
     struct Ngap_NGAP_PDU* message_p) {
   Logger::ngap().debug("Handling NG Setup Failure (AMF->AN)");
   // TODO:
+  ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, message_p);
   return RETURNok;
 }
 
@@ -156,6 +166,7 @@ int ngap_handle_initial_context_setup_request(
     struct Ngap_NGAP_PDU* message_p) {
   Logger::ngap().debug("Handling Initial Context Setup Request (AMF->AN)");
   // TODO:
+  ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, message_p);
   return RETURNok;
 }
 
@@ -215,6 +226,7 @@ int ngap_amf_handle_initial_context_setup_failure(
   Logger::ngap().debug(
       "Sending ITTI Initial Context Setup Failure to TASK_AMF_N2");
   // TODO:
+  ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, message_p);
   return RETURNok;
 }
 
@@ -283,6 +295,7 @@ int ngap_handle_ue_context_release_command(
     struct Ngap_NGAP_PDU* message_p) {
   Logger::ngap().debug("Handling UE Context Release Command (AMF->AN)");
   // TODO:
+  ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, message_p);
   return RETURNok;
 }
 
@@ -322,6 +335,7 @@ int ngap_handle_pdu_session_resource_release_command(
   Logger::ngap().debug(
       "Handling PDU Session Resource Release Command (AMF->AN)");
   // TODO
+  ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, message_p);
   return RETURNok;
 }
 
@@ -391,6 +405,7 @@ int ngap_handle_pdu_session_resource_setup_request(
     struct Ngap_NGAP_PDU* message_p) {
   Logger::ngap().debug("Handling PDU Session Resource Setup Request");
   // TODO:
+  ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, message_p);
   return RETURNok;
 }
 
@@ -483,6 +498,7 @@ int ngap_handle_pdu_session_resource_modify_request(
     struct Ngap_NGAP_PDU* message_p) {
   Logger::ngap().debug("Handling PDU Session Resource Modify Request");
   // TODO:
+  ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, message_p);
   return RETURNok;
 }
 
@@ -543,8 +559,33 @@ int ngap_amf_handle_pdu_session_resource_modify_response(
 int ngap_amf_handle_error_indication(
     const sctp_assoc_id_t assoc_id, const sctp_stream_id_t stream,
     struct Ngap_NGAP_PDU* message_p) {
-  Logger::ngap().debug("Sending ITTI NGAP Error Indication to TASK_AMF_N2");
-  // TODO:
+  Logger::ngap().debug("Handling NGAP Error Indication from gNB");
+  ngap_utils::print_asn_msg(&asn_DEF_Ngap_NGAP_PDU, message_p);
+
+  auto error_indication_msg = std::make_unique<ErrorIndication>();
+
+  if (!error_indication_msg->decode(message_p)) {
+    Logger::ngap().error("Decoding Error Indication message error");
+    return RETURNerror;
+  }
+
+  long amf_ue_ngap_id = error_indication_msg->getAmfUeNgapId();
+  long ran_ue_ngap_id = error_indication_msg->getRanUeNgapId();
+
+  Logger::ngap().debug(
+      "Error Indication references AMF UE NGAP ID (0x%lx), RAN UE NGAP ID "
+      "(0x%lx) ",
+      amf_ue_ngap_id, ran_ue_ngap_id);
+  std::shared_ptr<nas_context> nct = {};
+  if (amf_n1_inst &&
+      amf_n1_inst->amf_ue_id_2_nas_context(amf_ue_ngap_id, nct) &&
+      (nct != nullptr)) {
+    Logger::ngap().debug(
+        "Error Indication matches an existing NAS context (amf_ue_ngap_id "
+        "0x%lx)",
+        amf_ue_ngap_id);
+  }
+
   return RETURNok;
 }
 
@@ -554,6 +595,7 @@ int ngap_amf_configuration_update(
     struct Ngap_NGAP_PDU* message_p) {
   Logger::ngap().debug("Handling AMF Configuration Update");
   // TODO:
+  ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, message_p);
   return RETURNok;
 }
 
@@ -564,6 +606,7 @@ int ngap_amf_configuration_update_ack(
   Logger::ngap().debug(
       "Sending ITTI AMF Configuration Update ACK to TASK_AMF_N2");
   // TODO:
+  ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, message_p);
   return RETURNok;
 }
 
@@ -574,6 +617,7 @@ int ngap_amf_configuration_update_failure(
   Logger::ngap().debug(
       "Sending ITTI AMF Configuration Update Failure to TASK_AMF_N2");
   // TODO:
+  ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, message_p);
   return RETURNok;
 }
 
@@ -583,6 +627,7 @@ int amf_status_indication(
     struct Ngap_NGAP_PDU* message_p) {
   Logger::ngap().debug("Sending ITTI AMF Status Indication to TASK_AMF_N2");
   // TODO:
+  ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, message_p);
   return RETURNok;
 }
 
@@ -592,6 +637,7 @@ int cell_traffic_trace(
     struct Ngap_NGAP_PDU* message_p) {
   Logger::ngap().debug("Sending ITTI Cell Traffic Trace to TASK_AMF_N2");
   // TODO:
+  ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, message_p);
   return RETURNok;
 }
 
@@ -601,6 +647,7 @@ int deactivate_trace(
     struct Ngap_NGAP_PDU* message_p) {
   Logger::ngap().debug("Sending ITTI Deactivate Trace to TASK_AMF_N2");
   // TODO:
+  ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, message_p);
   return RETURNok;
 }
 
@@ -610,6 +657,7 @@ int downlink_nas_transport(
     struct Ngap_NGAP_PDU* message_p) {
   Logger::ngap().debug("Sending ITTI Downlink NAS Transport to TASK_AMF_N2");
   // TODO:
+  ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, message_p);
   return RETURNok;
 }
 
@@ -620,6 +668,7 @@ int downlink_non_UEassociated_nrppa_transport(
   Logger::ngap().debug(
       "Sending ITTI Downlink Non UEAssociated NRPPA Transport to TASK_AMF_N2");
   // TODO:
+  ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, message_p);
   return RETURNok;
 }
 
@@ -630,6 +679,7 @@ int downlink_ran_configuration_transfer(
   Logger::ngap().debug(
       "Sending ITTI Downlink RAN Configuration Transfer to TASK_AMF_N2");
   // TODO:
+  ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, message_p);
   return RETURNok;
 }
 
@@ -640,6 +690,7 @@ int downlink_ran_status_transfer(
   Logger::ngap().debug(
       "Sending ITTI Downlink RAN Status Transfer to TASK_AMF_N2");
   // TODO:
+  ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, message_p);
   return RETURNok;
 }
 
@@ -650,6 +701,7 @@ int downlink_ue_associated_nappa_transport(
   Logger::ngap().debug(
       "Sending ITTI Downlink UE Associated NAPPA Transport to TASK_AMF_N2");
   // TODO:
+  ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, message_p);
   return RETURNok;
 }
 
@@ -659,6 +711,7 @@ int handover_cancel(
     struct Ngap_NGAP_PDU* message_p) {
   Logger::ngap().debug("Sending ITTI Handover Cancel to TASK_AMF_N2");
   // TODO:
+  ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, message_p);
   return RETURNok;
 }
 
@@ -668,6 +721,7 @@ int handover_cancel_ack(
     struct Ngap_NGAP_PDU* message_p) {
   Logger::ngap().debug("Handling Handover Cancel Ack (AMF->AN)");
   // TODO:
+  ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, message_p);
   return RETURNok;
 }
 
@@ -706,6 +760,7 @@ int handover_command(
     struct Ngap_NGAP_PDU* message_p) {
   Logger::ngap().debug("Handling Handover Command (AMF->AN)");
   // TODO:
+  ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, message_p);
   return RETURNok;
 }
 
@@ -715,6 +770,7 @@ int handover_preparation_failure(
     struct Ngap_NGAP_PDU* message_p) {
   Logger::ngap().debug("Handling Handover Preparation failure (AMF->AN)");
   // TODO:
+  ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, message_p);
   return RETURNok;
 }
 
@@ -813,6 +869,7 @@ int handover_failure(
     struct Ngap_NGAP_PDU* message_p) {
   Logger::ngap().debug("Handling Handover Failure (AMF->AN)");
   // TODO:
+  ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, message_p);
   return RETURNok;
 }
 
@@ -823,6 +880,7 @@ int location_reporting_control(
   Logger::ngap().debug(
       "Sending ITTI Location Reporting Control to TASK_AMF_N2");
   // TODO:
+  ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, message_p);
   return RETURNok;
 }
 
@@ -833,6 +891,7 @@ int location_reporting_failure_indication(
   Logger::ngap().debug(
       "Sending ITTI Location Reporting Failure Indication to TASK_AMF_N2");
   // TODO:
+  ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, message_p);
   return RETURNok;
 }
 
@@ -842,6 +901,7 @@ int location_report(
     struct Ngap_NGAP_PDU* message_p) {
   Logger::ngap().debug("Sending ITTI Location Report to TASK_AMF_N2");
   // TODO:
+  ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, message_p);
   return RETURNok;
 }
 
@@ -852,6 +912,7 @@ int nas_non_delivery_indication(
   Logger::ngap().debug(
       "Sending ITTI NAS Non Delivery Indication to TASK_AMF_N2");
   // TODO:
+  ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, message_p);
   return RETURNok;
 }
 
@@ -889,6 +950,7 @@ int overload_start(
     struct Ngap_NGAP_PDU* message_p) {
   Logger::ngap().debug("Sending ITTI Overload Start to TASK_AMF_N2");
   // TODO:
+  ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, message_p);
   return RETURNok;
 }
 
@@ -898,6 +960,7 @@ int overload_stop(
     struct Ngap_NGAP_PDU* message_p) {
   Logger::ngap().debug("Sending ITTI Overload Stop to TASK_AMF_N2");
   // TODO:
+  ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, message_p);
   return RETURNok;
 }
 
@@ -907,6 +970,7 @@ int paging(
     struct Ngap_NGAP_PDU* message_p) {
   Logger::ngap().debug("Sending ITTI Paging to TASK_AMF_N2");
   // TODO:
+  ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, message_p);
   return RETURNok;
 }
 
@@ -916,6 +980,7 @@ int ngap_amf_handle_path_switch_request(
     struct Ngap_NGAP_PDU* message_p) {
   Logger::ngap().debug("Sending ITTI Path Switch Request to TASK_AMF_N2");
   // TODO:
+  ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, message_p);
   return RETURNok;
 }
 
@@ -925,6 +990,7 @@ int ngap_handle_path_switch_request_ack(
     struct Ngap_NGAP_PDU* message_p) {
   Logger::ngap().debug("Handling Path Switch Request Ack (AMF->AN)");
   // TODO:
+  ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, message_p);
   return RETURNok;
 }
 
@@ -934,6 +1000,7 @@ int ngap_handle_path_switch_request_failure(
     struct Ngap_NGAP_PDU* message_p) {
   Logger::ngap().debug("Handling Path Switch Request Failure (AMF->AN)");
   // TODO:
+  ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, message_p);
   return RETURNok;
 }
 
@@ -944,6 +1011,7 @@ int pdu_session_resource_modify_indication(
   Logger::ngap().debug(
       "Sending ITTI PDU Session Resource Modify Indication to TASK_AMF_N2");
   // TODO:
+  ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, message_p);
   return RETURNok;
 }
 
@@ -954,6 +1022,7 @@ int pdu_session_resource_modify_confirm(
   Logger::ngap().debug(
       "Handling PDU Session Resource Modify Confirm (AMF->AN)");
   // TODO:
+  ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, message_p);
   return RETURNok;
 }
 
@@ -964,6 +1033,7 @@ int pdu_session_resource_notify(
   Logger::ngap().debug(
       "Sending ITTI PDU Session Resource Notify to TASK_AMF_N2");
   // TODO:
+  ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, message_p);
   return RETURNok;
 }
 
@@ -973,6 +1043,7 @@ int private_message(
     struct Ngap_NGAP_PDU* message_p) {
   Logger::ngap().debug("Sending ITTI Private Message to TASK_AMF_N2");
   // TODO:
+  ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, message_p);
   return RETURNok;
 }
 
@@ -982,6 +1053,7 @@ int pws_cancel_request(
     struct Ngap_NGAP_PDU* message_p) {
   Logger::ngap().debug("Handling PWS Cancel Request (AMF->AN)");
   // TODO:
+  ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, message_p);
   return RETURNok;
 }
 
@@ -991,6 +1063,7 @@ int pws_cancel_response(
     struct Ngap_NGAP_PDU* message_p) {
   Logger::ngap().debug("Sending ITTI PWS Cancel Response to TASK_AMF_N2");
   // TODO:
+  ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, message_p);
   return RETURNok;
 }
 
@@ -1000,6 +1073,7 @@ int pws_failure_indication(
     struct Ngap_NGAP_PDU* message_p) {
   Logger::ngap().debug("Sending ITTI PWS Failure Indication to TASK_AMF_N2");
   // TODO:
+  ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, message_p);
   return RETURNok;
 }
 
@@ -1009,6 +1083,7 @@ int pws_restart_indication(
     struct Ngap_NGAP_PDU* message_p) {
   Logger::ngap().debug("Sending ITTI PWS Restart Indication to TASK_AMF_N2");
   // TODO:
+  ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, message_p);
   return RETURNok;
 }
 
@@ -1018,6 +1093,7 @@ int ran_configuration_update(
     struct Ngap_NGAP_PDU* message_p) {
   Logger::ngap().debug("Sending ITTI RAN Configuration Update to TASK_AMF_N2");
   // TODO:
+  ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, message_p);
   return RETURNok;
 }
 
@@ -1027,6 +1103,7 @@ int ran_configuration_update_ack(
     struct Ngap_NGAP_PDU* message_p) {
   Logger::ngap().debug("Handling RAN Configuration Update Ack (AMF->AN)");
   // TODO:
+  ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, message_p);
   return RETURNok;
 }
 
@@ -1036,6 +1113,7 @@ int ran_configuration_update_failure(
     struct Ngap_NGAP_PDU* message_p) {
   Logger::ngap().debug("Handling RAN Configuration Update Failure (AMF->AN)");
   // TODO:
+  ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, message_p);
   return RETURNok;
 }
 
@@ -1045,6 +1123,7 @@ int reroute_nas_request(
     struct Ngap_NGAP_PDU* message_p) {
   Logger::ngap().debug("Sending ITTI Reroute NAS Request to TASK_AMF_N2");
   // TODO:
+  ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, message_p);
   return RETURNok;
 }
 
@@ -1055,6 +1134,7 @@ int rrc_inactive_transition_report(
   Logger::ngap().debug(
       "Sending ITTI RRC Inactive Transition Report to TASK_AMF_N2");
   // TODO:
+  ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, message_p);
   return RETURNok;
 }
 
@@ -1064,6 +1144,7 @@ int trace_failure_indication(
     struct Ngap_NGAP_PDU* message_p) {
   Logger::ngap().debug("Sending ITTI Trace Failure Indication to TASK_AMF_N2");
   // TODO:
+  ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, message_p);
   return RETURNok;
 }
 
@@ -1073,6 +1154,7 @@ int trace_start(
     struct Ngap_NGAP_PDU* message_p) {
   Logger::ngap().debug("Sending ITTI Trace Start to TASK_AMF_N2");
   // TODO:
+  ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, message_p);
   return RETURNok;
 }
 
@@ -1082,6 +1164,7 @@ int ue_context_modification_request(
     struct Ngap_NGAP_PDU* message_p) {
   Logger::ngap().debug("Handling UE Context Modification Request (AMF->AN)");
   // TODO:
+  ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, message_p);
   return RETURNok;
 }
 
@@ -1092,6 +1175,7 @@ int ue_context_modification_response(
   Logger::ngap().debug(
       "Sending ITTI UE Context Modification Response to TASK_AMF_N2");
   // TODO:
+  ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, message_p);
   return RETURNok;
 }
 
@@ -1102,6 +1186,7 @@ int ue_context_modification_failure(
   Logger::ngap().debug(
       "Sending ITTI UE Context Modification Failure to TASK_AMF_N2");
   // TODO:
+  ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, message_p);
   return RETURNok;
 }
 
@@ -1111,6 +1196,7 @@ int ue_radio_capability_check_request(
     struct Ngap_NGAP_PDU* message_p) {
   Logger::ngap().debug("Handling UE Radio Capability Check Request (AMF->AN)");
   // TODO:
+  ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, message_p);
   return RETURNok;
 }
 
@@ -1121,6 +1207,7 @@ int ue_radio_capability_check_response(
   Logger::ngap().debug(
       "Sending ITTI UE Radio Capability Check Response to TASK_AMF_N2");
   // TODO:
+  ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, message_p);
   return RETURNok;
 }
 
@@ -1130,6 +1217,7 @@ int ue_tnla_binding_release(
     struct Ngap_NGAP_PDU* message_p) {
   Logger::ngap().debug("Sending ITTI UE TNLA Binding Release to TASK_AMF_N2");
   // TODO:
+  ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, message_p);
   return RETURNok;
 }
 
@@ -1177,6 +1265,7 @@ int uplink_ran_configuration_transfer(
   Logger::ngap().debug(
       "Sending ITTI Uplink RAN Configuration Transfer to TASK_AMF_N2");
   // TODO:
+  ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, message_p);
   return RETURNok;
 }
 
@@ -1255,6 +1344,7 @@ int secondary_rat_data_usage_report(
     struct Ngap_NGAP_PDU* message_p) {
   Logger::ngap().debug("Handling Secondary RAT Data Usage Report");
   // TODO:
+  ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, message_p);
   return RETURNok;
 }
 

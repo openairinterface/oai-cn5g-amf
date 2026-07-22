@@ -37,6 +37,30 @@ ue_context::ue_context() {
 ue_context::~ue_context() {}
 
 //------------------------------------------------------------------------------
+std::shared_ptr<nas_context> ue_context::get_nas_ctx() const {
+  std::shared_lock lock(m_ctx_);
+  return nas_ctx;
+}
+
+//------------------------------------------------------------------------------
+void ue_context::set_nas_ctx(const std::shared_ptr<nas_context>& nc) {
+  std::unique_lock lock(m_ctx_);
+  nas_ctx = nc;
+}
+
+//------------------------------------------------------------------------------
+std::shared_ptr<ue_ngap_context> ue_context::get_ngap_ctx() const {
+  std::shared_lock lock(m_ctx_);
+  return ngap_ctx;
+}
+
+//------------------------------------------------------------------------------
+void ue_context::set_ngap_ctx(const std::shared_ptr<ue_ngap_context>& unc) {
+  std::unique_lock lock(m_ctx_);
+  ngap_ctx = unc;
+}
+
+//------------------------------------------------------------------------------
 bool ue_context::get_pdu_session_context(
     std::uint8_t session_id,
     std::shared_ptr<pdu_session_context>& context) const {

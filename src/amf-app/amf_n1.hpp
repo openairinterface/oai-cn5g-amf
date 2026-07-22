@@ -29,6 +29,18 @@
 
 namespace amf_application {
 
+/*
+ * NAS integrity (MAC) verification
+ *   - verified          : the MAC was computed and matches
+ *   - no_integrity_ia0  : the selected integrity algorithm is the null
+ *                         algorithm 5G-IA0. Only acceptable under the
+ *                         unauthenticated-emergency exception (TS 33.501
+ *                         §5.5.2); otherwise the message MUST be dropped.
+ *   - error             : unsupported algorithm or invalid input. The message
+ *                         MUST be dropped (never processed).
+ */
+enum class nas_integrity_result { verified, no_integrity_ia0, error };
+
 class amf_n1 {
  public:
   amf_n1();
@@ -62,7 +74,7 @@ class amf_n1 {
   void nas_signalling_establishment_request_handle(
       uint8_t security_header_type, std::shared_ptr<nas_context> nc,
       uint32_t ran_ue_ngap_id, uint64_t amf_ue_ngap_id, bstring plain_msg,
-      std::string snn, uint8_t ulCount);
+      std::string snn, uint32_t ulCount);
 
   /*
    * Handle UL NAS message (Authentication Response, Security Mode Complete,
@@ -327,9 +339,34 @@ class amf_n1 {
    * @param [uint32_t&] mac: calculated MAC (result for NIA)
    * @return true if MAC can be calculated successfully, otherwise return false
    */
-  bool nas_message_integrity_protected(
-      nas_secu_ctx& nsc, uint8_t direction, uint8_t* input_nas,
+  nas_integrity_result nas_message_integrity_protected(
+      nas_secu_ctx& nsc, uint8_t direction, uint32_t count, uint8_t* input_nas,
       int input_nas_len, uint32_t& mac);
+
+  /*
+   * Verify (and, when ciphered, decipher) an uplink security-protected NAS
+   * message.
+   * @param [std::shared_ptr<nas_context>&] nc: UE NAS context
+   * @param [bstring] received_nas_msg: full received security-protected NAS PDU
+   * @param [bool] is_ciphered: whether the security header type is a ciphered
+   * type (0x2 / 0x4)
+   * @param [bstring&] decoded_plain_msg: output plain NAS message
+   * @param [uint32_t&] estimated_count: output full 24-bit estimated uplink
+   * COUNT that was accepted
+   * @return true if the message is authentic and accepted, false if it must be
+   * dropped
+   */
+  bool verify_and_decipher_uplink_nas(
+      std::shared_ptr<nas_context>& nc, bstring received_nas_msg,
+      bool is_ciphered, bstring& decoded_plain_msg, uint32_t& estimated_count);
+
+  /*
+   * Check whether a plaintext (non-integrity-protected) NAS message type is on
+   * the AMF plaintext allow-list of TS 24.501 §4.4.4.3.
+   * @param [uint8_t] message_type: 5GMM message type
+   * @return true if the message may be accepted unprotected
+   */
+  bool is_plaintext_message_allowed(uint8_t message_type);
 
   /*
    * Cipher NAS message with the corresponding ciphered algorithm
@@ -823,7 +860,7 @@ class amf_n1 {
    */
   bool service_request_handle(
       std::shared_ptr<nas_context> nc, const uint32_t ran_ue_ngap_id,
-      const uint64_t amf_ue_ngap_id, bstring nas, uint8_t ulCount,
+      const uint64_t amf_ue_ngap_id, bstring nas, uint32_t ulCount,
       uint8_t& cause);
 
   /*
@@ -833,6 +870,18 @@ class amf_n1 {
    * @return void
    */
   void send_service_reject(std::shared_ptr<nas_context>& nc, uint8_t cause);
+
+  /*
+   * Send Service Reject to the UE, addressed by the NGAP IDs only. Used when
+   * no NAS context exists for the UE.
+   * @param [const uint32_t] ran_ue_ngap_id: RAN UE NGAP ID
+   * @param [const uint64_t] amf_ue_ngap_id: AMF UE NGAP ID
+   * @param [uint8_t] cause: Cause
+   * @return true if the message was encoded and sent, otherwise false
+   */
+  bool send_service_reject(
+      const uint32_t ran_ue_ngap_id, const uint64_t amf_ue_ngap_id,
+      uint8_t cause);
 
   /*
    * Handle Identity Response message

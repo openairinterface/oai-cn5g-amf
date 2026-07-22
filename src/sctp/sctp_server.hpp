@@ -8,6 +8,7 @@
 #include "common_defs.h"
 #include "endpoint.hpp"
 
+#include <mutex>
 #include <thread>
 #include <vector>
 
@@ -90,9 +91,12 @@ class sctp_server {
   int handle_assoc_change(
       int sd, uint32_t ppid, struct sctp_assoc_change* assoc_change);
   int sctp_handle_com_down(sctp_assoc_id_t assoc_id);
-  int sctp_handle_reset(const sctp_assoc_id_t assoc_id);
+  int sctp_handle_reset(
+      int sd, uint32_t ppid, struct sctp_assoc_change* sctp_assoc_changed);
   sctp_association_t* add_new_association(
       int sd, uint32_t ppid, struct sctp_assoc_change* sctp_assoc_changed);
+  void remove_association(sctp_assoc_id_t assoc_id);
+  sctp_association_t* sctp_find_assoc_locked(sctp_assoc_id_t assoc_id);
   int sctp_get_local_addresses(
       int sock, struct sockaddr** local_addr, int* nb_local_addresses);
   int sctp_get_peer_addresses(
@@ -107,6 +111,7 @@ class sctp_server {
   struct sockaddr_in server_addr_;
   struct sctp_event_subscribe events_;
   std::vector<sctp_association_t*> sctp_ctx_;
+  mutable std::mutex sctp_ctx_mutex_;
 };
 
 }  // namespace sctp

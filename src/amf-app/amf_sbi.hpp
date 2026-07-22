@@ -395,6 +395,18 @@ class amf_sbi {
   bool send_http_request(
       const std::string& remote_uri, const oai::common::sbi::method_e method,
       const std::string& msg_body, oai::http::response& http_response);
+
+ private:
+  /*
+   * Validate a request URI before using it. The default policy requires an
+   * http/https scheme and a well-formed absolute URI with a non-empty host, and
+   * rejects link-local (169.254.0.0/16, fe80::/10). A
+   * stricter host policy (loopback rejection + allow-list) is OFF by default so
+   * normal intra NF traffic is not affected.
+   * @param [const std::string&] uri: candidate outbound URI
+   * @return true if the URI is allowed, false if it must be rejected
+   */
+  bool is_allowed_uri(const std::string& uri);
 };
 
 }  // namespace amf_application

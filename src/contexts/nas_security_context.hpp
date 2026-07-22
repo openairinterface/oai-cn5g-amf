@@ -49,6 +49,7 @@ class nas_secu_ctx {
   uint8_t knas_int[AUTH_KNAS_INT_SIZE];
   count_t dl_count;
   count_t ul_count;
+  bool ul_count_valid = false;
   capability_t ue_algorithms;
   selected_algs nas_algs;
 };

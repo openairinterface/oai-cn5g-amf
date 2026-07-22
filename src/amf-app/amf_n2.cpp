@@ -23,8 +23,17 @@
 #include "NgSetupResponse.hpp"
 #include "Ngap_Cause.h"
 #include "Ngap_CauseNas.h"
+#include "Ngap_CauseProtocol.h"
 #include "Ngap_CauseRadioNetwork.h"
+#include "Ngap_ErrorIndication.h"
+#include "Ngap_InitiatingMessage.h"
+#include "Ngap_NGAP-PDU.h"
+#include "Ngap_ProcedureCode.h"
+#include "Ngap_ProtocolIE-Field.h"
+#include "Ngap_ProtocolIE-ID.h"
 #include "Ngap_TimeToWait.h"
+#include "constr_TYPE.h"
+#include "per_encoder.h"
 #include "Paging.hpp"
 #include "HandoverCommandTransfer.hpp"
 #include "PduSessionResourceModifyRequest.hpp"
@@ -47,6 +56,13 @@
 #include "utils.hpp"
 #include "PlmnId.hpp"
 #include "mime_parser.hpp"
+#include "ErrorIndication.hpp"
+
+extern "C" {
+#include "Ngap_ErrorIndication.h"
+#include "Ngap_ProtocolIE-Field.h"
+#include "Ngap_ProtocolIE-ID.h"
+}
 
 using namespace amf_application;
 using namespace oai::config;
@@ -312,21 +328,25 @@ void amf_n2::handle_itti_message(std::shared_ptr<itti_paging>& itti_msg) {
     return;
 
   if (unc->amf_ue_ngap_id != itti_msg->amf_ue_ngap_id) {
+    // Abort on an inconsistent AMF UE NGAP ID
     Logger::amf_n2().error(
         "The requested UE (amf_ue_ngap_id: " AMF_UE_NGAP_ID_FMT
         ") is not valid, existed UE "
-        "which's amf_ue_ngap_id (" AMF_UE_NGAP_ID_FMT ")",
+        "which's amf_ue_ngap_id (" AMF_UE_NGAP_ID_FMT "); aborting Paging",
         itti_msg->amf_ue_ngap_id, unc->amf_ue_ngap_id);
+    return;
   }
 
   // TODO: check UE reachability status
 
   // get NAS context
   std::shared_ptr<nas_context> nc = {};
-  if (!amf_n1_inst->amf_ue_id_2_nas_context(itti_msg->amf_ue_ngap_id, nc)) {
+  if (!amf_n1_inst->amf_ue_id_2_nas_context(itti_msg->amf_ue_ngap_id, nc) ||
+      (nc == nullptr)) {
     Logger::amf_n2().warn(
         "No existed nas_context with amf_ue_ngap_id(" AMF_UE_NGAP_ID_FMT ")",
         itti_msg->amf_ue_ngap_id);
+    return;
   }
   // Network stops sending paging messages since the mobile reachable timer
   // expires
@@ -351,7 +371,11 @@ void amf_n2::handle_itti_message(std::shared_ptr<itti_paging>& itti_msg) {
 
   uint8_t buffer[BUFFER_SIZE_512];
   int encoded_size = paging_msg.Encode(buffer, BUFFER_SIZE_512);
-  bstring b        = blk2bstr(buffer, encoded_size);
+  if ((encoded_size < 0) || (encoded_size > BUFFER_SIZE_512)) {
+    Logger::amf_n2().error("Encoding failed or buffer too small");
+    return;
+  }
+  bstring b = blk2bstr(buffer, encoded_size);
 
   amf_n2_inst->sctp_s_38412.sctp_send_msg(
       unc->gnb_assoc_id, unc->sctp_stream_send, &b);
@@ -897,11 +921,29 @@ void amf_n2::handle_itti_message(
   if (!ran_ue_id_2_ue_ngap_context(ran_ue_ngap_id, gc->gnb_id, unc)) return;
 
   if (unc->amf_ue_ngap_id != amf_ue_ngap_id) {
+    // Abort
     Logger::amf_n2().error(
         "The requested UE (amf_ue_ngap_id: " AMF_UE_NGAP_ID_FMT
         ") is not valid, existed UE "
-        "which's amf_ue_ngap_id (" AMF_UE_NGAP_ID_FMT ")",
+        "which's amf_ue_ngap_id (" AMF_UE_NGAP_ID_FMT
+        "); aborting Uplink NAS Transport",
         amf_ue_ngap_id, unc->amf_ue_ngap_id);
+    std::optional<long> amf_id_opt =
+        std::make_optional<long>(static_cast<long>(amf_ue_ngap_id));
+    std::optional<uint32_t> ran_id_opt =
+        std::make_optional<uint32_t>(ran_ue_ngap_id);
+
+    // 5GS TMSI
+    FiveGSTmsi tmp = {};
+    tmp.set(unc->s_setid, unc->s_pointer, unc->s_tmsi);
+    std::optional<FiveGSTmsi> five_gs_tmsi =
+        std::make_optional<FiveGSTmsi>(tmp);
+
+    send_ng_error_indication(
+        ul_nas_transport->assoc_id, ul_nas_transport->stream, amf_id_opt,
+        ran_id_opt, Ngap_Cause_PR_radioNetwork,
+        Ngap_CauseRadioNetwork_inconsistent_remote_UE_NGAP_ID, five_gs_tmsi);
+    return;
   }
   /*
      //TODO: check with a correct NGAP state
@@ -1573,10 +1615,14 @@ void amf_n2::handle_itti_message(
   if (nc != nullptr) {
     // Get the current AMF UE NGAP ID and compare with the one from
     // UEContextReleaseComplete
-    uint64_t current_amf_ue_ngap_id = INVALID_AMF_UE_NGAP_ID;
+    uint64_t current_amf_ue_ngap_id = nc->amf_ue_ngap_id;
     if (current_amf_ue_ngap_id != amf_ue_ngap_id) {
       // Remove UE NGAP context
-      Logger::amf_n2().debug("UE Context Release Complete for the old context");
+      Logger::amf_n2().debug(
+          "UE Context Release Complete for the old context "
+          "(current amf_ue_ngap_id " AMF_UE_NGAP_ID_FMT
+          ", received amf_ue_ngap_id " AMF_UE_NGAP_ID_FMT ")",
+          current_amf_ue_ngap_id, amf_ue_ngap_id);
       remove_amf_ue_ngap_id_2_ue_ngap_context(amf_ue_ngap_id);
       remove_ran_ue_ngap_id_2_ngap_context(ran_ue_ngap_id, gc->gnb_id);
       return;
@@ -1713,22 +1759,15 @@ void amf_n2::handle_itti_message(
     smf_responses.erase(smf_responses.begin());
   }
 
-  // Remove UE NGAP context
+  // Remove the UE NGAPcontext only: the N2 signalling connection
+  // is gone, but the UE is still registered.
   remove_amf_ue_ngap_id_2_ue_ngap_context(amf_ue_ngap_id);
   remove_ran_ue_ngap_id_2_ngap_context(ran_ue_ngap_id, gc->gnb_id);
 
-  // Remove the amf_app UE context
-  if (amf_app_inst->remove_ue_context(ran_ue_ngap_id, amf_ue_ngap_id)) {
-    Logger::amf_n2().debug(
-        "Deleted UE context associated with "
-        "amf_ue_ngap_id " AMF_UE_NGAP_ID_FMT,
-        amf_ue_ngap_id);
-  } else {
-    Logger::amf_n2().debug(
-        "Could not delete UE context associated with "
-        "amf_ue_ngap_id " AMF_UE_NGAP_ID_FMT,
-        amf_ue_ngap_id);
-  }
+  Logger::amf_n2().debug(
+      "Keeping amf_app UE context for amf_ue_ngap_id " AMF_UE_NGAP_ID_FMT
+      " (UE is CM-IDLE but still registered)",
+      amf_ue_ngap_id);
 }
 
 //------------------------------------------------------------------------------
@@ -2176,6 +2215,11 @@ void amf_n2::handle_itti_message(
         OCTET_STRING_fromBuf(
             &handoverCommandTransfer, n2_sm.c_str(), n2_sm.length());
         handoverItem.set(pdu_session_id, handoverCommandTransfer);
+        if (handoverCommandTransfer.buf) {
+          free(handoverCommandTransfer.buf);
+          handoverCommandTransfer.buf  = nullptr;
+          handoverCommandTransfer.size = 0;
+        }
         handoverItemList.push_back(handoverItem);
         handoverList.set(handoverItemList);
 
@@ -2249,10 +2293,11 @@ void amf_n2::handle_itti_message(
       amf_app_inst->get_ue_context(old_ran_ue_ngap_id, amf_ue_ngap_id);
 
   if (uc == nullptr) {
-    Logger::amf_n2().debug(
+    Logger::amf_n2().warn(
         "No existing UE context with amf_ue_ngap_id " AMF_UE_NGAP_ID_FMT
-        ", ran_ue_ngap_id " RAN_UE_NGAP_ID_FMT,
+        ", ran_ue_ngap_id " RAN_UE_NGAP_ID_FMT ", ignore Handover Notify",
         amf_ue_ngap_id, ran_ue_ngap_id);
+    return;
   }
 
   // Get PDU Session Context
@@ -2756,6 +2801,39 @@ void amf_n2::send_handover_preparation_failure(
 }
 
 //------------------------------------------------------------------------------
+void amf_n2::send_ng_error_indication(
+    const sctp_assoc_id_t& assoc_id, const sctp_stream_id_t& stream,
+    const std::optional<long> amf_ue_ngap_id,
+    const std::optional<uint32_t> ran_ue_ngap_id,
+    const Ngap_Cause_PR& cause_present, long cause_value,
+    const std::optional<FiveGSTmsi>& tmsi) {
+  auto error_indication_msg = std::make_unique<ErrorIndication>();
+
+  if (amf_ue_ngap_id.has_value())
+    error_indication_msg->setAmfUeNgapId(amf_ue_ngap_id.value());
+  if (ran_ue_ngap_id.has_value())
+    error_indication_msg->setRanUeNgapId(ran_ue_ngap_id.value());
+  error_indication_msg->setCause(cause_present, cause_value);
+  if (tmsi.has_value()) {
+    error_indication_msg->setFiveGSTmsi(tmsi.value());
+  }
+
+  uint8_t buffer[BUFFER_SIZE_1024];
+  int encoded_size = error_indication_msg->Encode(buffer, BUFFER_SIZE_1024);
+
+  if ((encoded_size < 0) || (encoded_size > BUFFER_SIZE_1024)) {
+    Logger::amf_n2().error("Encoding failed or buffer too small");
+    return;
+  }
+
+  Logger::amf_n2().debug(
+      "Sending NGAP Error Indication to gNB (assoc_id %d)", assoc_id);
+  bstring b = blk2bstr(buffer, encoded_size);
+  sctp_s_38412.sctp_send_msg(assoc_id, stream, &b);
+  oai::utils::utils::bdestroy_wrapper(&b);
+}
+
+//------------------------------------------------------------------------------
 template<typename T>
 void amf_n2::send_ng_setup_failure(
     const T& cause, const e_Ngap_TimeToWait& time_to_wait,
@@ -2782,8 +2860,8 @@ bool amf_n2::ran_ue_id_2_ue_ngap_context(
     std::shared_ptr<ue_ngap_context>& unc) const {
   std::shared_ptr<ue_context> uc =
       amf_app_inst->find_ue_by_ran_gnb(ran_ue_ngap_id, gnb_id);
-  if (uc != nullptr && uc->ngap_ctx != nullptr) {
-    unc = uc->ngap_ctx;
+  if (uc != nullptr && uc->get_ngap_ctx() != nullptr) {
+    unc = uc->get_ngap_ctx();
     return true;
   }
 
@@ -2811,7 +2889,7 @@ bool amf_n2::ran_ue_id_2_ue_ngap_context(
     std::shared_ptr<ue_ngap_context>& unc) const {
   std::shared_ptr<ue_context> uc =
       amf_app_inst->get_ue_context(ran_ue_ngap_id, amf_ue_ngap_id);
-  if (uc == nullptr || uc->ngap_ctx == nullptr) {
+  if (uc == nullptr || uc->get_ngap_ctx() == nullptr) {
     Logger::amf_n2().warn(
         "No UE NGAP context with AMF UE NGAP ID "
         "(" AMF_UE_NGAP_ID_FMT
@@ -2820,7 +2898,7 @@ bool amf_n2::ran_ue_id_2_ue_ngap_context(
         amf_ue_ngap_id, ran_ue_ngap_id);
     return false;
   }
-  unc = uc->ngap_ctx;
+  unc = uc->get_ngap_ctx();
   return true;
 }
 
@@ -2843,7 +2921,7 @@ void amf_n2::set_ran_ue_ngap_id_2_ue_ngap_context(
       amf_app_inst->find_ue_by_amf_ue_ngap_id(unc->amf_ue_ngap_id);
   if (uc == nullptr) return;
 
-  uc->ngap_ctx = unc;
+  uc->set_ngap_ctx(unc);
   amf_app_inst->bind_ran_gnb(ran_ue_ngap_id, gnb_id, uc);
 }
 
@@ -2884,7 +2962,7 @@ void amf_n2::release_ngap_context_only(
   std::shared_ptr<ue_context> uc =
       amf_app_inst->find_ue_by_amf_ue_ngap_id(amf_ue_ngap_id);
   if (uc != nullptr) {
-    uc->ngap_ctx = nullptr;
+    uc->set_ngap_ctx(nullptr);
   }
   amf_app_inst->unbind_ran_gnb(ran_ue_ngap_id, gnb_id);
 
@@ -2939,9 +3017,10 @@ void amf_n2::get_ue_ngap_contexts(
     std::vector<std::shared_ptr<ue_ngap_context>>& ue_contexts) {
   amf_app_inst->for_each_ue_context([&](const std::shared_ptr<ue_context>& uc) {
     // Skip CM-IDLE UEs (no NGAP context) - fixes the null-deref.
-    if (!uc || uc->ngap_ctx == nullptr) return;
-    if (uc->ngap_ctx->gnb_assoc_id == gnb_assoc_id)
-      ue_contexts.push_back(uc->ngap_ctx);
+    if (!uc) return;
+    std::shared_ptr<ue_ngap_context> unc = uc->get_ngap_ctx();
+    if (unc == nullptr) return;
+    if (unc->gnb_assoc_id == gnb_assoc_id) ue_contexts.push_back(unc);
   });
 }
 
@@ -2951,13 +3030,13 @@ bool amf_n2::amf_ue_id_2_ue_ngap_context(
     std::shared_ptr<ue_ngap_context>& unc) const {
   std::shared_ptr<ue_context> uc =
       amf_app_inst->find_ue_by_amf_ue_ngap_id(amf_ue_ngap_id);
-  if (uc == nullptr || uc->ngap_ctx == nullptr) {
+  if (uc == nullptr || uc->get_ngap_ctx() == nullptr) {
     Logger::amf_n2().error(
         "No UE NGAP context with amf_ue_ngap_id " AMF_UE_NGAP_ID_FMT "",
         amf_ue_ngap_id);
     return false;
   }
-  unc = uc->ngap_ctx;
+  unc = uc->get_ngap_ctx();
   return true;
 }
 
@@ -2987,7 +3066,7 @@ void amf_n2::set_amf_ue_ngap_id_2_ue_ngap_context(
     return;
   }
 
-  uc->ngap_ctx = unc;
+  uc->set_ngap_ctx(unc);
   amf_app_inst->bind_ran_gnb(unc->ran_ue_ngap_id, uc->gnb_id, uc);
 
   // Store NGAP context in uc->ngap_ctx. Erase the pending one
@@ -3010,7 +3089,7 @@ void amf_n2::remove_amf_ue_ngap_id_2_ue_ngap_context(
   std::shared_ptr<ue_context> uc =
       amf_app_inst->find_ue_by_amf_ue_ngap_id(amf_ue_ngap_id);
   if (uc == nullptr) return;
-  uc->ngap_ctx = nullptr;
+  uc->set_ngap_ctx(nullptr);
   Logger::amf_n2().debug(
       "Removed UE NGAP context with amf_ue_ngap_id " AMF_UE_NGAP_ID_FMT "",
       amf_ue_ngap_id);

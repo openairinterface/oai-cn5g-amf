@@ -5,10 +5,13 @@
 #ifndef _UE_NGAP_CONTEXT_H_
 #define _UE_NGAP_CONTEXT_H_
 
+#include <cstdlib>  // free (asn1c OCTET_STRING buffers)
+
 #include "amf.hpp"
 #include "sctp_server.hpp"  // namespace sctp, sctp_stream_id_t, sctp_assoc_id_t
 #include "NgapIesStruct.hpp"         // Tai_t, OCTET_STRING_t
 #include "Ngap_CauseRadioNetwork.h"  // Ngap_CauseRadioNetwork_t
+#include "utils.hpp"                 // bdestroy_wrapper
 
 using namespace sctp;
 typedef enum {
@@ -46,10 +49,21 @@ class ue_ngap_context {
     ue_radio_cap_ind    = nullptr;
   }
 
+  ue_ngap_context(const ue_ngap_context&) = delete;
+  ue_ngap_context(ue_ngap_context&&)      = delete;
+  ue_ngap_context& operator=(const ue_ngap_context&) = delete;
+  ue_ngap_context& operator=(ue_ngap_context&&) = delete;
+
   virtual ~ue_ngap_context() {
     delete[] initial_ue_msg.buf;
     initial_ue_msg.buf  = nullptr;
     initial_ue_msg.size = 0;
+    oai::utils::utils::bdestroy_wrapper(&ue_radio_cap_ind);
+    for (auto& pdu_session : pdu_sessions_to_be_released) {
+      free(pdu_session.second.buf);
+      pdu_session.second.buf  = nullptr;
+      pdu_session.second.size = 0;
+    }
   }
 
   uint32_t ran_ue_ngap_id;         // 32bits

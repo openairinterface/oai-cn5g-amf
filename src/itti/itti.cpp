@@ -37,6 +37,10 @@ void itti_mw::timer_manager_task(
       }
       std::set<itti_timer>::iterator it = itti_inst->timers.begin();
       itti_inst->current_timer          = std::ref(*it);
+      // Snapshot the timer fields while still holding m_timers:
+      // timer_remove() may overwrite current_timer under the lock,
+      // so current_timer must not be read once the lock is released
+      const itti_timer timer_snapshot = itti_inst->current_timer;
       itti_inst->timers.erase(it);
       lx.unlock();
 
@@ -47,19 +51,16 @@ void itti_mw::timer_manager_task(
       }
 
       // check time-out
-      if (itti_inst->current_timer.time_out >
-          std::chrono::system_clock::now()) {
+      if (timer_snapshot.time_out > std::chrono::system_clock::now()) {
         std::unique_lock<std::mutex> lto(itti_inst->m_timeout);
-        auto diff = itti_inst->current_timer.time_out -
-                    std::chrono::system_clock::now();
-        auto rc = itti_inst->c_timeout.wait_for(lto, diff);
+        auto diff = timer_snapshot.time_out - std::chrono::system_clock::now();
+        auto rc   = itti_inst->c_timeout.wait_for(lto, diff);
         lto.unlock();
         if (std::cv_status::timeout == rc) {
           // signal time-out
           itti_msg_timeout mto(
-              TASK_ITTI_TIMER, itti_inst->current_timer.task_id,
-              itti_inst->current_timer.id, itti_inst->current_timer.arg1_user,
-              itti_inst->current_timer.arg2_user);
+              TASK_ITTI_TIMER, timer_snapshot.task_id, timer_snapshot.id,
+              timer_snapshot.arg1_user, timer_snapshot.arg2_user);
           std::shared_ptr<itti_msg_timeout> msgsh =
               std::make_shared<itti_msg_timeout>(mto);
           int ret = itti_inst->send_msg(msgsh);
@@ -75,9 +76,8 @@ void itti_mw::timer_manager_task(
       } else {
         // signal time-out
         itti_msg_timeout mto(
-            TASK_ITTI_TIMER, itti_inst->current_timer.task_id,
-            itti_inst->current_timer.id, itti_inst->current_timer.arg1_user,
-            itti_inst->current_timer.arg2_user);
+            TASK_ITTI_TIMER, timer_snapshot.task_id, timer_snapshot.id,
+            timer_snapshot.arg1_user, timer_snapshot.arg2_user);
         std::shared_ptr<itti_msg_timeout> msgsh =
             std::make_shared<itti_msg_timeout>(mto);
         itti_inst->send_msg(msgsh);

@@ -4,8 +4,11 @@
 
 #include "amf_app.hpp"
 
+#include <cerrno>
 #include <chrono>
+#include <cstring>
 #include <gmp.h>
+#include <random>
 
 #include <boost/uuid/random_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
@@ -757,18 +760,12 @@ void amf_app::handle_itti_message(itti_sbi_n1_message_notification& itti_msg) {
 
   if (ue_ctx.supiIsSet()) {
     supi = ue_ctx.getSupi();
-    // Update UE Context
+    // Find the existing UE Context with this SUPI, if any
     uc = get_ue_context(supi);
     if (!uc) {
-      // Create a new UE Context
       Logger::amf_app().debug(
-          "No existing UE Context, Create a new one with SUPI %s",
+          "No existing UE Context with SUPI %s, a new one will be created",
           supi.c_str());
-      uc                 = std::shared_ptr<ue_context>(new ue_context());
-      uc->amf_ue_ngap_id = INVALID_AMF_UE_NGAP_ID;
-      uc->supi           = supi;
-      uc->gnb_id         = gnb_id;
-      set_ue_context(supi, uc);
     }
   }
 
@@ -790,6 +787,10 @@ void amf_app::handle_itti_message(itti_sbi_n1_message_notification& itti_msg) {
   uc = ue_context_store_.get_or_create(amf_ue_ngap_id);
 
   // Update info for UE context
+  if (!supi.empty()) {
+    uc->supi = supi;
+    set_ue_context(supi, uc);
+  }
   uc->gnb_id         = gnb_id;
   uc->amf_ue_ngap_id = amf_ue_ngap_id;
   uc->ran_ue_ngap_id = ran_ue_ngap_id;
@@ -2476,15 +2477,36 @@ void amf_app::find_non_ue_n2_info_subscriptions(
 uint32_t amf_app::generate_random_tmsi() {
   // Use the getrandom() system call
   // Note: for RHEL only supported by RHEL 8 Beta+
-  uint32_t rand_number_generated;
-  if (getrandom(&rand_number_generated, sizeof(uint32_t), GRND_NONBLOCK) ==
-      -1) {
+  uint32_t rand_number_generated = 0;
+  // Never return a non-random value, retry on failures
+  // Falling back to a blocking call if needed
+  constexpr int kMaxAttempts = 5;
+  ssize_t nb_bytes           = -1;
+  for (int attempt = 0; attempt < kMaxAttempts; ++attempt) {
+    nb_bytes =
+        getrandom(&rand_number_generated, sizeof(uint32_t), GRND_NONBLOCK);
+    if (nb_bytes == static_cast<ssize_t>(sizeof(uint32_t))) break;
     Logger::amf_app().warn(
-        "Error when generating a random number using getrandom()");
-  } else {
-    Logger::amf_app().debug(
-        "Random number generated: %ld", rand_number_generated);
+        "Error when generating a random number using getrandom() (%s), "
+        "retrying with a blocking call",
+        strerror(errno));
+    // Blocking call: waits until the kernel entropy pool is initialized
+    nb_bytes = getrandom(&rand_number_generated, sizeof(uint32_t), 0);
+    if (nb_bytes == static_cast<ssize_t>(sizeof(uint32_t))) break;
   }
+
+  if (nb_bytes != static_cast<ssize_t>(sizeof(uint32_t))) {
+    // getrandom() persistently failing (e.g. not supported): fall back to
+    // std::random_device rather than returning a predictable value
+    Logger::amf_app().error(
+        "getrandom() persistently failing (%s), falling back to "
+        "std::random_device",
+        strerror(errno));
+    std::random_device rd;
+    rand_number_generated = static_cast<uint32_t>(rd());
+  }
+
+  Logger::amf_app().debug("Random number generated: %u", rand_number_generated);
 
   return rand_number_generated;
 }
@@ -2497,9 +2519,36 @@ bool amf_app::generate_5g_guti(
 
   if (uc == nullptr) return false;
 
-  mcc      = uc->tai.mcc;
-  mnc      = uc->tai.mnc;
-  tmsi     = generate_random_tmsi();
+  mcc = uc->tai.mcc;
+  mnc = uc->tai.mnc;
+
+  // Allocate a 5G-TMSI that does not collide with an already-allocated GUTI
+  constexpr int kMaxTmsiAllocAttempts = 5;
+  bool allocated                      = false;
+  for (int attempt = 0; attempt < kMaxTmsiAllocAttempts; ++attempt) {
+    const uint32_t candidate_tmsi    = generate_random_tmsi();
+    const std::string candidate_guti = amf_conv::tmsi_to_guti(
+        mcc, mnc, amf_cfg->guami.region_id, amf_cfg->guami.amf_set_id,
+        amf_cfg->guami.amf_pointer, amf_conv::tmsi_to_string(candidate_tmsi));
+    if (find_ue_by_guti(candidate_guti) == nullptr) {
+      tmsi      = candidate_tmsi;
+      allocated = true;
+      break;
+    }
+    Logger::amf_app().warn(
+        "Generated 5G-TMSI collides with existing GUTI %s, regenerating "
+        "(attempt %d/%d)",
+        candidate_guti.c_str(), attempt + 1, kMaxTmsiAllocAttempts);
+  }
+
+  if (!allocated) {
+    Logger::amf_app().error(
+        "Could not allocate a unique 5G-TMSI after %d attempts, aborting GUTI "
+        "generation",
+        kMaxTmsiAllocAttempts);
+    return false;
+  }
+
   uc->tmsi = tmsi;
   return true;
 }
@@ -2906,7 +2955,8 @@ void amf_app::get_nrfs(std::unordered_set<std::string>& nrfs) {
           }
         }
       }
-      // Remove the promise from the list
+      // Remove the promise from the response handlers and from the local list
+      remove_promise(nssf_responses.begin()->first);
       nssf_responses.erase(nssf_responses.begin());
     }
 
@@ -3066,8 +3116,8 @@ void amf_app::trigger_pdu_session_release(
           // TODO:
         }
       }
-      // Remove the promise from the list since the result is processed or not
-      // available
+      // Remove the promise from the response handlers and from the local list
+      amf_app_inst->remove_promise(smf_responses.begin()->first);
       smf_responses.erase(smf_responses.begin());
     }
 
@@ -3084,7 +3134,10 @@ void amf_app::trigger_pdu_session_up_deactivation(
   std::vector<std::shared_ptr<pdu_session_context>> sessions_ctx;
   if (uc->get_pdu_sessions_context(sessions_ctx)) {
     // Send PDUSessionUpdateSMContextRequest to SMF for each PDU session
-    std::map<uint32_t, boost::shared_future<nlohmann::json>> smf_responses;
+    // Map PDU Session ID to <Promise ID, Future>
+    std::map<
+        uint32_t, std::pair<uint32_t, boost::shared_future<nlohmann::json>>>
+        smf_responses;
     for (auto session : sessions_ctx) {
       Logger::amf_app().debug("PDU Session ID %d", session->pdu_session_id);
       // Generate a promise and associate this promise to the curl handle
@@ -3094,7 +3147,8 @@ void amf_app::trigger_pdu_session_up_deactivation(
 
       // Store the future to be processed later
       amf_app_inst->store_promise(promise_id, p);
-      smf_responses.emplace(session->pdu_session_id, f);
+      smf_responses.emplace(
+          session->pdu_session_id, std::make_pair(promise_id, f));
       Logger::amf_app().debug("Promise ID generated %d", promise_id);
 
       Logger::amf_app().debug(
@@ -3127,7 +3181,7 @@ void amf_app::trigger_pdu_session_up_deactivation(
       // Wait for the result available and process accordingly
       std::optional<nlohmann::json> result_opt = std::nullopt;
       oai::utils::utils::wait_for_result(
-          smf_responses.begin()->second, result_opt);
+          smf_responses.begin()->second.second, result_opt);
 
       if (result_opt.has_value()) {
         nlohmann::json result = result_opt.value();
@@ -3156,8 +3210,8 @@ void amf_app::trigger_pdu_session_up_deactivation(
         is_up_activated = false;
         Logger::amf_app().warn("Could not get the HTTP response code");
       }
-      // Remove the promise from the list since the result is processed or not
-      // available
+      // Remove the promise from the response handlers and from the local list
+      amf_app_inst->remove_promise(smf_responses.begin()->second.first);
       smf_responses.erase(smf_responses.begin());
     }
   } else {
@@ -3174,7 +3228,10 @@ bool amf_app::trigger_pdu_session_up_activation(
   std::vector<std::shared_ptr<pdu_session_context>> sessions_ctx;
   if (uc->get_pdu_sessions_context(sessions_ctx)) {
     // Send PDUSessionUpdateSMContextRequest to SMF for each PDU session
-    std::map<uint32_t, boost::shared_future<nlohmann::json>> smf_responses;
+    // Map PDU Session ID to <Promise ID, Future>
+    std::map<
+        uint32_t, std::pair<uint32_t, boost::shared_future<nlohmann::json>>>
+        smf_responses;
     for (auto session : sessions_ctx) {
       Logger::amf_app().debug("PDU Session ID %d", session->pdu_session_id);
       // Generate a promise and associate this promise to the response handler
@@ -3184,7 +3241,8 @@ bool amf_app::trigger_pdu_session_up_activation(
 
       // Store the future to be processed later
       amf_app_inst->store_promise(promise_id, p);
-      smf_responses.emplace(session->pdu_session_id, f);
+      smf_responses.emplace(
+          session->pdu_session_id, std::make_pair(promise_id, f));
       Logger::amf_app().debug("Promise ID generated %d", promise_id);
 
       Logger::amf_app().debug(
@@ -3209,6 +3267,9 @@ bool amf_app::trigger_pdu_session_up_activation(
         Logger::amf_app().error(
             "Could not send ITTI message %s to task TASK_AMF_SBI",
             itti_n11_msg->get_msg_name());
+        // Remove all stored promises
+        for (const auto& response : smf_responses)
+          amf_app_inst->remove_promise(response.second.first);
         return false;
       }
     }
@@ -3217,7 +3278,7 @@ bool amf_app::trigger_pdu_session_up_activation(
       // Wait for the result available and process accordingly
       std::optional<nlohmann::json> result_opt = std::nullopt;
       oai::utils::utils::wait_for_result(
-          smf_responses.begin()->second, result_opt);
+          smf_responses.begin()->second.second, result_opt);
 
       if (result_opt.has_value()) {
         nlohmann::json result = result_opt.value();
@@ -3247,8 +3308,8 @@ bool amf_app::trigger_pdu_session_up_activation(
         Logger::amf_app().warn("Could not get response from SMF");
         activation_result = false;
       }
-      // Remove the promise from the list since the result is processed or not
-      // available
+      // Remove the promise from the response handlers and from the local list
+      amf_app_inst->remove_promise(smf_responses.begin()->second.first);
       smf_responses.erase(smf_responses.begin());
     }
   } else {
@@ -3295,6 +3356,8 @@ bool amf_app::trigger_pdu_session_up_activation(
       Logger::amf_app().error(
           "Could not send ITTI message %s to task TASK_AMF_SBI",
           itti_n11_msg->get_msg_name());
+      // Remove the stored promise
+      amf_app_inst->remove_promise(promise_id);
       return false;
     }
 

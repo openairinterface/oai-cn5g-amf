@@ -65,6 +65,12 @@ int nas_algorithms::nas_stream_encrypt_nea1(
   IV[0] = IV[2];
   snow3g_initialize(K, IV, &snow_3g_context);
   KS = (uint32_t*) malloc(4 * n);
+  // Check the allocation result before use.
+  if (KS == NULL) {
+    Logger::amf_n1().error(
+        "NEA1: cannot allocate %d octet(s) for key stream", 4 * n);
+    return -1;
+  }
   snow3g_generate_key_stream(n, (uint32_t*) KS, &snow_3g_context);
   if (zero_bit > 0) {
     KS[n - 1] = KS[n - 1] & (uint32_t) (0xFFFFFFFF << (8 - zero_bit));
@@ -171,8 +177,15 @@ int nas_algorithms::nas_stream_encrypt_nea2(
 
   if (zero_bit > 0) byte_length += 1;
 
-  ctx         = malloc(nettle_aes128.context_size);
-  data        = (uint8_t*) malloc(byte_length);
+  ctx  = malloc(nettle_aes128.context_size);
+  data = (uint8_t*) malloc(byte_length);
+  // Check the allocation results before use.
+  if (ctx == NULL || data == NULL) {
+    Logger::amf_n1().error("NEA2: cannot allocate cipher context/data buffer");
+    if (ctx != NULL) free(ctx);
+    if (data != NULL) free(data);
+    return -1;
+  }
   local_count = hton_int32(stream_cipher->count);
   memset(m, 0, sizeof(m));
   memcpy(&m[0], &local_count, 4);
@@ -224,6 +237,12 @@ int nas_algorithms::nas_stream_encrypt_nia2(
 
   local_count = hton_int32(stream_cipher->count);
   m           = (uint8_t*) calloc(m_length + 8, sizeof(uint8_t));
+  // Check the allocation result before use.
+  if (m == NULL) {
+    Logger::amf_n1().error(
+        "NIA2: cannot allocate %u octet(s) for MAC input", m_length + 8);
+    return -1;
+  }
   memcpy(&m[0], &local_count, 4);
   m[4] = ((stream_cipher->bearer & 0x1F) << 3) |
          ((stream_cipher->direction & 0x01) << 2);
