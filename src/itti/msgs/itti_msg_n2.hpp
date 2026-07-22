@@ -9,6 +9,11 @@
 #include "HandoverRequestAck.hpp"
 #include "HandoverRequiredMsg.hpp"
 #include "InitialUeMessage.hpp"
+#include "PathSwitchRequest.hpp"
+#include "PathSwitchRequestAck.hpp"
+#include "UeContextModificationFailure.hpp"
+#include "UeContextModificationRequest.hpp"
+#include "UeContextModificationResponse.hpp"
 #include "NgReset.hpp"
 #include "NgSetupRequest.hpp"
 #include "UeContextReleaseComplete.hpp"
@@ -561,6 +566,87 @@ class itti_uplink_non_ue_associated_nrppa_transport : public itti_msg_n2 {
 
   bstring nrppa_pdu;
   bstring routing_id;
+};
+
+class itti_path_switch_request : public itti_msg_n2 {
+ public:
+  itti_path_switch_request(const task_id_t origin, const task_id_t destination)
+      : itti_msg_n2(PATH_SWITCH_REQUEST, origin, destination) {
+    path_switch_req = nullptr;
+  }
+  itti_path_switch_request(const itti_path_switch_request& i) : itti_msg_n2(i) {
+    path_switch_req = i.path_switch_req;
+  }
+  virtual ~itti_path_switch_request() {}
+
+  std::shared_ptr<PathSwitchRequestMsg> path_switch_req;
+};
+
+class itti_path_switch_request_ack : public itti_msg_n2 {
+ public:
+  itti_path_switch_request_ack(
+      const task_id_t origin, const task_id_t destination)
+      : itti_msg_n2(PATH_SWITCH_REQUEST_ACK, origin, destination) {
+    path_switch_req_ack = nullptr;
+  }
+  itti_path_switch_request_ack(const itti_path_switch_request_ack& i)
+      : itti_msg_n2(i) {
+    path_switch_req_ack = i.path_switch_req_ack;
+  }
+  virtual ~itti_path_switch_request_ack() {}
+
+  std::shared_ptr<PathSwitchRequestAckMsg> path_switch_req_ack;
+};
+
+class itti_ue_context_modification_request : public itti_msg_n2 {
+ public:
+  itti_ue_context_modification_request(
+      const task_id_t origin, const task_id_t destination)
+      : itti_msg_n2(UE_CONTEXT_MODIFICATION_REQUEST, origin, destination) {
+    ue_ctx_mod_req = nullptr;
+  }
+  itti_ue_context_modification_request(
+      const itti_ue_context_modification_request& i)
+      : itti_msg_n2(i) {
+    ue_ctx_mod_req = i.ue_ctx_mod_req;
+  }
+  virtual ~itti_ue_context_modification_request() {}
+
+  std::shared_ptr<UeContextModificationRequestMsg> ue_ctx_mod_req;
+};
+
+class itti_ue_context_modification_response : public itti_msg_n2 {
+ public:
+  itti_ue_context_modification_response(
+      const task_id_t origin, const task_id_t destination)
+      : itti_msg_n2(UE_CONTEXT_MODIFICATION_RESPONSE, origin, destination) {
+    ue_ctx_mod_resp = nullptr;
+  }
+  itti_ue_context_modification_response(
+      const itti_ue_context_modification_response& i)
+      : itti_msg_n2(i) {
+    ue_ctx_mod_resp = i.ue_ctx_mod_resp;
+  }
+  virtual ~itti_ue_context_modification_response() {}
+
+  std::shared_ptr<UeContextModificationResponseMsg> ue_ctx_mod_resp;
+};
+
+class itti_ue_context_modification_failure : public itti_msg_n2 {
+ public:
+  itti_ue_context_modification_failure(
+      const task_id_t origin, const task_id_t destination)
+      : itti_msg_n2(UE_CONTEXT_MODIFICATION_FAILURE, origin, destination) {
+    ue_ctx_mod_fail = nullptr;
+  }
+  itti_ue_context_modification_failure(
+      const itti_ue_context_modification_failure& i)
+      : itti_msg_n2(i) {
+    ue_ctx_mod_fail = i.ue_ctx_mod_fail;
+  }
+  virtual ~itti_ue_context_modification_failure() {}
+
+  std::shared_ptr<UeContextModificationFailureMsg> ue_ctx_mod_fail;
 };
 
 #endif
