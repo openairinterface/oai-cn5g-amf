@@ -244,6 +244,27 @@ class amf_n2 : public oai::ngap::ngap_app {
       const sctp_assoc_id_t& gnb_assoc_id);
 
   /*
+   * Build and send an NGAP Error Indication (TS 38.413 §8.7.5 / §10)
+   * Constructs the PDU with an appropriate Cause IE and,
+   * when the triggering message used UE-associated signalling, the AMF/RAN UE
+   * NGAP ID IEs.
+   * @param [const sctp_assoc_id_t&] assoc_id: gNB Association ID
+   * @param [const sctp_stream_id_t&] stream: Stream ID
+   * @param [const std::optional<long>] amf_ue_ngap_id: AMF UE NGAP ID
+   * @param [const std::optional<uint32_t>] ran_ue_ngap_id: RAN UE NGAP ID
+   * @param [const Ngap_Cause_PR&] cause_present: Ngap_Cause_PR selector
+   * @param [long] cause_value: cause value within the selected group
+   *  @param [const std::optional<FiveGSTmsi>&] tmsi: TMSI
+   * @return void
+   */
+  void send_ng_error_indication(
+      const sctp_assoc_id_t& assoc_id, const sctp_stream_id_t& stream,
+      const std::optional<long> amf_ue_ngap_id,
+      const std::optional<uint32_t> ran_ue_ngap_id,
+      const Ngap_Cause_PR& cause_present, long cause_value,
+      const std::optional<FiveGSTmsi>& tmsi = std::nullopt);
+
+  /*
    * Send NG Setup Failure
    * @param [const T&] cause: Cause
    * @param [const e_Ngap_TimeToWait&] time_to_wait: Time to Wait IE

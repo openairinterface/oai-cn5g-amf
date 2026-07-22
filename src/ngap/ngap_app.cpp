@@ -5,13 +5,18 @@
 #include "ngap_app.hpp"
 
 #include "amf_config.hpp"
+#include "amf_n2.hpp"
 #include "logger.hpp"
 #include "ngap_message_callback.hpp"
 #include "ngap_utils.hpp"
 
 extern "C" {
+#include "Ngap_Cause.h"
+#include "Ngap_CauseProtocol.h"
 #include "Ngap_InitiatingMessage.h"
 #include "Ngap_NGAP-PDU.h"
+#include "Ngap_SuccessfulOutcome.h"
+#include "Ngap_UnsuccessfulOutcome.h"
 #include "constr_TYPE.h"
 }
 
@@ -20,6 +25,7 @@ using namespace oai::config;
 using namespace oai::ngap;
 
 extern std::unique_ptr<oai::config::amf_config> amf_cfg;
+extern amf_n2* amf_n2_inst;
 
 //------------------------------------------------------------------------------
 ngap_app::ngap_app(const std::string& address, const uint16_t port_num)
@@ -54,42 +60,85 @@ void ngap_app::handle_receive(
       blength(payload), 0, 0);
 
   if (dec_ret.code != RC_OK) {
+    // Report via Error Indication
     Logger::ngap().error("Decode NGAP message failed");
+    if (amf_n2_inst)
+      amf_n2_inst->send_ng_error_indication(
+          assoc_id, stream, std::nullopt, std::nullopt, Ngap_Cause_PR_protocol,
+          Ngap_CauseProtocol_transfer_syntax_error);
     ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, ngap_msg_pdu);
     return;
   }
 
-  if ((ngap_msg_pdu->choice.initiatingMessage->procedureCode >
-       (NGAP_PROCEDURE_CODE_MAX_VALUE - 1)) or
-      (ngap_msg_pdu->present > NGAP_PRESENT_MAX_VALUE)) {
+  Ngap_ProcedureCode_t procedure_code = 0;
+  const void* message_body            = nullptr;
+  switch (ngap_msg_pdu->present) {
+    case Ngap_NGAP_PDU_PR_initiatingMessage:
+      message_body = ngap_msg_pdu->choice.initiatingMessage;
+      if (message_body)
+        procedure_code = ngap_msg_pdu->choice.initiatingMessage->procedureCode;
+      break;
+    case Ngap_NGAP_PDU_PR_successfulOutcome:
+      message_body = ngap_msg_pdu->choice.successfulOutcome;
+      if (message_body)
+        procedure_code = ngap_msg_pdu->choice.successfulOutcome->procedureCode;
+      break;
+    case Ngap_NGAP_PDU_PR_unsuccessfulOutcome:
+      message_body = ngap_msg_pdu->choice.unsuccessfulOutcome;
+      if (message_body)
+        procedure_code =
+            ngap_msg_pdu->choice.unsuccessfulOutcome->procedureCode;
+      break;
+    default:
+      break;
+  }
+
+  if ((ngap_msg_pdu->present < Ngap_NGAP_PDU_PR_initiatingMessage) ||
+      (ngap_msg_pdu->present > NGAP_PRESENT_MAX_VALUE) ||
+      (message_body == nullptr)) {
     Logger::ngap().error(
-        "Invalid procedure code %d or present %d",
-        ngap_msg_pdu->choice.initiatingMessage->procedureCode,
+        "Invalid NGAP PDU present value %d or NULL message body, dropping",
         ngap_msg_pdu->present);
+    if (amf_n2_inst)
+      amf_n2_inst->send_ng_error_indication(
+          assoc_id, stream, std::nullopt, std::nullopt, Ngap_Cause_PR_protocol,
+          Ngap_CauseProtocol_abstract_syntax_error_reject);
+    ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, ngap_msg_pdu);
+    return;
+  }
+
+  if (procedure_code > (NGAP_PROCEDURE_CODE_MAX_VALUE - 1)) {
+    Logger::ngap().error(
+        "Invalid procedure code %ld, dropping message", procedure_code);
+    if (amf_n2_inst)
+      amf_n2_inst->send_ng_error_indication(
+          assoc_id, stream, std::nullopt, std::nullopt, Ngap_Cause_PR_protocol,
+          Ngap_CauseProtocol_abstract_syntax_error_reject);
     ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, ngap_msg_pdu);
     return;
   }
 
   Logger::ngap().debug(
-      "Decoded NGAP message, procedure code %d, present %d",
-      ngap_msg_pdu->choice.initiatingMessage->procedureCode,
+      "Decoded NGAP message, procedure code %ld, present %d", procedure_code,
       ngap_msg_pdu->present);
   ngap_utils::print_asn_msg(&asn_DEF_Ngap_NGAP_PDU, ngap_msg_pdu);
 
   // If no handler available
-  if (messages_callback[ngap_msg_pdu->choice.initiatingMessage->procedureCode]
-                       [ngap_msg_pdu->present - 1] == nullptr) {
+  if (messages_callback[procedure_code][ngap_msg_pdu->present - 1] == nullptr) {
+    // Unknown / unsupported procedure -> Error Indication, then drop.
     Logger::ngap().error(
-        "No handler available for procedure code %d and present %d",
-        ngap_msg_pdu->choice.initiatingMessage->procedureCode,
-        ngap_msg_pdu->present);
+        "No handler available for procedure code %ld and present %d",
+        procedure_code, ngap_msg_pdu->present);
+    if (amf_n2_inst)
+      amf_n2_inst->send_ng_error_indication(
+          assoc_id, stream, std::nullopt, std::nullopt, Ngap_Cause_PR_protocol,
+          Ngap_CauseProtocol_abstract_syntax_error_reject);
     ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, ngap_msg_pdu);
     return;
   }
 
   // Handle the message
-  (*messages_callback[ngap_msg_pdu->choice.initiatingMessage->procedureCode]
-                     [ngap_msg_pdu->present - 1])(
+  (*messages_callback[procedure_code][ngap_msg_pdu->present - 1])(
       assoc_id, stream, ngap_msg_pdu);
   // Typically, NGAP PDU will be freed in the handler, so do not free it here to
   // avoid double free

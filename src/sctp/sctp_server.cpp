@@ -62,6 +62,21 @@ sctp_server::~sctp_server() {
   if (res != 0) {
     Logger::sctp().error("close on socket_ failed %s", strerror(errno));
   }
+
+  // Free all remaining associations
+  {
+    std::lock_guard<std::mutex> lock(sctp_ctx_mutex_);
+    for (auto* association : sctp_ctx_) {
+      if (association != nullptr) {
+        if (association->peer_addresses != nullptr) {
+          sctp_freepaddrs(association->peer_addresses);
+        }
+        free(association);
+      }
+    }
+    sctp_ctx_.clear();
+  }
+
   Logger::sctp().debug("Thread on sctp_receiver_thread should have ended!");
 }
 
@@ -272,13 +287,36 @@ int sctp_server::sctp_read_from_socket(int sd, uint32_t ppid) {
 
 //------------------------------------------------------------------------------
 int sctp_server::sctp_handle_com_down(sctp_assoc_id_t assoc_id) {
+  Logger::sctp().debug(
+      "Handling disconnection of the association with Id (%d)", assoc_id);
+  // Remove the association from the list and free its resources first,
+  // so that no message can be sent on this association anymore
+  remove_association(assoc_id);
   app_->handle_sctp_shutdown(assoc_id);
   return SCTP_RC_DISCONNECT;
 }
 
 //------------------------------------------------------------------------------
-int sctp_server::sctp_handle_reset(const sctp_assoc_id_t assoc_id) {
-  return RETURNok;
+int sctp_server::sctp_handle_reset(
+    int sd, uint32_t ppid, struct sctp_assoc_change* sctp_assoc_changed) {
+  sctp_assoc_id_t assoc_id = (sctp_assoc_id_t) sctp_assoc_changed->sac_assoc_id;
+  Logger::sctp().debug(
+      "Handling SCTP Restart for the association with Id (%d) as down + up",
+      assoc_id);
+
+  // Down: clean up the old association (if known) and notify the application
+  if (sctp_is_assoc_in_list(assoc_id) != NULL) {
+    remove_association(assoc_id);
+    app_->handle_sctp_shutdown(assoc_id);
+  }
+
+  // Up: re-add the association
+  if (add_new_association(sd, ppid, sctp_assoc_changed) == NULL) {
+    Logger::sctp().error(
+        "Re-add association with Id (%d) after SCTP Restart error", assoc_id);
+    return SCTP_RC_ERROR;
+  }
+  return SCTP_RC_NORMAL_READ;
 }
 
 //------------------------------------------------------------------------------
@@ -296,11 +334,7 @@ int sctp_server::handle_assoc_change(
       break;
     }
     case SCTP_RESTART: {
-      if (sctp_is_assoc_in_list(
-              (sctp_assoc_id_t) sctp_assoc_changed->sac_assoc_id) != NULL) {
-        rc = sctp_handle_reset(
-            (sctp_assoc_id_t) sctp_assoc_changed->sac_assoc_id);
-      }
+      rc = sctp_handle_reset(sd, ppid, sctp_assoc_changed);
       break;
     }
     case SCTP_COMM_LOST:
@@ -327,6 +361,12 @@ sctp_association_t* sctp_server::add_new_association(
     int sd, uint32_t ppid, struct sctp_assoc_change* sctp_assoc_changed) {
   sctp_association_t* new_association = NULL;
   new_association = (sctp_association_t*) calloc(1, sizeof(sctp_association_t));
+  if (new_association == NULL) {
+    Logger::sctp().error(
+        "Failed to allocate memory for the new association with Id (%d)",
+        (sctp_assoc_id_t) sctp_assoc_changed->sac_assoc_id);
+    return NULL;
+  }
   new_association->sd         = sd;
   new_association->ppid       = ppid;
   new_association->instreams  = sctp_assoc_changed->sac_inbound_streams;
@@ -337,12 +377,22 @@ sctp_association_t* sctp_server::add_new_association(
       "Add new association with Id (%d)",
       (sctp_assoc_id_t) sctp_assoc_changed->sac_assoc_id);
 
-  sctp_ctx_.push_back(new_association);
-
   sctp_get_local_addresses(sd, NULL, NULL);
-  sctp_get_peer_addresses(
-      sd, &new_association->peer_addresses,
-      &new_association->nb_peer_addresses);
+  if (sctp_get_peer_addresses(
+          sd, &new_association->peer_addresses,
+          &new_association->nb_peer_addresses) != RETURNok) {
+    Logger::sctp().error(
+        "Failed to get peer addresses for the new association with Id (%d)",
+        new_association->assoc_id);
+    free(new_association);
+    return NULL;
+  }
+
+  {
+    std::lock_guard<std::mutex> lock(sctp_ctx_mutex_);
+    sctp_ctx_.push_back(new_association);
+  }
+
   app_->handle_sctp_new_association(
       new_association->assoc_id, new_association->instreams,
       new_association->outstreams);
@@ -351,21 +401,39 @@ sctp_association_t* sctp_server::add_new_association(
 }
 
 //------------------------------------------------------------------------------
-sctp_association_t* sctp_server::sctp_is_assoc_in_list(
+sctp_association_t* sctp_server::sctp_find_assoc_locked(
     sctp_assoc_id_t assoc_id) {
-  sctp_association_t* assoc_desc = NULL;
-
-  if (assoc_id < 0) {
-    return NULL;
-  }
-
-  for (int i = 0; i < sctp_ctx_.size(); i++) {
-    if (sctp_ctx_[i]->assoc_id == assoc_id) {
+  for (size_t i = 0; i < sctp_ctx_.size(); i++) {
+    if ((sctp_ctx_[i] != nullptr) && (sctp_ctx_[i]->assoc_id == assoc_id)) {
       return sctp_ctx_[i];
     }
   }
+  return NULL;
+}
 
-  return assoc_desc;
+//------------------------------------------------------------------------------
+sctp_association_t* sctp_server::sctp_is_assoc_in_list(
+    sctp_assoc_id_t assoc_id) {
+  std::lock_guard<std::mutex> lock(sctp_ctx_mutex_);
+  return sctp_find_assoc_locked(assoc_id);
+}
+
+//------------------------------------------------------------------------------
+void sctp_server::remove_association(sctp_assoc_id_t assoc_id) {
+  std::lock_guard<std::mutex> lock(sctp_ctx_mutex_);
+  for (auto it = sctp_ctx_.begin(); it != sctp_ctx_.end(); ++it) {
+    if ((*it != nullptr) && ((*it)->assoc_id == assoc_id)) {
+      if ((*it)->peer_addresses != nullptr) {
+        sctp_freepaddrs((*it)->peer_addresses);
+      }
+      free(*it);
+      sctp_ctx_.erase(it);
+      Logger::sctp().debug("Removed the association with Id (%d)", assoc_id);
+      return;
+    }
+  }
+  Logger::sctp().debug(
+      "The association with Id (%d) is not in the association list", assoc_id);
 }
 
 //------------------------------------------------------------------------------
@@ -466,40 +534,54 @@ int sctp_server::sctp_get_local_addresses(
 //------------------------------------------------------------------------------
 int sctp_server::sctp_send_msg(
     sctp_assoc_id_t sctp_assoc_id, sctp_stream_id_t stream, bstring* payload) {
-  sctp_association_t* assoc_desc = NULL;
-  if ((assoc_desc = sctp_is_assoc_in_list(sctp_assoc_id)) == NULL) {
-    Logger::sctp().error(
-        "This association Id (%d) has not been found in the association list",
-        sctp_assoc_id);
-    return RETURNerror;
+  // Snapshot the fields needed for the send under the lock; do not hold the
+  // lock across the (potentially blocking) sctp_sendmsg() call and do not
+  // keep the raw pointer (the association may be removed concurrently by the
+  // receiver thread)
+  int sd        = -1;
+  uint32_t ppid = 0;
+  {
+    std::lock_guard<std::mutex> lock(sctp_ctx_mutex_);
+    sctp_association_t* assoc_desc = sctp_find_assoc_locked(sctp_assoc_id);
+    if (assoc_desc == NULL) {
+      Logger::sctp().error(
+          "This association Id (%d) has not been found in the association "
+          "list",
+          sctp_assoc_id);
+      return RETURNerror;
+    }
+    if (assoc_desc->sd == -1) {
+      Logger::sctp().error(
+          "The socket is invalid (may be closed, assoc id %d)", sctp_assoc_id);
+      return RETURNerror;
+    }
+    sd   = assoc_desc->sd;
+    ppid = assoc_desc->ppid;
   }
-  if (assoc_desc->sd == -1) {
-    Logger::sctp().error(
-        "The socket is invalid (may be closed, assoc id %d)", sctp_assoc_id);
-    return RETURNerror;
-  }
+
   Logger::sctp().debug(
       "[Socket %d, Assoc ID %d] Sending buffer %p of %d bytes on stream %d "
       "with PPID %d",
-      assoc_desc->sd, sctp_assoc_id, bdata(*payload), blength(*payload), stream,
-      assoc_desc->ppid);
+      sd, sctp_assoc_id, bdata(*payload), blength(*payload), stream, ppid);
 
   // Set timetolive to 500ms
   if (sctp_sendmsg(
-          assoc_desc->sd, (const void*) bdata(*payload),
-          (size_t) blength(*payload), NULL, 0, htonl(assoc_desc->ppid), 0,
-          stream, this->sctp_ttl, 0) < 0) {
+          sd, (const void*) bdata(*payload), (size_t) blength(*payload), NULL,
+          0, htonl(ppid), 0, stream, this->sctp_ttl, 0) < 0) {
     Logger::sctp().error(
-        "[Socket %d] Send stream %u, PPID %u, len %u failed (%s, %d)",
-        assoc_desc->sd, stream, htonl(assoc_desc->ppid), blength(*payload),
-        strerror(errno), errno);
+        "[Socket %d] Send stream %u, PPID %u, len %u failed (%s, %d)", sd,
+        stream, htonl(ppid), blength(*payload), strerror(errno), errno);
     //*payload = NULL;
     return RETURNerror;
   }
   Logger::sctp().debug(
       "Successfully sent %d bytes on stream %d", blength(*payload), stream);
   //*payload = NULL;
-  assoc_desc->messages_sent++;
+  {
+    std::lock_guard<std::mutex> lock(sctp_ctx_mutex_);
+    sctp_association_t* assoc_desc = sctp_find_assoc_locked(sctp_assoc_id);
+    if (assoc_desc != NULL) assoc_desc->messages_sent++;
+  }
   return RETURNok;
 }
 

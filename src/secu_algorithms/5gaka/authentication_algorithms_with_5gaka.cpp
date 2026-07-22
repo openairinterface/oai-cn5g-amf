@@ -303,6 +303,7 @@ void Authentication_5gaka::derive_kseaf(
   // 3+netName.size); oai::utils::output_wrapper::print_buffer("amf_n1", "key
   // KEY", kausf, 32);
   kdf(kausf, 32, S, 3 + netName.size, kseaf, 32);
+  free(netName.buf);
   // oai::utils::output_wrapper::print_buffer("amf_n1", "KDF out: Kseaf", kseaf,
   // 32); Logger::amf_n1().debug("derive kseaf finished!");
 }
@@ -335,6 +336,7 @@ void Authentication_5gaka::derive_kausf(
   // 11+netName.size); oai::utils::output_wrapper::print_buffer("amf_n1", "key
   // KEY", key, 32);
   kdf(key, 32, S, 11 + netName.size, kausf, 32);
+  free(netName.buf);
   // oai::utils::output_wrapper::print_buffer("amf_n1", "KDF out: Kausf", kausf,
   // 32); Logger::amf_n1().debug("derive kausf finished!");
 }
@@ -367,6 +369,7 @@ void Authentication_5gaka::derive_kamf(
   // 7+supiLen); oai::utils::output_wrapper::print_buffer("amf_n1", "key KEY",
   // kseaf, 32);
   kdf(kseaf, 32, S, 7 + supiLen, kamf, 32);
+  free(supi.buf);
   // oai::utils::output_wrapper::print_buffer("amf_n1", "KDF out: Kamf", kamf,
   // 32); Logger::amf_n1().debug("derive kamf finished!");
 }
@@ -419,7 +422,11 @@ void Authentication_5gaka::handover_ncc_derive_knh(
     uint8_t (&knh)[AUTH_VECTOR_LENGTH_OCTETS], int ncc, bool is_prev_kgnb_set,
     uint8_t (&prev_kgnb)[AUTH_VECTOR_LENGTH_OCTETS]) {
   Logger::amf_n1().debug("derive_handover_ncc_knh ...");
-  uint8_t S[20], SS[ncc][35];
+  // ncc originates from unc->ncc (uint8_t, 0..255), so a fixed 256-row buffer
+  // always suffices;
+  uint8_t S[20], SS[256][35];
+  if (ncc < 0) ncc = 0;
+  if (ncc > 256) ncc = 256;
 
   if (is_prev_kgnb_set) {
     // If prev kgNB is already exists, copy directly

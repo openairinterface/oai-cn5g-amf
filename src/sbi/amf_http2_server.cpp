@@ -15,6 +15,7 @@
 #include "amf_config.hpp"
 #include "amf_conversions.hpp"
 #include "amf_sbi_helper.hpp"
+#include "helper/sbi_helper.hpp"
 #include "logger.hpp"
 #include "output_wrapper.hpp"
 #include "utils.hpp"
@@ -51,8 +52,23 @@ void amf_http2_server::start() {
       tls.use_certificate_chain_file(certificate_file);
       configure_tls_context_easy(ec, tls);
     } catch (std::exception& e) {
-      Logger::amf_server().error("%s", e.what());
+      // TLS was explicitly configured but could not be
+      // initialized (bad/missing key or certificate).
+      // TODO: Silently downgrade to plaintext
+      Logger::amf_server().warn(
+          "TLS is enabled but initialization failed (%s), start the SBI server "
+          "in plaintext",
+          e.what());
+      enable_tls = false;  // TODO: return;
+    }
+    // configure_tls_context_easy reports failures via the error_code.
+    if (ec) {
+      Logger::amf_server().warn(
+          "TLS is enabled but context configuration failed (%s), start the SBI "
+          "server in plaintext",
+          ec.message().c_str());
       enable_tls = false;
+      // TODO: return;
     }
   }
 
@@ -68,89 +84,117 @@ void amf_http2_server::start() {
       amf_sbi_helper::AmfCommunicationServiceBase() +
           amf_sbi_helper::AmfCommPathUeContext,
       [&](const request& request, const response& res) {
-        request.on_data([&](const uint8_t* data, std::size_t len) {
+        // OAuth2 access-token: validate the request
+        if (!oai::amf::sbi::authorize_request(request, res)) return;
+        auto body = std::make_shared<oai::amf::sbi::request_body_buffer>();
+        request.on_data([&, body](const uint8_t* data, std::size_t len) {
           if (len > 0) {
-            std::string msg((char*) data, len);
+            if (!body->append(data, len))
+              return send_response(
+                  res, oai::common::sbi::http_status_code::PAYLOAD_TOO_LARGE);
+            return;
+          }
+          // Terminating callback: the full request body has been accumulated
+          if (body->rejected()) return;
+          const std::string& msg = body->body();
+          if (!msg.empty()) {
             Logger::amf_server().debug(
                 "Received message with URI: %s", request.uri().path);
             Logger::amf_server().debug("Message content \n %s", msg.c_str());
 
-            // Get the ueContextId and method
-            std::vector<std::string> split_result;
-            boost::split(
-                split_result, request.uri().path, boost::is_any_of("/"));
-            if (split_result.size() < 6) {
-              Logger::amf_server().warn("Requested URL is not implemented");
+            try {
+              // Get the ueContextId and method
+              std::vector<std::string> split_result;
+              boost::split(
+                  split_result, request.uri().path, boost::is_any_of("/"));
+              if (split_result.size() < 6) {
+                Logger::amf_server().warn("Requested URL is not implemented");
+                return send_response(
+                    res, oai::common::sbi::http_status_code::NOT_IMPLEMENTED);
+              }
+
+              std::string ue_context_id = split_result[4];
+              Logger::amf_server().info(
+                  "ue_context_id %s", ue_context_id.c_str());
+
+              if (split_result.size() ==
+                  6) {  // N1N2MessageTransfer or N1 Message Notify
+
+                // simple parser
+                oai::utils::mime_parser sp = {};
+                if (!sp.parse(msg)) {
+                  return send_response(
+                      res, oai::common::sbi::http_status_code::BAD_REQUEST);
+                }
+
+                std::unordered_map<std::string, oai::utils::mime_part> parts =
+                    {};
+                sp.get_mime_parts(parts);
+                uint8_t size = parts.size();
+                Logger::amf_server().debug("Number of MIME parts %d", size);
+
+                // at least 2 parts for Json data and N1 (+ N2)
+                if (size < 2) {
+                  Logger::amf_server().debug(
+                      "Bad request: should have at least 2 MIME parts");
+                  return send_response(
+                      res, oai::common::sbi::http_status_code::BAD_REQUEST);
+                }
+
+                for (auto it : parts) {
+                  Logger::amf_server().debug(
+                      "MIME part: %s (%d)", it.first.c_str(),
+                      it.second.body.size());
+                }
+
+                std::string procedure = split_result[split_result.size() - 1];
+                Logger::amf_server().info("Procedure %s", procedure.c_str());
+                if (procedure.compare(
+                        amf_sbi_helper::AmfCommPathN1N2Messages) == 0) {
+                  this->n1_n2_message_transfer_handler(
+                      ue_context_id, parts, res);
+                }
+                if (procedure.compare(
+                        amf_sbi_helper::AmfCommPathN1MessageNotify) == 0) {
+                  this->n1_message_notify_handler(ue_context_id, parts, res);
+                }
+              } else if (split_result.size() == 7) {
+                std::string procedure = split_result[split_result.size() - 1];
+                Logger::amf_server().info("Procedure %s", procedure.c_str());
+                if (procedure.compare("subscriptions") == 0) {
+                  // TODO:
+                  UeN1N2InfoSubscriptionCreateData
+                      ueN1N2InfoSubscriptionCreateData = {};
+                  if (!oai::amf::sbi::parse_json_body(
+                          msg, ueN1N2InfoSubscriptionCreateData)) {
+                    return send_response(
+                        res, oai::common::sbi::http_status_code::BAD_REQUEST);
+                  }
+
+                  this->n1_n2_message_subscribe_handler(
+                      ue_context_id, ueN1N2InfoSubscriptionCreateData, res);
+                }
+              } else if (split_result.size() == 8) {
+                std::string procedure = split_result[split_result.size() - 2];
+                Logger::amf_server().info("Procedure %s", procedure.c_str());
+                if (procedure.compare("subscriptions") == 0) {
+                  std::string subscription_id = split_result[7];
+                  Logger::amf_server().info(
+                      "subscription_id %s", subscription_id.c_str());
+                  this->n1_n2_message_unsubscribe_handler(
+                      ue_context_id, subscription_id, res);
+                }
+              }
+            } catch (nlohmann::detail::exception& e) {
+              Logger::amf_server().warn(
+                  "Cannot parse the JSON data (error: %s)!", e.what());
               return send_response(
-                  res, oai::common::sbi::http_status_code::NOT_IMPLEMENTED);
-            }
-
-            std::string ue_context_id = split_result[4];
-            Logger::amf_server().info(
-                "ue_context_id %s", ue_context_id.c_str());
-
-            if (split_result.size() ==
-                6) {  // N1N2MessageTransfer or N1 Message Notify
-
-              // simple parser
-              oai::utils::mime_parser sp = {};
-              if (!sp.parse(msg)) {
-                return send_response(
-                    res, oai::common::sbi::http_status_code::BAD_REQUEST);
-              }
-
-              std::unordered_map<std::string, oai::utils::mime_part> parts = {};
-              sp.get_mime_parts(parts);
-              uint8_t size = parts.size();
-              Logger::amf_server().debug("Number of MIME parts %d", size);
-
-              // at least 2 parts for Json data and N1 (+ N2)
-              if (size < 2) {
-                Logger::amf_server().debug(
-                    "Bad request: should have at least 2 MIME parts");
-                return send_response(
-                    res, oai::common::sbi::http_status_code::BAD_REQUEST);
-              }
-
-              for (auto it : parts) {
-                Logger::amf_server().debug(
-                    "MIME part: %s (%d)", it.first.c_str(),
-                    it.second.body.size());
-              }
-
-              std::string procedure = split_result[split_result.size() - 1];
-              Logger::amf_server().info("Procedure %s", procedure.c_str());
-              if (procedure.compare(amf_sbi_helper::AmfCommPathN1N2Messages) ==
-                  0) {
-                this->n1_n2_message_transfer_handler(ue_context_id, parts, res);
-              }
-              if (procedure.compare(
-                      amf_sbi_helper::AmfCommPathN1MessageNotify) == 0) {
-                this->n1_message_notify_handler(ue_context_id, parts, res);
-              }
-            } else if (split_result.size() == 7) {
-              std::string procedure = split_result[split_result.size() - 1];
-              Logger::amf_server().info("Procedure %s", procedure.c_str());
-              if (procedure.compare("subscriptions") == 0) {
-                // TODO:
-                UeN1N2InfoSubscriptionCreateData
-                    ueN1N2InfoSubscriptionCreateData = {};
-                nlohmann::json::parse(msg.c_str())
-                    .get_to(ueN1N2InfoSubscriptionCreateData);
-
-                this->n1_n2_message_subscribe_handler(
-                    ue_context_id, ueN1N2InfoSubscriptionCreateData, res);
-              }
-            } else if (split_result.size() == 8) {
-              std::string procedure = split_result[split_result.size() - 2];
-              Logger::amf_server().info("Procedure %s", procedure.c_str());
-              if (procedure.compare("subscriptions") == 0) {
-                std::string subscription_id = split_result[7];
-                Logger::amf_server().info(
-                    "subscription_id %s", subscription_id.c_str());
-                this->n1_n2_message_unsubscribe_handler(
-                    ue_context_id, subscription_id, res);
-              }
+                  res, oai::common::sbi::http_status_code::BAD_REQUEST);
+            } catch (std::exception& e) {
+              Logger::amf_server().warn("Error: %s!", e.what());
+              return send_response(
+                  res,
+                  oai::common::sbi::http_status_code::INTERNAL_SERVER_ERROR);
             }
           }
         });
@@ -161,23 +205,37 @@ void amf_http2_server::start() {
       amf_sbi_helper::AmfEventExposureServiceBase() +
           amf_sbi_helper::AmfEvtsPathSubscriptions,
       [&](const request& request, const response& res) {
-        request.on_data([&](const uint8_t* data, std::size_t len) {
-          std::string msg((char*) data, len);
+        // OAuth2 access-token: validate the request
+        if (!oai::amf::sbi::authorize_request(request, res)) return;
+        auto body = std::make_shared<oai::amf::sbi::request_body_buffer>();
+        request.on_data([&, body](const uint8_t* data, std::size_t len) {
+          if (len > 0) {
+            if (!body->append(data, len))
+              return send_response(
+                  res, oai::common::sbi::http_status_code::PAYLOAD_TOO_LARGE);
+            return;
+          }
+          // Terminating callback: the full request body has been accumulated
+          if (body->rejected()) return;
+          const std::string& msg = body->body();
           Logger::amf_server().debug(
               "Received message with URI: %s", request.uri().path);
           try {
             std::vector<std::string> split_result;
             boost::split(
                 split_result, request.uri().path, boost::is_any_of("/"));
-            if (request.method().compare("POST") == 0 && len > 0) {
+            if (request.method().compare("POST") == 0 && !msg.empty()) {
               if (split_result.size() != 4) {
                 Logger::amf_server().warn("Requested URL is not implemented");
                 return send_response(
                     res, oai::common::sbi::http_status_code::NOT_IMPLEMENTED);
               }
               AmfCreateEventSubscription amfCreateEventSubscription;
-              nlohmann::json::parse(msg.c_str())
-                  .get_to(amfCreateEventSubscription);
+              if (!oai::amf::sbi::parse_json_body(
+                      msg, amfCreateEventSubscription)) {
+                return send_response(
+                    res, oai::common::sbi::http_status_code::BAD_REQUEST);
+              }
               this->create_event_subscription_handler(
                   amfCreateEventSubscription, res);
             } else if (request.method().compare("DELETE") == 0) {
@@ -231,16 +289,31 @@ void amf_http2_server::start() {
       amf_sbi_helper::AmfConfigurationServiceBase() +
           amf_sbi_helper::AmfConfPathConfiguration,
       [&](const request& request, const response& res) {
-        request.on_data([&](const uint8_t* data, std::size_t len) {
+        // OAuth2 access-token: validate the request
+        if (!oai::amf::sbi::authorize_request(request, res)) return;
+        auto body = std::make_shared<oai::amf::sbi::request_body_buffer>();
+        request.on_data([&, body](const uint8_t* data, std::size_t len) {
+          if (len > 0) {
+            if (!body->append(data, len))
+              return send_response(
+                  res, oai::common::sbi::http_status_code::PAYLOAD_TOO_LARGE);
+            return;
+          }
+          // Terminating callback: the full request body has been accumulated
+          if (body->rejected()) return;
+          const std::string& msg = body->body();
           Logger::amf_server().debug(
               "Received message with URI: %s", request.uri().path);
           try {
             if (request.method().compare("GET") == 0) {
               this->get_configuration_handler(res);
             }
-            if (request.method().compare("PUT") == 0 && len > 0) {
-              std::string msg((char*) data, len);
-              auto configuration_info = nlohmann::json::parse(msg.c_str());
+            if (request.method().compare("PUT") == 0 && !msg.empty()) {
+              nlohmann::json configuration_info = {};
+              if (!oai::amf::sbi::parse_json_body(msg, configuration_info)) {
+                return send_response(
+                    res, oai::common::sbi::http_status_code::BAD_REQUEST);
+              }
               this->update_configuration_handler(configuration_info, res);
             }
           } catch (nlohmann::detail::exception& e) {
@@ -257,9 +330,20 @@ void amf_http2_server::start() {
       amf_sbi_helper::AmfCommunicationServiceBase() +
           amf_sbi_helper::AmfCommPathNonUeN1N2MessageTransfer,
       [&](const request& request, const response& res) {
-        request.on_data([&](const uint8_t* data, std::size_t len) {
+        // OAuth2 access-token: validate the request
+        if (!oai::amf::sbi::authorize_request(request, res)) return;
+        auto body = std::make_shared<oai::amf::sbi::request_body_buffer>();
+        request.on_data([&, body](const uint8_t* data, std::size_t len) {
           if (len > 0) {
-            std::string msg((char*) data, len);
+            if (!body->append(data, len))
+              return send_response(
+                  res, oai::common::sbi::http_status_code::PAYLOAD_TOO_LARGE);
+            return;
+          }
+          // Terminating callback: the full request body has been accumulated
+          if (body->rejected()) return;
+          const std::string& msg = body->body();
+          if (!msg.empty()) {
             Logger::amf_server().debug(
                 "Received message with URI: %s", request.uri().path);
             Logger::amf_server().debug("");
@@ -342,9 +426,23 @@ void amf_http2_server::start() {
                   "n2_content_id: %s", n2_content_id.c_str());
             }
 
+            // Check whether N2 Content Id is valid with MIME part
+            if (parts.count(n2_content_id) == 0 ||
+                parts[n2_content_id].body.size() == 0) {
+              Logger::amf_server().error("Missing NRPPa PDU MIME part");
+              return send_response(
+                  res, oai::common::sbi::http_status_code::BAD_REQUEST);
+            }
+
             // Get NRPPA PDU
             bstring nrppa_pdu = nullptr;
             amf_conv::msg_str_2_msg_hex(parts[n2_content_id].body, nrppa_pdu);
+            if (nrppa_pdu == nullptr) {
+              Logger::amf_server().error(
+                  "Cannot convert the NRPPa PDU MIME part");
+              return send_response(
+                  res, oai::common::sbi::http_status_code::BAD_REQUEST);
+            }
             // Get Routing ID
             bstring routing_id = nullptr;
             amf_conv::string_2_bstring(
@@ -386,46 +484,57 @@ void amf_http2_server::start() {
       amf_sbi_helper::AmfCommunicationServiceBase() +
           amf_sbi_helper::AmfCommPathNonUeN1N2MessageSubscriptions,
       [&](const request& request, const response& res) {
-        request.on_data([&](const uint8_t* data, std::size_t len) {
+        // OAuth2 access-token: validate the request
+        if (!oai::amf::sbi::authorize_request(request, res)) return;
+        auto body = std::make_shared<oai::amf::sbi::request_body_buffer>();
+        request.on_data([&, body](const uint8_t* data, std::size_t len) {
           if (len > 0) {
-            std::string msg((char*) data, len);
-            try {
-              std::vector<std::string> split_result;
-              boost::split(
-                  split_result, request.uri().path, boost::is_any_of("/"));
+            if (!body->append(data, len))
+              return send_response(
+                  res, oai::common::sbi::http_status_code::PAYLOAD_TOO_LARGE);
+            return;
+          }
+          // Terminating callback: the full request body has been accumulated
+          if (body->rejected()) return;
+          const std::string& msg = body->body();
+          try {
+            std::vector<std::string> split_result;
+            boost::split(
+                split_result, request.uri().path, boost::is_any_of("/"));
 
-              if (split_result.size() < 5) {
-                Logger::amf_server().warn("Requested URL is not implemented");
-                return send_response(
-                    res, oai::common::sbi::http_status_code::NOT_IMPLEMENTED);
-              }
+            if (split_result.size() < 5) {
+              Logger::amf_server().warn("Requested URL is not implemented");
+              return send_response(
+                  res, oai::common::sbi::http_status_code::NOT_IMPLEMENTED);
+            }
 
-              // NonUeN2InfoSubscribe
-              if (request.method().compare("POST") == 0 && len > 0 &&
-                  (split_result.size() == 5)) {
-                NonUeN2InfoSubscriptionCreateData createData = {};
-                nlohmann::json::parse(msg.c_str()).get_to(createData);
-                this->non_ue_n2_info_subscribe_handler(createData, res);
-              } else if (
-                  request.method().compare("DELETE") == 0 &&
-                  (split_result.size() == 6)) {  // NonUeN2InfoUnSubscribe
-                std::string subscription_id =
-                    split_result[split_result.size() - 1];
-                Logger::amf_server().info(
-                    "n2NotifySubscriptionId %s", subscription_id.c_str());
-                this->non_ue_n2_info_unsubscribe_handler(subscription_id, res);
-              } else {
-                Logger::amf_server().warn(
-                    "Invalid request (error: Invalid Request Method)!");
+            // NonUeN2InfoSubscribe
+            if (request.method().compare("POST") == 0 && !msg.empty() &&
+                (split_result.size() == 5)) {
+              NonUeN2InfoSubscriptionCreateData createData = {};
+              if (!oai::amf::sbi::parse_json_body(msg, createData)) {
                 return send_response(
                     res, oai::common::sbi::http_status_code::BAD_REQUEST);
               }
-            } catch (std::exception& e) {
+              this->non_ue_n2_info_subscribe_handler(createData, res);
+            } else if (
+                request.method().compare("DELETE") == 0 &&
+                (split_result.size() == 6)) {  // NonUeN2InfoUnSubscribe
+              std::string subscription_id =
+                  split_result[split_result.size() - 1];
+              Logger::amf_server().info(
+                  "n2NotifySubscriptionId %s", subscription_id.c_str());
+              this->non_ue_n2_info_unsubscribe_handler(subscription_id, res);
+            } else {
               Logger::amf_server().warn(
-                  "Invalid request (error: %s)!", e.what());
+                  "Invalid request (error: Invalid Request Method)!");
               return send_response(
                   res, oai::common::sbi::http_status_code::BAD_REQUEST);
             }
+          } catch (std::exception& e) {
+            Logger::amf_server().warn("Invalid request (error: %s)!", e.what());
+            return send_response(
+                res, oai::common::sbi::http_status_code::BAD_REQUEST);
           }
         });
       });
@@ -436,64 +545,75 @@ void amf_http2_server::start() {
       amf_sbi_helper::AmfCommunicationServiceBase() +
           amf_sbi_helper::AmfCommPathSubscriptions,
       [&](const request& request, const response& res) {
-        request.on_data([&](const uint8_t* data, std::size_t len) {
+        // OAuth2 access-token: validate the request
+        if (!oai::amf::sbi::authorize_request(request, res)) return;
+        auto body = std::make_shared<oai::amf::sbi::request_body_buffer>();
+        request.on_data([&, body](const uint8_t* data, std::size_t len) {
           if (len > 0) {
-            std::string msg((char*) data, len);
-            try {
-              std::vector<std::string> split_result;
-              boost::split(
-                  split_result, request.uri().path, boost::is_any_of("/"));
+            if (!body->append(data, len))
+              return send_response(
+                  res, oai::common::sbi::http_status_code::PAYLOAD_TOO_LARGE);
+            return;
+          }
+          // Terminating callback: the full request body has been accumulated
+          if (body->rejected()) return;
+          const std::string& msg = body->body();
+          try {
+            std::vector<std::string> split_result;
+            boost::split(
+                split_result, request.uri().path, boost::is_any_of("/"));
 
-              if (split_result.size() < 5) {
-                Logger::amf_server().warn("Requested URL is not implemented");
-                return send_response(
-                    res, oai::common::sbi::http_status_code::NOT_IMPLEMENTED);
-              }
+            if (split_result.size() < 5) {
+              Logger::amf_server().warn("Requested URL is not implemented");
+              return send_response(
+                  res, oai::common::sbi::http_status_code::NOT_IMPLEMENTED);
+            }
 
-              // AMFStatusChangeSubscribe
-              if (request.method().compare("POST") == 0 && len > 0 &&
-                  (split_result.size() == 5)) {
-                SubscriptionData subscription_data = {};
-                nlohmann::json::parse(msg.c_str()).get_to(subscription_data);
-                this->amf_status_change_subscribe_handler(
-                    subscription_data, res);
-              } else if (
-                  request.method().compare("DELETE") == 0 &&
-                  (split_result.size() == 6)) {  // AMFStatusChangeUnSubscribe
-                std::string subscription_id =
-                    split_result[split_result.size() - 1];
-                Logger::amf_server().info(
-                    " AMF Status Change Subscription Id %s",
-                    subscription_id.c_str());
-
-                this->amf_status_change_unsubscribe_handler(
-                    subscription_id, res);
-              } else if (
-                  request.method().compare("PUT") == 0 &&
-                  (split_result.size() ==
-                   6)) {  // AMFStatusChangeSubscribeModify
-                std::string subscription_id =
-                    split_result[split_result.size() - 1];
-                Logger::amf_server().info(
-                    " AMF Status Change Subscription Id %s",
-                    subscription_id.c_str());
-
-                SubscriptionData subscription_data = {};
-                nlohmann::json::parse(msg.c_str()).get_to(subscription_data);
-                this->amf_status_change_subscribe_modify_handler(
-                    subscription_id, subscription_data, res);
-              } else {
-                Logger::amf_server().warn(
-                    "Invalid request (error: Invalid Request Method)!");
+            // AMFStatusChangeSubscribe
+            if (request.method().compare("POST") == 0 && !msg.empty() &&
+                (split_result.size() == 5)) {
+              SubscriptionData subscription_data = {};
+              if (!oai::amf::sbi::parse_json_body(msg, subscription_data)) {
                 return send_response(
                     res, oai::common::sbi::http_status_code::BAD_REQUEST);
               }
-            } catch (std::exception& e) {
+              this->amf_status_change_subscribe_handler(subscription_data, res);
+            } else if (
+                request.method().compare("DELETE") == 0 &&
+                (split_result.size() == 6)) {  // AMFStatusChangeUnSubscribe
+              std::string subscription_id =
+                  split_result[split_result.size() - 1];
+              Logger::amf_server().info(
+                  " AMF Status Change Subscription Id %s",
+                  subscription_id.c_str());
+
+              this->amf_status_change_unsubscribe_handler(subscription_id, res);
+            } else if (
+                request.method().compare("PUT") == 0 &&
+                (split_result.size() == 6)) {  // AMFStatusChangeSubscribeModify
+              std::string subscription_id =
+                  split_result[split_result.size() - 1];
+              Logger::amf_server().info(
+                  " AMF Status Change Subscription Id %s",
+                  subscription_id.c_str());
+
+              SubscriptionData subscription_data = {};
+              if (!oai::amf::sbi::parse_json_body(msg, subscription_data)) {
+                return send_response(
+                    res, oai::common::sbi::http_status_code::BAD_REQUEST);
+              }
+              this->amf_status_change_subscribe_modify_handler(
+                  subscription_id, subscription_data, res);
+            } else {
               Logger::amf_server().warn(
-                  "Invalid request (error: %s)!", e.what());
+                  "Invalid request (error: Invalid Request Method)!");
               return send_response(
                   res, oai::common::sbi::http_status_code::BAD_REQUEST);
             }
+          } catch (std::exception& e) {
+            Logger::amf_server().warn("Invalid request (error: %s)!", e.what());
+            return send_response(
+                res, oai::common::sbi::http_status_code::BAD_REQUEST);
           }
         });
       });
@@ -504,13 +624,24 @@ void amf_http2_server::start() {
       amf_sbi_helper::AmfStatusNotifyServiceBase() +
           amf_sbi_helper::AmfStatusNotifPathPduSessionRelease,
       [&](const request& request, const response& res) {
-        request.on_data([&](const uint8_t* data, std::size_t len) {
-          std::string msg((char*) data, len);
+        // OAuth2 access-token: validate the request
+        if (!oai::amf::sbi::authorize_request(request, res)) return;
+        auto body = std::make_shared<oai::amf::sbi::request_body_buffer>();
+        request.on_data([&, body](const uint8_t* data, std::size_t len) {
+          if (len > 0) {
+            if (!body->append(data, len))
+              return send_response(
+                  res, oai::common::sbi::http_status_code::PAYLOAD_TOO_LARGE);
+            return;
+          }
+          // Terminating callback: the full request body has been accumulated
+          if (body->rejected()) return;
+          const std::string& msg = body->body();
           try {
             std::vector<std::string> split_result;
             boost::split(
                 split_result, request.uri().path, boost::is_any_of("/"));
-            if (request.method().compare("POST") == 0 && len > 0) {
+            if (request.method().compare("POST") == 0 && !msg.empty()) {
               if (split_result.size() != 7) {
                 Logger::amf_server().warn("Requested URL is not implemented");
                 return send_response(
@@ -535,7 +666,10 @@ void amf_http2_server::start() {
               }
 
               SmContextStatusNotification statusNotification = {};
-              nlohmann::json::parse(msg.c_str()).get_to(statusNotification);
+              if (!oai::amf::sbi::parse_json_body(msg, statusNotification)) {
+                return send_response(
+                    res, oai::common::sbi::http_status_code::BAD_REQUEST);
+              }
               this->status_notify_handler(
                   ue_context_id, pdu_session_id, statusNotification, res);
             } else {
@@ -559,13 +693,24 @@ void amf_http2_server::start() {
       amf_sbi_helper::AmfCallbackBase() +
           amf_sbi_helper::AmfCallbackPathPolicyUpdateNotification,
       [&](const request& request, const response& res) {
-        request.on_data([&](const uint8_t* data, std::size_t len) {
-          std::string msg((char*) data, len);
+        // OAuth2 access-token: validate the request
+        if (!oai::amf::sbi::authorize_request(request, res)) return;
+        auto body = std::make_shared<oai::amf::sbi::request_body_buffer>();
+        request.on_data([&, body](const uint8_t* data, std::size_t len) {
+          if (len > 0) {
+            if (!body->append(data, len))
+              return send_response(
+                  res, oai::common::sbi::http_status_code::PAYLOAD_TOO_LARGE);
+            return;
+          }
+          // Terminating callback: the full request body has been accumulated
+          if (body->rejected()) return;
+          const std::string& msg = body->body();
           try {
             std::vector<std::string> split_result;
             boost::split(
                 split_result, request.uri().path, boost::is_any_of("/"));
-            if (request.method().compare("POST") == 0 && len > 0) {
+            if (request.method().compare("POST") == 0 && !msg.empty()) {
               if (split_result.size() != 7) {
                 Logger::amf_server().warn("Requested URL is not implemented");
                 return send_response(
@@ -581,7 +726,10 @@ void amf_http2_server::start() {
               if (boost::iequals(
                       action, "update")) {  // policyUpdateNotification
                 oai::_3gpp::model::PolicyUpdate policy_update = {};
-                nlohmann::json::parse(msg.c_str()).get_to(policy_update);
+                if (!oai::amf::sbi::parse_json_body(msg, policy_update)) {
+                  return send_response(
+                      res, oai::common::sbi::http_status_code::BAD_REQUEST);
+                }
                 this->update_policy_notification_handler(
                     ue_context_id, policy_update, res);
               } else if (
@@ -590,8 +738,11 @@ void amf_http2_server::start() {
                       "terminate")) {  // policyAssocitionTerminationRequestNotification
                 oai::_3gpp::model::TerminationNotification
                     termination_notification = {};
-                nlohmann::json::parse(msg.c_str())
-                    .get_to(termination_notification);
+                if (!oai::amf::sbi::parse_json_body(
+                        msg, termination_notification)) {
+                  return send_response(
+                      res, oai::common::sbi::http_status_code::BAD_REQUEST);
+                }
                 this->terminate_policy_notification_handler(
                     ue_context_id, termination_notification, res);
               } else {
@@ -620,13 +771,24 @@ void amf_http2_server::start() {
       amf_sbi_helper::AmfCallbackBase() +
           amf_sbi_helper::AmfCallbackPathNudmSdmNotification,
       [&](const request& request, const response& res) {
-        request.on_data([&](const uint8_t* data, std::size_t len) {
-          std::string msg((char*) data, len);
+        // OAuth2 access-token: validate the request
+        if (!oai::amf::sbi::authorize_request(request, res)) return;
+        auto body = std::make_shared<oai::amf::sbi::request_body_buffer>();
+        request.on_data([&, body](const uint8_t* data, std::size_t len) {
+          if (len > 0) {
+            if (!body->append(data, len))
+              return send_response(
+                  res, oai::common::sbi::http_status_code::PAYLOAD_TOO_LARGE);
+            return;
+          }
+          // Terminating callback: the full request body has been accumulated
+          if (body->rejected()) return;
+          const std::string& msg = body->body();
           try {
             std::vector<std::string> split_result;
             boost::split(
                 split_result, request.uri().path, boost::is_any_of("/"));
-            if (request.method().compare("POST") == 0 && len > 0) {
+            if (request.method().compare("POST") == 0 && !msg.empty()) {
               // URL: /namf-callback/v1/<supi>/nudm-sdm-notification
               // split_result[size-2] == <supi>
               if (split_result.size() < 2) {
@@ -636,7 +798,10 @@ void amf_http2_server::start() {
               }
               std::string supi = split_result[split_result.size() - 2];
               oai::_3gpp::model::ModificationNotification notification = {};
-              nlohmann::json::parse(msg).get_to(notification);
+              if (!oai::amf::sbi::parse_json_body(msg, notification)) {
+                return send_response(
+                    res, oai::common::sbi::http_status_code::BAD_REQUEST);
+              }
               this->nudm_sdm_notification_handler(supi, notification, res);
             } else {
               Logger::amf_server().warn(
@@ -658,7 +823,18 @@ void amf_http2_server::start() {
   server.handle(
       amf_sbi_helper::AmfMTBase() + amf_sbi_helper::AmfMTPathDomainSelection,
       [&](const request& request, const response& res) {
-        request.on_data([&](const uint8_t* data, std::size_t len) {
+        // OAuth2 access-token: validate the request
+        if (!oai::amf::sbi::authorize_request(request, res)) return;
+        auto body = std::make_shared<oai::amf::sbi::request_body_buffer>();
+        request.on_data([&, body](const uint8_t* data, std::size_t len) {
+          if (len > 0) {
+            if (!body->append(data, len))
+              return send_response(
+                  res, oai::common::sbi::http_status_code::PAYLOAD_TOO_LARGE);
+            return;
+          }
+          // Terminating callback: the full request body has been accumulated
+          if (body->rejected()) return;
           Logger::amf_server().debug(
               "Received message with URI: %s", request.uri().path);
           try {
@@ -666,7 +842,7 @@ void amf_http2_server::start() {
             std::vector<std::string> split_result;
             boost::split(
                 split_result, request.uri().path, boost::is_any_of("/"));
-            if (request.method().compare("GET") == 0 && len > 0) {
+            if (request.method().compare("GET") == 0) {
               if (split_result.size() != 6) {
                 Logger::amf_server().warn("Requested URL is not implemented");
                 return send_response(
@@ -706,6 +882,11 @@ void amf_http2_server::start() {
                 "Can not parse the JSON data (error: %s)!", e.what());
             return send_response(
                 res, oai::common::sbi::http_status_code::BAD_REQUEST);
+          } catch (std::exception& e) {
+            Logger::amf_sbi().warn(
+                "Can not parse the query parameters (error: %s)!", e.what());
+            return send_response(
+                res, oai::common::sbi::http_status_code::BAD_REQUEST);
           }
         });
       });
@@ -716,16 +897,27 @@ void amf_http2_server::start() {
       amf_sbi_helper::AmfLocationServiceBase() +
           amf_sbi_helper::AmflocPathUeContextIdProvideLocInfo,
       [&](const request& request, const response& res) {
-        request.on_data([&](const uint8_t* data, std::size_t len) {
+        // OAuth2 access-token: validate the request
+        if (!oai::amf::sbi::authorize_request(request, res)) return;
+        auto body = std::make_shared<oai::amf::sbi::request_body_buffer>();
+        request.on_data([&, body](const uint8_t* data, std::size_t len) {
+          if (len > 0) {
+            if (!body->append(data, len))
+              return send_response(
+                  res, oai::common::sbi::http_status_code::PAYLOAD_TOO_LARGE);
+            return;
+          }
+          // Terminating callback: the full request body has been accumulated
+          if (body->rejected()) return;
+          const std::string& msg = body->body();
           Logger::amf_server().debug(
               "Received message with URI: %s", request.uri().path);
-          std::string msg((char*) data, len);
           try {
             // Get the ueContextId and method
             std::vector<std::string> split_result;
             boost::split(
                 split_result, request.uri().path, boost::is_any_of("/"));
-            if (request.method().compare("POST") == 0 && len > 0) {
+            if (request.method().compare("POST") == 0 && !msg.empty()) {
               if (split_result.size() != 6) {
                 Logger::amf_server().warn("Requested URL is not implemented");
                 return send_response(
@@ -738,7 +930,10 @@ void amf_http2_server::start() {
                   "ue_context_id %s", ue_context_id.c_str());
 
               oai::_3gpp::model::RequestLocInfo request_loc_info = {};
-              nlohmann::json::parse(msg.c_str()).get_to(request_loc_info);
+              if (!oai::amf::sbi::parse_json_body(msg, request_loc_info)) {
+                return send_response(
+                    res, oai::common::sbi::http_status_code::BAD_REQUEST);
+              }
 
               this->provide_location_info_handler(
                   ue_context_id, request_loc_info, res);
@@ -791,9 +986,11 @@ void amf_http2_server::create_event_subscription_handler(
 
   // TODO: To be fixed with correct location
   if (sub_id != -1) {
+    char sbi_addr_str[INET_ADDRSTRLEN] = {};
+    inet_ntop(AF_INET, &amf_cfg->sbi.addr4, sbi_addr_str, sizeof(sbi_addr_str));
     std::string location =
-        std::string(inet_ntoa(*((struct in_addr*) &amf_cfg->sbi.addr4))) + ":" +
-        std::to_string(amf_cfg->sbi.port) + NAMF_EVENT_EXPOSURE_BASE +
+        std::string(sbi_addr_str) + ":" + std::to_string(amf_cfg->sbi.port) +
+        NAMF_EVENT_EXPOSURE_BASE +
         amf_cfg->sbi.api_version.value_or(DEFAULT_SBI_API_VERSION) +
         "/namf-evts/" + std::to_string(sub_id);
 
@@ -824,8 +1021,12 @@ void amf_http2_server::n1_n2_message_transfer_handler(
   std::string supi = ueContextId;
 
   N1N2MessageTransferReqData n1N2MessageTransferReqData = {};
-  nlohmann::json::parse(parts[oai::utils::JSON_CONTENT_ID_MIME].body.c_str())
-      .get_to(n1N2MessageTransferReqData);
+  if (parts.count(oai::utils::JSON_CONTENT_ID_MIME) == 0 ||
+      !oai::amf::sbi::parse_json_body(
+          parts[oai::utils::JSON_CONTENT_ID_MIME].body,
+          n1N2MessageTransferReqData)) {
+    return send_response(res, oai::common::sbi::http_status_code::BAD_REQUEST);
+  }
 
   bool request_valid = true;
   bstring n1sm       = nullptr;
@@ -896,6 +1097,12 @@ void amf_http2_server::n1_n2_message_transfer_handler(
         }
 
         amf_conv::msg_str_2_msg_hex(parts[n2_content_id].body, n2sm);
+        // Verify the content after the conversion
+        if (n2sm == nullptr) {
+          Logger::amf_server().error("Cannot convert the N2 SM MIME part");
+          request_valid = false;
+          break;
+        }
         // Store N2 SM in PDU Session Context
         psc->n2sm              = bstrcpy(n2sm);
         psc->is_n2sm_available = true;
@@ -943,6 +1150,12 @@ void amf_http2_server::n1_n2_message_transfer_handler(
 
         // NRPPA PDU
         amf_conv::msg_str_2_msg_hex(parts[n2_content_id].body, nrppa_pdu);
+        // Verify the content after the conversion
+        if (nrppa_pdu == nullptr) {
+          Logger::amf_server().error("Cannot convert the NRPPa PDU MIME part");
+          request_valid = false;
+          break;
+        }
         amf_conv::string_2_bstring(
             n1N2MessageTransferReqData.getN2InfoContainer()
                 .getNrppaInfo()
@@ -1000,6 +1213,12 @@ void amf_http2_server::n1_n2_message_transfer_handler(
             parts[n1_content_id].body.substr(
                 0, parts[n1_content_id].body.length()),
             n1sm);
+        // Verify the content after the conversion
+        if (n1sm == nullptr) {
+          Logger::amf_server().error("Cannot convert the N1 SM MIME part");
+          request_valid = false;
+          break;
+        }
         oai::utils::output_wrapper::print_buffer(
             "amf_server", "Received N1 SM", (uint8_t*) bdata(n1sm),
             blength(n1sm));
@@ -1091,8 +1310,12 @@ void amf_http2_server::n1_message_notify_handler(
 
   std::string supi                            = ueContextId;
   N1MessageNotification n1MessageNotification = {};
-  nlohmann::json::parse(parts[oai::utils::JSON_CONTENT_ID_MIME].body.c_str())
-      .get_to(n1MessageNotification);
+  if (parts.count(oai::utils::JSON_CONTENT_ID_MIME) == 0 ||
+      !oai::amf::sbi::parse_json_body(
+          parts[oai::utils::JSON_CONTENT_ID_MIME].body,
+          n1MessageNotification)) {
+    return send_response(res, oai::common::sbi::http_status_code::BAD_REQUEST);
+  }
 
   Logger::amf_server().debug("N1MessageContainer is present, handling...");
 
@@ -2269,6 +2492,21 @@ void amf_http2_server::stop() {
 //------------------------------------------------------------------------------
 void amf_http2_server::send_response(
     const response& res, uint32_t response_code) {
+  // SBI-14 — attach a minimal application/problem+json ProblemDetails body on
+  // error responses (4xx/5xx) per TS 29.500 §5.2.7, so peer NFs receive a
+  // structured error instead of an empty body. Success (2xx/3xx) responses keep
+  // their previous empty-body behavior unchanged. TODO(spec): the full
+  // mandatory ProblemDetails schema (canonical type URIs + per-service cause
+  // enums) is pending TS 29.500/29.518 — see helper/sbi_problem_details.hpp.
+  if (response_code >= 400) {
+    const nlohmann::json body =
+        oai::amf::sbi::build_problem_details(response_code);
+    header_map h;
+    h.emplace("content-type", header_value{"application/problem+json", false});
+    res.write_head(response_code, h);
+    res.end(body.dump().c_str());
+    return;
+  }
   res.write_head(response_code);
   res.end();
 }

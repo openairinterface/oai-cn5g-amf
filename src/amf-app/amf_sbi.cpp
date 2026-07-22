@@ -6,6 +6,9 @@
 
 #include <nlohmann/json.hpp>
 
+#include <algorithm>
+#include <cctype>
+
 #include "3gpp_24.501.hpp"
 #include "3gpp_29.500.h"
 #include "3gpp_29.502.h"
@@ -39,6 +42,131 @@ extern amf_sbi* amf_sbi_inst;
 extern amf_n1* amf_n1_inst;
 extern amf_app* amf_app_inst;
 extern std::shared_ptr<oai::http::http_client> http_client_inst;
+
+namespace {
+constexpr bool kSsrfStrictHostPolicy = false;
+
+// RFC 3986 percent-encoding for a query-string VALUE. Unreserved
+// characters pass through unchanged, everything else (incl. '{', '}', '"', ' ',
+// ',', '&', '=') is percent-encoded. Decoding the result yields exactly the
+// input, so valid values are unaffected.
+std::string url_encode(const std::string& value) {
+  static const char hex[] = "0123456789ABCDEF";
+  std::string out;
+  out.reserve(value.size() * 3);
+  for (unsigned char c : value) {
+    if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') ||
+        (c >= '0' && c <= '9') || c == '-' || c == '_' || c == '.' ||
+        c == '~') {
+      out.push_back(static_cast<char>(c));
+    } else {
+      out.push_back('%');
+      out.push_back(hex[(c >> 4) & 0x0F]);
+      out.push_back(hex[c & 0x0F]);
+    }
+  }
+  return out;
+}
+
+std::string to_lower_copy(const std::string& s) {
+  std::string r = s;
+  std::transform(r.begin(), r.end(), r.begin(), [](unsigned char c) {
+    return static_cast<char>(std::tolower(c));
+  });
+  return r;
+}
+
+// Reject link-local and IPv6 link-local (fe80::/10)
+bool is_link_local_or_metadata(const std::string& host_lower) {
+  if (host_lower.rfind("169.254.", 0) == 0) return true;
+  if (host_lower.rfind("fe80:", 0) == 0) return true;
+  return false;
+}
+
+bool is_loopback_host(const std::string& host_lower) {
+  return host_lower == "localhost" || host_lower == "::1" ||
+         host_lower == "0.0.0.0" || host_lower.rfind("127.", 0) == 0;
+}
+
+// When a request that a caller is waiting on (via promise_id) fails
+// before/without a response being produced, resolve the promise with a failure
+// so the caller returns immediately instead of blocking until the
+// GATEWAY_TIMEOUT.
+void resolve_promise_failure(uint32_t promise_id) {
+  if (promise_id == 0 || amf_app_inst == nullptr) return;
+  nlohmann::json response_data                = {};
+  response_data[kSbiResponseHttpResponseCode] = 0;
+  amf_app_inst->trigger_process_response(promise_id, response_data);
+}
+}  // namespace
+
+//------------------------------------------------------------------------------
+bool amf_sbi::is_allowed_uri(const std::string& uri) {
+  // Scheme must be present and be http/https. https is preferred but http is
+  // accepted so that non-TLS intra-core deployments keep working.
+  const auto scheme_end = uri.find("://");
+  if (scheme_end == std::string::npos || scheme_end == 0) {
+    Logger::amf_sbi().warn(
+        "Rejecting outbound URI (no scheme / not absolute): %s", uri.c_str());
+    return false;
+  }
+  const std::string scheme = to_lower_copy(uri.substr(0, scheme_end));
+  if (scheme != "http" && scheme != "https") {
+    Logger::amf_sbi().warn(
+        "Rejecting outbound URI (unsupported scheme '%s'): %s", scheme.c_str(),
+        uri.c_str());
+    return false;
+  }
+
+  // Extract the authority (up to the first '/', '?' or '#').
+  std::string rest         = uri.substr(scheme_end + 3);
+  const auto authority_end = rest.find_first_of("/?#");
+  std::string authority    = (authority_end == std::string::npos) ?
+                                 rest :
+                                 rest.substr(0, authority_end);
+
+  // Strip any userinfo ("user:pass@").
+  const auto at = authority.rfind('@');
+  if (at != std::string::npos) authority = authority.substr(at + 1);
+
+  // Extract the host, handling "[ipv6]:port" and "host:port".
+  std::string host;
+  if (!authority.empty() && authority.front() == '[') {
+    const auto close = authority.find(']');
+    if (close == std::string::npos) {
+      Logger::amf_sbi().warn(
+          "Rejecting outbound URI (malformed IPv6 authority): %s", uri.c_str());
+      return false;
+    }
+    host = authority.substr(1, close - 1);
+  } else {
+    host = authority.substr(0, authority.find(':'));
+  }
+
+  if (host.empty()) {
+    Logger::amf_sbi().warn(
+        "Rejecting outbound URI (empty host): %s", uri.c_str());
+    return false;
+  }
+
+  const std::string host_lower = to_lower_copy(host);
+  if (is_link_local_or_metadata(host_lower)) {
+    Logger::amf_sbi().warn(
+        "Rejecting outbound URI (link-local / metadata host '%s'): %s",
+        host.c_str(), uri.c_str());
+    return false;
+  }
+
+  if (kSsrfStrictHostPolicy && is_loopback_host(host_lower)) {
+    Logger::amf_sbi().warn(
+        "Rejecting outbound URI (loopback host '%s' blocked by strict SSRF "
+        "policy): %s",
+        host.c_str(), uri.c_str());
+    return false;
+  }
+
+  return true;
+}
 
 //------------------------------------------------------------------------------
 void amf_sbi_task(void*) {
@@ -300,7 +428,10 @@ void amf_sbi::handle_itti_message(
     itti_nsmf_pdusession_update_sm_context& itti_msg) {
   std::shared_ptr<ue_context> uc = amf_app_inst->get_ue_context(
       itti_msg.ran_ue_ngap_id, itti_msg.amf_ue_ngap_id);
-  if (uc == nullptr) return;
+  if (uc == nullptr) {
+    resolve_promise_failure(itti_msg.promise_id);
+    return;
+  }
 
   std::string supi = uc->supi;
 
@@ -310,11 +441,15 @@ void amf_sbi::handle_itti_message(
       supi.c_str(), itti_msg.pdu_session_id);
 
   std::shared_ptr<pdu_session_context> psc = {};
-  if (!uc->get_pdu_session_context(itti_msg.pdu_session_id, psc)) return;
+  if (!uc->get_pdu_session_context(itti_msg.pdu_session_id, psc)) {
+    resolve_promise_failure(itti_msg.promise_id);
+    return;
+  }
 
   std::string remote_uri = {};
   if (!amf_sbi_helper::get_smf_pdu_session_context_uri(psc, remote_uri)) {
     Logger::amf_sbi().error("Could not find Nsmf_PDUSession URI");
+    resolve_promise_failure(itti_msg.promise_id);
     return;
   }
   remote_uri += NSMF_PDU_SESSION_MODIFY;
@@ -364,6 +499,11 @@ void amf_sbi::handle_itti_message(
   bool request_result = send_http_request(
       remote_uri, json_part, n1sm_msg, n2sm_msg, supi, itti_msg.pdu_session_id,
       amf_cfg->support_features.http_version, itti_msg.promise_id);
+
+  // On failure send_http_request() never resolves the promise (it only
+  // resolves on the success path); resolve it here so a waiting caller does not
+  // block until GATEWAY_TIMEOUT.
+  if (!request_result) resolve_promise_failure(itti_msg.promise_id);
 
   if (request_result and
       (boost::iequals(itti_msg.n2sm_info_type, "PDU_RES_SETUP_RSP"))) {
@@ -643,8 +783,13 @@ void amf_sbi::handle_itti_message(
     itti_nsmf_pdusession_release_sm_context& itti_msg) {
   std::shared_ptr<pdu_session_context> psc = {};
   if (!amf_app_inst->get_pdu_session_context(
-          itti_msg.supi, itti_msg.pdu_session_id, psc))
+          itti_msg.supi, itti_msg.pdu_session_id, psc)) {
+    Logger::amf_sbi().error(
+        "Could not find PDU Session Context (SUPI %s, PDU Session ID %d), "
+        "cannot send Nsmf_PDUSession_ReleaseSMContext to SMF",
+        itti_msg.supi.c_str(), itti_msg.pdu_session_id);
     return;
+  }
 
   std::string remote_uri = {};
   if (!amf_sbi_helper::get_smf_pdu_session_context_uri(psc, remote_uri)) {
@@ -753,6 +898,13 @@ void amf_sbi::handle_itti_message(itti_sbi_notify_subscribed_event& itti_msg) {
     std::string uri        = i.get_notify_uri();
     uint32_t response_code = 0;
 
+    // Validate the URL before using it
+    if (!is_allowed_uri(uri)) {
+      Logger::amf_sbi().warn(
+          "Skipping event notification: notifyUri rejected by SSRF policy");
+      continue;
+    }
+
     send_http_request(
         uri, oai::common::sbi::method_e::POST, body, response_json,
         response_code, amf_cfg->support_features.http_version);
@@ -775,7 +927,7 @@ void amf_sbi::handle_itti_message(
   plmn_id["mnc"]         = itti_msg.plmn.mnc;
 
   std::string parameters = {};
-  parameters             = "?plmn-id=" + plmn_id.dump();
+  parameters             = "?plmn-id=" + url_encode(plmn_id.dump());
   uri += parameters;
 
   nlohmann::json response_data = {};
@@ -819,9 +971,10 @@ void amf_sbi::handle_itti_message(
   tai["tac"]           = std::to_string(itti_msg.tai.tac);
 
   std::string parameters = {};
-  parameters = "?nf-type=AMF&nf-id=" + amf_app_inst->get_nf_instance() +
-               "&slice-info-request-for-registration=" + slice_info.dump() +
-               "&tai=" + tai.dump();
+  parameters =
+      "?nf-type=AMF&nf-id=" + url_encode(amf_app_inst->get_nf_instance()) +
+      "&slice-info-request-for-registration=" + url_encode(slice_info.dump()) +
+      "&tai=" + url_encode(tai.dump());
   //"?home-plmn-id=" + home_plmn_id.dump();
   uri += parameters;
 
@@ -877,6 +1030,13 @@ void amf_sbi::handle_itti_message(itti_sbi_n1_message_notify& itti_msg) {
   std::string uri = itti_msg.target_amf_uri + "/ue-contexts/" + itti_msg.supi +
                     "/n1-message-notify";
 
+  // Validate the URL before using it
+  if (!is_allowed_uri(uri)) {
+    Logger::amf_sbi().warn(
+        "Aborting N1 Message Notify: target AMF URI rejected by SSRF policy");
+    return;
+  }
+
   nlohmann::json json_data = {};
   json_data[oai::utils::N1_SM_CONTENT_ID]["contentId"] =
       oai::utils::N1_SM_CONTENT_ID;
@@ -913,6 +1073,13 @@ void amf_sbi::handle_itti_message(itti_sbi_n2_info_notify& itti_msg) {
 
   uint32_t response_code = 0;
   std::string n1sm_msg   = {};
+
+  // Validate the URL before using it
+  if (!is_allowed_uri(itti_msg.nf_uri)) {
+    Logger::amf_sbi().warn(
+        "Aborting N2 Info Notify: NF URI rejected by SSRF policy");
+    return;
+  }
 
   send_http_request(
       itti_msg.nf_uri, json_part, n1sm_msg, n2_info_msg,
@@ -1181,7 +1348,7 @@ void amf_sbi::handle_itti_message(itti_sbi_retrieve_am_data& itti_msg) {
   nlohmann::json plmn_id = {};
   to_json(plmn_id, itti_msg.plmn_id);
   std::string parameters = {};
-  parameters             = "?plmn-id=" + plmn_id.dump();
+  parameters             = "?plmn-id=" + url_encode(plmn_id.dump());
   uri += parameters;
 
   oai::http::response http_response = {};
@@ -1227,7 +1394,7 @@ void amf_sbi::handle_itti_message(
   nlohmann::json plmn_id = {};
   to_json(plmn_id, itti_msg.plmn_id);
   std::string parameters = {};
-  parameters             = "?plmn-id=" + plmn_id.dump();
+  parameters             = "?plmn-id=" + url_encode(plmn_id.dump());
   uri += parameters;
 
   oai::http::response http_response = {};
@@ -2149,9 +2316,9 @@ void amf_sbi::get_network_slice_information(
 
   std::string parameters = {};
   parameters.append("?nf-type=AMF&nf-id=")
-      .append(amf_instance_id)
+      .append(url_encode(amf_instance_id))
       .append("&slice-info-request-for-pdu-session=")
-      .append(slice_info.dump());
+      .append(url_encode(slice_info.dump()));
   nssf_uri += parameters;
 
   Logger::amf_sbi().debug(
