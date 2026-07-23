@@ -24,7 +24,7 @@ At the moment, it contains the following network elements:
 
 Each has its own repository: this repository (`oai-cn5g-amf`) is meant for AMF.
 
-# Licence info
+## Licence info
 
 The source code is distributed under `Collaborative Standards Software License v1.0 (CSSL v1.0)`.
 For more details, visit the [OAI Website](https://openairinterface.org/oai-cssl/).
@@ -35,31 +35,24 @@ file at the root of this repository.
 Certain files in the repository are using MIT License and documentation is distributed under
 Creative Commons Attribution 4.0 International license.
 
-For third-party softwares, please refer to the NOTICE file.
+For third-party softwares, please refer to the [NOTICE](NOTICE) file.
 
-# Where to start
+## Collaborative Development
 
-The Openair-CN-5G AMF code is written, executed, and tested on UBUNTU server bionic version.
-Other Linux distributions support will be added later on.
+This source code is hosted and maintained on GitHub, enabling collaborative development and contribution:
 
-More details on the supported feature set is available on this [page](docs/FEATURE_SET.md).
+* Repository: [https://github.com/openairinterface/oai-cn5g-amf](https://github.com/openairinterface/oai-cn5g-amf)
 
-# Collaborative work
+Contribution guidelines and development workflows are described in the [CONTRIBUTING](CONTRIBUTING.md) file.
 
-This source code is managed through a GITLAB server, a collaborative development platform:
+For information about supported features and capabilities, see the [Feature Set](docs/FEATURE_SET.md).
 
-*  URL: [https://gitlab.eurecom.fr/oai/cn5g/oai-cn5g-amf](https://gitlab.eurecom.fr/oai/cn5g/oai-cn5g-amf).
+## Contribution Requests
 
-Process is explained in [CONTRIBUTING](CONTRIBUTING.md) file.
+Anyone is welcome to contribute to any part of the codebase and any network component.
 
-# Contribution requests
+Contributions can include bug fixes, suggestions, design and architecture improvements, as well as feedback on coding and implementation.
 
-In a general way, anybody who is willing can contribute on any part of the
-code in any network component.
-
-Contributions can be simple bugfixes, advices and remarks on the design,
-architecture, coding/implementation.
-
-# Release Notes
+## Release Notes
 
 They are available on the [CHANGELOG](CHANGELOG.md) file.
