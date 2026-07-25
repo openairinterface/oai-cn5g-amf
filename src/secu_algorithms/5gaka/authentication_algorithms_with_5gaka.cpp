@@ -369,7 +369,7 @@ void Authentication_5gaka::derive_kamf(
   // 7+supiLen); oai::utils::output_wrapper::print_buffer("amf_n1", "key KEY",
   // kseaf, 32);
   kdf(kseaf, 32, S, 7 + supiLen, kamf, 32);
-  free(supi.buf);
+  // free(supi.buf);
   // oai::utils::output_wrapper::print_buffer("amf_n1", "KDF out: Kamf", kamf,
   // 32); Logger::amf_n1().debug("derive kamf finished!");
 }
