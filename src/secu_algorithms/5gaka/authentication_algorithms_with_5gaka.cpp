@@ -313,9 +313,15 @@ void Authentication_5gaka::derive_kausf(
     uint8_t ak[6], uint8_t kausf[32]) {
   Logger::amf_n1().debug("derive_kausf ...");
   // Logger::amf_n1().debug("inputstring: snn(%s)", serving_network.c_str());
-  OCTET_STRING_t netName;
-  OCTET_STRING_fromBuf(
-      &netName, serving_network.c_str(), serving_network.length());
+
+  OCTET_STRING_t netName = {};
+  if (OCTET_STRING_fromBuf(
+          &netName, serving_network.c_str(), serving_network.length()) != 0) {
+    Logger::amf_n1().error(
+        "Could not encode Network Name for Kausf derivation");
+    return;
+  }
+
   // oai::utils::output_wrapper::print_buffer("amf_n1", "inputstring: snn(hex)",
   // netName.buf, netName.size);
   uint8_t S[100];
