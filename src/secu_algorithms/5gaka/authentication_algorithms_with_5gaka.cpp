@@ -288,9 +288,13 @@ void Authentication_5gaka::derive_kseaf(
     std::string serving_network, uint8_t kausf[32], uint8_t kseaf[32]) {
   Logger::amf_n1().debug("derive_kseaf ...");
   // Logger::amf_n1().debug("inputstring: snn(%s)", serving_network.c_str());
-  OCTET_STRING_t netName;
-  OCTET_STRING_fromBuf(
-      &netName, serving_network.c_str(), serving_network.length());
+  OCTET_STRING_t netName = {};
+  if (OCTET_STRING_fromBuf(
+          &netName, serving_network.c_str(), serving_network.length()) != 0) {
+    Logger::amf_n1().error(
+        "Could not encode Network Name for Kseaf derivation");
+    return;
+  }
   // oai::utils::output_wrapper::print_buffer("amf_n1", "inputstring: snn(hex)",
   // netName.buf, netName.size);
   uint8_t S[100];
