@@ -349,8 +349,11 @@ void Authentication_5gaka::derive_kamf(
   // int supiLen = (imsi.length()*sizeof(unsigned char))/2;
   // unsigned char * supi = (unsigned char*)calloc(1, supiLen);
   // hexStr2Byte(imsi.c_str(), supi, imsi.length());
-  OCTET_STRING_t supi;
-  OCTET_STRING_fromBuf(&supi, ueSupi.c_str(), ueSupi.length());
+  OCTET_STRING_t supi = {};
+  if (OCTET_STRING_fromBuf(&supi, ueSupi.c_str(), ueSupi.length()) != 0) {
+    Logger::amf_n1().error("Could not encode SUPI for Kamf derivation");
+    return;
+  }
   // uint8_t supi[8] = {0x64, 0xf0, 0x11, 0x10, 0x32, 0x54, 0x76, 0x98};
   int supiLen = supi.size;
   // oai::utils::output_wrapper::print_buffer("amf_n1", "inputstring:
@@ -369,7 +372,7 @@ void Authentication_5gaka::derive_kamf(
   // 7+supiLen); oai::utils::output_wrapper::print_buffer("amf_n1", "key KEY",
   // kseaf, 32);
   kdf(kseaf, 32, S, 7 + supiLen, kamf, 32);
-  // free(supi.buf);
+  free(supi.buf);
   // oai::utils::output_wrapper::print_buffer("amf_n1", "KDF out: Kamf", kamf,
   // 32); Logger::amf_n1().debug("derive kamf finished!");
 }
