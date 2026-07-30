@@ -9,6 +9,7 @@
 #include "logger.hpp"
 #include "ngap_message_callback.hpp"
 #include "ngap_utils.hpp"
+#include "output_wrapper.hpp"
 
 extern "C" {
 #include "Ngap_Cause.h"
@@ -59,13 +60,19 @@ void ngap_app::handle_receive(
       NULL, &asn_DEF_Ngap_NGAP_PDU, (void**) &ngap_msg_pdu, bdata(payload),
       blength(payload), 0, 0);
 
+  oai::utils::output_wrapper::print_buffer(
+      "ngap_app", "NGAP", (const uint8_t*) bdata(payload), blength(payload));
+
   if (dec_ret.code != RC_OK) {
     // Report via Error Indication
-    Logger::ngap().error("Decode NGAP message failed");
-    if (amf_n2_inst)
-      amf_n2_inst->send_ng_error_indication(
-          assoc_id, stream, std::nullopt, std::nullopt, Ngap_Cause_PR_protocol,
-          Ngap_CauseProtocol_transfer_syntax_error);
+    Logger::ngap().error(
+        "Decode NGAP message failed, code %d, consumed %zu bits, payload %d "
+        "bytes",
+        dec_ret.code, dec_ret.consumed, blength(payload));
+    // if (amf_n2_inst)
+    // amf_n2_inst->send_ng_error_indication(
+    //    assoc_id, stream, std::nullopt, std::nullopt, Ngap_Cause_PR_protocol,
+    //    Ngap_CauseProtocol_transfer_syntax_error);
     ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, ngap_msg_pdu);
     return;
   }
