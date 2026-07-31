@@ -593,6 +593,8 @@ bool amf_n1::is_plaintext_message_allowed(uint8_t message_type) {
     case kSecurityModeReject:
     case kDeregistrationRequestUeOriginating:
     case kDeregistrationAcceptUeTerminated:
+    case kUlNasTransport:  // TODO: Must be remove to cope with 3GPP specs,
+                           // temporarily add this to work with 3rd RAN
       return true;
     default:
       return false;

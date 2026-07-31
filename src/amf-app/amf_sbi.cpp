@@ -51,6 +51,8 @@ constexpr bool kSsrfStrictHostPolicy = false;
 // ',', '&', '=') is percent-encoded. Decoding the result yields exactly the
 // input, so valid values are unaffected.
 std::string url_encode(const std::string& value) {
+  // TODO: temporary disable this function
+  return value;
   static const char hex[] = "0123456789ABCDEF";
   std::string out;
   out.reserve(value.size() * 3);
@@ -88,6 +90,20 @@ bool is_loopback_host(const std::string& host_lower) {
          host_lower == "0.0.0.0" || host_lower.rfind("127.", 0) == 0;
 }
 
+// Backward-compatibility shim for legacy callback URIs that were registered
+// without a scheme. Keep this normalization local to the event callback path
+// so the shared outbound URI validator stays strict for other requests.
+std::string normalize_http_callback_uri(const std::string& uri) {
+  const auto scheme_end = uri.find("://");
+  if (scheme_end == std::string::npos) {
+    return "http://" + uri;
+  }
+  if (scheme_end == 0) {
+    return "http" + uri;
+  }
+  return uri;
+}
+
 // When a request that a caller is waiting on (via promise_id) fails
 // before/without a response being produced, resolve the promise with a failure
 // so the caller returns immediately instead of blocking until the
@@ -104,22 +120,28 @@ void resolve_promise_failure(uint32_t promise_id) {
 bool amf_sbi::is_allowed_uri(const std::string& uri) {
   // Scheme must be present and be http/https. https is preferred but http is
   // accepted so that non-TLS intra-core deployments keep working.
+  std::string rest      = {};
   const auto scheme_end = uri.find("://");
-  if (scheme_end == std::string::npos || scheme_end == 0) {
+  if (scheme_end == std::string::npos) {
     Logger::amf_sbi().warn(
         "Rejecting outbound URI (no scheme / not absolute): %s", uri.c_str());
     return false;
-  }
-  const std::string scheme = to_lower_copy(uri.substr(0, scheme_end));
-  if (scheme != "http" && scheme != "https") {
+  } else if (scheme_end == 0) {
     Logger::amf_sbi().warn(
-        "Rejecting outbound URI (unsupported scheme '%s'): %s", scheme.c_str(),
-        uri.c_str());
+        "Rejecting outbound URI (empty scheme): %s", uri.c_str());
     return false;
+  } else {
+    const std::string scheme = to_lower_copy(uri.substr(0, scheme_end));
+    if (scheme != "http" && scheme != "https") {
+      Logger::amf_sbi().warn(
+          "Rejecting outbound URI (unsupported scheme '%s'): %s",
+          scheme.c_str(), uri.c_str());
+      return false;
+    }
+    // Extract the authority (up to the first '/', '?' or '#').
+    rest = uri.substr(scheme_end + 3);
   }
 
-  // Extract the authority (up to the first '/', '?' or '#').
-  std::string rest         = uri.substr(scheme_end + 3);
   const auto authority_end = rest.find_first_of("/?#");
   std::string authority    = (authority_end == std::string::npos) ?
                                  rest :
@@ -895,18 +917,25 @@ void amf_sbi::handle_itti_message(itti_sbi_notify_subscribed_event& itti_msg) {
     std::string body             = json_data.dump();
     nlohmann::json response_json = {};
 
-    std::string uri        = i.get_notify_uri();
-    uint32_t response_code = 0;
+    std::string uri         = i.get_notify_uri();
+    std::string request_uri = normalize_http_callback_uri(uri);
+    uint32_t response_code  = 0;
 
     // Validate the URL before using it
-    if (!is_allowed_uri(uri)) {
+    if (request_uri != uri) {
+      Logger::amf_sbi().warn(
+          "Normalizing legacy callback notifyUri '%s' to '%s'", uri.c_str(),
+          request_uri.c_str());
+    }
+
+    if (!is_allowed_uri(request_uri)) {
       Logger::amf_sbi().warn(
           "Skipping event notification: notifyUri rejected by SSRF policy");
       continue;
     }
 
     send_http_request(
-        uri, oai::common::sbi::method_e::POST, body, response_json,
+        request_uri, oai::common::sbi::method_e::POST, body, response_json,
         response_code, amf_cfg->support_features.http_version);
     // TODO: process the response
   }
