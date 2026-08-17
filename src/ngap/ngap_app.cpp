@@ -9,6 +9,7 @@
 #include "logger.hpp"
 #include "ngap_message_callback.hpp"
 #include "ngap_utils.hpp"
+#include "output_wrapper.hpp"
 
 extern "C" {
 #include "Ngap_Cause.h"
@@ -20,12 +21,46 @@ extern "C" {
 #include "constr_TYPE.h"
 }
 
+#include <vector>
+
 using namespace sctp;
 using namespace oai::config;
 using namespace oai::ngap;
 
 extern std::unique_ptr<oai::config::amf_config> amf_cfg;
 extern amf_n2* amf_n2_inst;
+
+namespace {
+
+// Some gNB stacks encode RAN_UE_NGAP_ID open types with a leading APER padding
+// byte. The current generated decoder treats that as a 5-octet constrained
+// integer and rejects the whole PDU before AMF can inspect the message.
+// Normalize only that exact IE shape and retry decoding.
+bool normalize_ran_ue_ngap_id_open_type(
+    const bstring payload, std::vector<uint8_t>& out) {
+  const auto* data = reinterpret_cast<const uint8_t*>(bdata(payload));
+  const int len    = blength(payload);
+
+  if (len < 12) return false;
+  if (data[0] != 0x00 || data[2] != 0x40 || data[3] == 0x00) return false;
+
+  for (int i = 4; i <= len - 7; ++i) {
+    if (data[i] != 0x00 || data[i + 1] != 0x55 || data[i + 2] != 0x00 ||
+        data[i + 3] != 0x05 || data[i + 4] != 0xc0) {
+      continue;
+    }
+
+    out.assign(data, data + len);
+    out[3] -= 1;
+    out[i + 3] = 0x04;
+    out.erase(out.begin() + i + 4);
+    return true;
+  }
+
+  return false;
+}
+
+}  // namespace
 
 //------------------------------------------------------------------------------
 ngap_app::ngap_app(const std::string& address, const uint16_t port_num)
@@ -59,9 +94,32 @@ void ngap_app::handle_receive(
       NULL, &asn_DEF_Ngap_NGAP_PDU, (void**) &ngap_msg_pdu, bdata(payload),
       blength(payload), 0, 0);
 
+  std::vector<uint8_t> normalized_payload;
+  if (dec_ret.code != RC_OK &&
+      normalize_ran_ue_ngap_id_open_type(payload, normalized_payload)) {
+    Logger::ngap().warn(
+        "Retrying NGAP decode after normalizing RAN_UE_NGAP_ID open type "
+        "length");
+    ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, ngap_msg_pdu);
+    ngap_msg_pdu = (Ngap_NGAP_PDU_t*) calloc(1, sizeof(Ngap_NGAP_PDU_t));
+    if (!ngap_msg_pdu) {
+      Logger::ngap().error("Failed to allocate memory for NGAP PDU");
+      return;
+    }
+    dec_ret = aper_decode(
+        NULL, &asn_DEF_Ngap_NGAP_PDU, (void**) &ngap_msg_pdu,
+        normalized_payload.data(), normalized_payload.size(), 0, 0);
+  }
+
+  oai::utils::output_wrapper::print_buffer(
+      "ngap_app", "NGAP", (const uint8_t*) bdata(payload), blength(payload));
+
   if (dec_ret.code != RC_OK) {
     // Report via Error Indication
-    Logger::ngap().error("Decode NGAP message failed");
+    Logger::ngap().error(
+        "Decode NGAP message failed, code %d, consumed %zu bits, payload %d "
+        "bytes",
+        dec_ret.code, dec_ret.consumed, blength(payload));
     if (amf_n2_inst)
       amf_n2_inst->send_ng_error_indication(
           assoc_id, stream, std::nullopt, std::nullopt, Ngap_Cause_PR_protocol,
