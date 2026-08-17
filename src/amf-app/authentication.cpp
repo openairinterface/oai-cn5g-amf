@@ -187,9 +187,13 @@ void authentication::generate_5g_he_av_in_udm(
 void authentication::annex_a_4_33501(
     uint8_t ck[16], uint8_t ik[16], uint8_t* input, uint8_t rand[16],
     std::string& serving_network, uint8_t* output) {
-  OCTET_STRING_t netName;
-  OCTET_STRING_fromBuf(
-      &netName, serving_network.c_str(), serving_network.length());
+  OCTET_STRING_t netName = {};
+  if (OCTET_STRING_fromBuf(
+          &netName, serving_network.c_str(), serving_network.length()) != 0) {
+    Logger::authentication().error(
+        "Could not encode Network Name for XRES* derivation");
+    return;
+  }
   uint8_t S[100];
   S[0] = 0x6B;
   memcpy(&S[1], netName.buf, netName.size);
@@ -226,6 +230,7 @@ void authentication::annex_a_4_33501(
   for (int i = 0; i < 16; i++) output[i] = out[16 + i];
   oai::utils::output_wrapper::print_buffer(
       "authentication", "XRES*(new)", out, AUTH_VECTOR_LENGTH_OCTETS);
+  free(netName.buf);
 }
 
 //------------------------------------------------------------------------------
