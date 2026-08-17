@@ -288,9 +288,13 @@ void Authentication_5gaka::derive_kseaf(
     std::string serving_network, uint8_t kausf[32], uint8_t kseaf[32]) {
   Logger::amf_n1().debug("derive_kseaf ...");
   // Logger::amf_n1().debug("inputstring: snn(%s)", serving_network.c_str());
-  OCTET_STRING_t netName;
-  OCTET_STRING_fromBuf(
-      &netName, serving_network.c_str(), serving_network.length());
+  OCTET_STRING_t netName = {};
+  if (OCTET_STRING_fromBuf(
+          &netName, serving_network.c_str(), serving_network.length()) != 0) {
+    Logger::amf_n1().error(
+        "Could not encode Network Name for Kseaf derivation");
+    return;
+  }
   // oai::utils::output_wrapper::print_buffer("amf_n1", "inputstring: snn(hex)",
   // netName.buf, netName.size);
   uint8_t S[100];
@@ -313,9 +317,15 @@ void Authentication_5gaka::derive_kausf(
     uint8_t ak[6], uint8_t kausf[32]) {
   Logger::amf_n1().debug("derive_kausf ...");
   // Logger::amf_n1().debug("inputstring: snn(%s)", serving_network.c_str());
-  OCTET_STRING_t netName;
-  OCTET_STRING_fromBuf(
-      &netName, serving_network.c_str(), serving_network.length());
+
+  OCTET_STRING_t netName = {};
+  if (OCTET_STRING_fromBuf(
+          &netName, serving_network.c_str(), serving_network.length()) != 0) {
+    Logger::amf_n1().error(
+        "Could not encode Network Name for Kausf derivation");
+    return;
+  }
+
   // oai::utils::output_wrapper::print_buffer("amf_n1", "inputstring: snn(hex)",
   // netName.buf, netName.size);
   uint8_t S[100];
@@ -349,8 +359,11 @@ void Authentication_5gaka::derive_kamf(
   // int supiLen = (imsi.length()*sizeof(unsigned char))/2;
   // unsigned char * supi = (unsigned char*)calloc(1, supiLen);
   // hexStr2Byte(imsi.c_str(), supi, imsi.length());
-  OCTET_STRING_t supi;
-  OCTET_STRING_fromBuf(&supi, ueSupi.c_str(), ueSupi.length());
+  OCTET_STRING_t supi = {};
+  if (OCTET_STRING_fromBuf(&supi, ueSupi.c_str(), ueSupi.length()) != 0) {
+    Logger::amf_n1().error("Could not encode SUPI for Kamf derivation");
+    return;
+  }
   // uint8_t supi[8] = {0x64, 0xf0, 0x11, 0x10, 0x32, 0x54, 0x76, 0x98};
   int supiLen = supi.size;
   // oai::utils::output_wrapper::print_buffer("amf_n1", "inputstring:

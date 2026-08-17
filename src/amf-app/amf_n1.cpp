@@ -4,7 +4,9 @@
 
 #include "amf_n1.hpp"
 
+#include <algorithm>
 #include <bitset>
+#include <cctype>
 
 #include "3gpp_24.501.hpp"
 #include "AmfEventReport.h"
@@ -3041,8 +3043,18 @@ bool amf_n1::_5g_aka_confirmation_from_ausf(
         }
 
         if (!confirmation_data_response.kseafIsSet()) return false;
-        unsigned char* kseaf_hex = amf_conv::format_string_as_hex(
-            confirmation_data_response.getKseaf());
+        const std::string kseaf = confirmation_data_response.getKseaf();
+        if (kseaf.length() != (AUTH_VECTOR_LENGTH_OCTETS * 2) ||
+            !std::all_of(kseaf.begin(), kseaf.end(), [](unsigned char c) {
+              return std::isxdigit(c);
+            })) {
+          Logger::amf_n1().warn(
+              "Invalid kseaf received from AUSF, expected %d hex characters",
+              AUTH_VECTOR_LENGTH_OCTETS * 2);
+          return false;
+        }
+        unsigned char* kseaf_hex = amf_conv::format_string_as_hex(kseaf);
+        if (!kseaf_hex) return false;
         memcpy(nc->_5g_av[0].kseaf, kseaf_hex, AUTH_VECTOR_LENGTH_OCTETS);
         oai::utils::output_wrapper::print_buffer(
             "amf_n1", "5G AV: kseaf", nc->_5g_av[0].kseaf,
