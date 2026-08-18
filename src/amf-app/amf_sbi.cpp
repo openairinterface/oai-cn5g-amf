@@ -1908,6 +1908,10 @@ bool amf_sbi::send_http_request(
 
   if (http_response.status_code ==
       oai::common::sbi::http_status_code::NO_RESPONSE) {
+    Logger::amf_sbi().error(
+        "HTTP request timeout (no response received) for Create SM Context "
+        "(SUPI: %s, PDU Session ID: %d, URI: %s)",
+        supi.c_str(), pdu_session_id, remote_uri.c_str());
     return false;
   }
 
@@ -1977,6 +1981,13 @@ bool amf_sbi::send_http_request(
           "Location of the created SMF context: %s",
           loc_header->second.c_str());
       psc->smf_info.context_location = loc_header->second;
+      Logger::amf_sbi().debug(
+          "Stored SMF context_location for PDU Session ID %d, SUPI %s: %s",
+          pdu_session_id, supi.c_str(), psc->smf_info.context_location.c_str());
+      Logger::amf_sbi().debug(
+          "SMF info_available: %s, uri_root: %s",
+          psc->smf_info.info_available ? "true" : "false",
+          psc->smf_info.uri_root.c_str());
     }
 
     try {
