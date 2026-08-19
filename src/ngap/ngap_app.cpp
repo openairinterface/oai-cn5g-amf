@@ -32,11 +32,11 @@ extern amf_n2* amf_n2_inst;
 
 namespace {
 
-// Some gNB stacks encode RAN_UE_NGAP_ID open types with a leading APER padding
-// byte. The current generated decoder treats that as a 5-octet constrained
-// integer and rejects the whole PDU before AMF can inspect the message.
+// Some gNB stacks encode NGAP open types with a leading APER padding
+// byte. The current generated decoder may either reject the whole PDU or decode
+// the padded value as a different IE ID.
 // Normalize only that exact IE shape and retry decoding.
-bool normalize_ran_ue_ngap_id_open_type(
+bool normalize_ngap_open_types(
     const bstring payload, std::vector<uint8_t>& out) {
   const auto* data = reinterpret_cast<const uint8_t*>(bdata(payload));
   const int len    = blength(payload);
