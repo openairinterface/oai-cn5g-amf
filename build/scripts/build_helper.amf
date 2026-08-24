@@ -1,106 +1,96 @@
 # SPDX-License-Identifier: LicenseRef-CSSL-1.0
 
-################################
-# include helper functions
-################################
+# -------------------------------------------------------------------------------
+# Install the build and runtime dependencies of the OAI AMF: distribution
+# packages plus the libraries that are built from source.
+# Ubuntu 24.04 and the RHEL/Rocky 9 family are the supported distributions.
+# -------------------------------------------------------------------------------
+
+# -------------------------------------------------------------------------------
+# Include the shared helper functions.
+# -------------------------------------------------------------------------------
+
 SCRIPT=$(readlink -f ${BASH_SOURCE})
 THIS_SCRIPT_PATH=`dirname $SCRIPT`
-source $THIS_SCRIPT_PATH/../common-build/installation/build_helper
-source $THIS_SCRIPT_PATH/../common-build/installation/build_helper.fmt
-source $THIS_SCRIPT_PATH/../common-build/installation/build_helper.spdlog
-source $THIS_SCRIPT_PATH/../common-build/installation/build_helper.pistache
-source $THIS_SCRIPT_PATH/../common-build/installation/build_helper.nlohmann
-source $THIS_SCRIPT_PATH/../common-build/installation/build_helper.nghttp2
-source $THIS_SCRIPT_PATH/../common-build/installation/build_helper.yamlcpp
-source $THIS_SCRIPT_PATH/../common-build/installation/build_helper.cpr
+COMMON_BUILD_PATH=$THIS_SCRIPT_PATH/../common-build/installation
 
-#-------------------------------------------------------------------------------
-#arg1 is force (0 or 1) (no interactive script)
-#arg2 is debug (0 or 1) (install debug libraries)
+source $COMMON_BUILD_PATH/build_helper
+for helper in fmt spdlog pistache nlohmann nghttp2 yamlcpp cpr; do
+  source $COMMON_BUILD_PATH/build_helper.$helper
+done
+
+# -------------------------------------------------------------------------------
+# Install everything needed to build the AMF: the distribution packages, then
+# the libraries that are built from source.
+# -------------------------------------------------------------------------------
+
+# arg1 is force (0 or 1) (no interactive script)
+# arg2 is debug (0 or 1) (install debug libraries)
+
 check_install_amf_deps(){
 
-  if [ $1 -gt 0 ]; then
-    OPTION="-y"
-  else
-    OPTION=""
-  fi
-  if [ $2 -eq 0 ]; then
-    debug=0
-  else
-    debug=1
-  fi
+  OPTION=""
+  [ $1 -gt 0 ] && OPTION="-y"
+  debug=0
+  [ $2 -ne 0 ] && debug=1
 
   echo "Check supported distribution"
-  check_supported_distribution
-  [[ $? -ne 0 ]] && return $?
+  check_supported_distribution || {
+    echo_error "$(get_distribution_release) is not a supported distribution"
+    return 1
+  }
 
   # prevent lock on /var/lib/dpkg/lock
-  if [[ $OS_DISTRO == "ubuntu" ]]; then
-    #$SUDO systemctl mask apt-daily.service
-    #$SUDO systemctl mask apt-daily.timer
-    #$SUDO systemctl mask apt-daily-upgrade.service
-    #$SUDO systemctl mask apt-daily-upgrade.timer
-    if [ $IS_CONTAINER -eq 0 ]; then
-      $SUDO sed -i 's/1/0/g' /etc/apt/apt.conf.d/10periodic
-    fi
+  if [[ $OS_DISTRO == "ubuntu" ]] && [ $IS_CONTAINER -eq 0 ]; then
+    $SUDO sed -i 's/1/0/g' /etc/apt/apt.conf.d/10periodic
   fi
 
   update_package_db
 
-
   check_enable_epel_repos
 
   # Compilers, generators, ...
+  PACKAGE_LIST="\
+    autoconf \
+    automake \
+    $CMAKE \
+    git"
   if [[ $OS_DISTRO == "ubuntu" ]]; then
-    PACKAGE_LIST="\
-      autoconf \
-      automake \
-      build-essential \
-      $CMAKE \
-      git"
+    # build-essential pulls in gcc, g++ and make
+    PACKAGE_LIST="$PACKAGE_LIST build-essential"
   elif [[ "$OS_BASEDISTRO" == "fedora" ]]; then
-    PACKAGE_LIST="\
-      autoconf \
-      automake \
-      gcc-c++ \
-      $CMAKE \
-      make \
-      git"
+    PACKAGE_LIST="$PACKAGE_LIST gcc-c++ make"
   else
     echo_fatal "$OS_DISTRO is not a supported distribution."
   fi
   echo "Install build tools"
-  $SUDO $INSTALLER install $OPTION $PACKAGE_LIST
-  ret=$?;[[ $ret -ne 0 ]] && return $ret
+  $SUDO $INSTALLER install $OPTION $PACKAGE_LIST || return $?
 
   # Libraries
+  PACKAGE_LIST="\
+    libtool \
+    libxml2 \
+    openssl \
+    ninja-build \
+    meson"
   if [[ $OS_DISTRO == "ubuntu" ]]; then
-    case "$(get_distribution_release)" in
-      "ubuntu24.04")
-        specific_packages="libasio-dev libboost-all-dev libasan8"
-        ;;
-    esac
-    # removed libspdlog-dev
-    PACKAGE_LIST="\
-      $specific_packages \
+    PACKAGE_LIST="$PACKAGE_LIST \
+      libasio-dev \
+      libboost-all-dev \
+      libasan8 \
       mysql-client \
       libmysqlclient-dev \
       libcurl4-gnutls-dev \
       libevent-dev \
       libsctp-dev \
       libssl-dev \
-      libtool \
-      libxml2 \
       libxml2-dev \
-      openssl \
       nettle-dev \
       libcurl4 \
       net-tools \
-      pkg-config \
-      ninja-build \
-      meson"
+      pkg-config"
   elif [[ "$OS_BASEDISTRO" == "fedora" ]]; then
-    PACKAGE_LIST="\
+    PACKAGE_LIST="$PACKAGE_LIST \
       mysql \
       mysql-devel \
       mysql-libs \
@@ -108,70 +98,36 @@ check_install_amf_deps(){
       lksctp-tools \
       lksctp-tools-devel \
       openssl-devel \
-      libtool \
-      libxml2 \
       libxml2-devel \
-      openssl \
       check \
       nettle-devel \
       libcurl-devel \
       pkgconfig \
-      ninja-build \
-      meson \
       libasan"
   else
     echo_fatal "$OS_DISTRO is not a supported distribution."
   fi
   echo "Install distro libs"
-  $SUDO $INSTALLER install $OPTION $PACKAGE_LIST
-
-  ret=$?;[[ $ret -ne 0 ]] && return $ret
+  $SUDO $INSTALLER install $OPTION $PACKAGE_LIST || return $?
   echo "distro libs installation complete"
 
-  install_fmt_from_git $1 $2
-  ret=$?;[[ $ret -ne 0 ]] && return $ret
-
-  install_spdlog_from_git $1 $2
-  ret=$?;[[ $ret -ne 0 ]] && return $ret
-
-  install_pistache_from_git $1 $2
-  ret=$?;[[ $ret -ne 0 ]] && return $ret
-
-  install_nlohmann_from_git $1 $2
-  ret=$?;[[ $ret -ne 0 ]] && return $ret
-
-  install_nghttp2_from_git $1 $2
-  ret=$?;[[ $ret -ne 0 ]] && return $ret
-
-  install_cpr_from_git $1 $2
-  ret=$?;[[ $ret -ne 0 ]] && return $ret
-
-  # latest usage of yaml-cpp suggests that we should be using 0.7+ version
-  # To be sure, let's install from source all the time for the moment
-  if [[ $OS_DISTRO == "ubuntu" ]]; then
-    case "$(get_distribution_release)" in
-      "ubuntu24.04")
-        # probably 0.8.0
-        #$SUDO $INSTALLER install $OPTION libyaml-cpp0.8 libyaml-cpp-dev
-        install_libyaml_cpp_from_git $1 $2
-        ret=$?;[[ $ret -ne 0 ]] && return $ret
-        ;;
-    esac
-  elif [[ "$OS_BASEDISTRO" == "fedora" ]]; then
-    # definitely, 0.6.2 as PPA installed is not enough
-    # $SUDO $INSTALLER install $OPTION yaml-cpp yaml-cpp-devel
-    install_libyaml_cpp_from_git $1 $2
-    ret=$?;[[ $ret -ne 0 ]] && return $ret
-  fi
+  for lib in fmt spdlog pistache nlohmann nghttp2 cpr libyaml_cpp; do
+    install_${lib}_from_git $1 $2 || return $?
+  done
 
   $SUDO ldconfig
   return 0
 
 }
 
+# -------------------------------------------------------------------------------
+# Distribution detection.
+# -------------------------------------------------------------------------------
+
 OS_DISTRO=$(grep "^ID=" /etc/os-release | sed "s/ID=//" | sed "s/\"//g")
 OS_RELEASE=$(grep "^VERSION_ID=" /etc/os-release | sed "s/VERSION_ID=//" | sed "s/\"//g")
 
+# Echoes the distribution and its release joined, e.g. ubuntu24.04.
 get_distribution_release() {
     if [[ ! -z "$OS_DISTRO$OS_RELEASE" ]]; then
         echo "$OS_DISTRO$OS_RELEASE"
@@ -180,6 +136,7 @@ get_distribution_release() {
     fi
 }
 
+# Returns 1 where LTTNG is supported: build_amf adds -DUSE_LTTNG=ON on 1.
 check_platform_for_lttng() {
   local distribution=$(get_distribution_release)
   if [[ "$distribution" == "ubuntu24.04" ]]; then
