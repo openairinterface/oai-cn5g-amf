@@ -6,7 +6,6 @@ archives/
 *.swp
 .vscode
 
-amf.conf.dev
 amf.entrypoint.sh
 
 # Packet Capture
