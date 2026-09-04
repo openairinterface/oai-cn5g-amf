@@ -59,6 +59,7 @@ void N1N2MessageCollectionDocumentApiImpl::n1_n2_message_transfer(
   bstring n2sm       = nullptr;
   bstring nrppa_pdu  = nullptr;
   bstring routing_id = nullptr;
+  bstring n1lpp      = nullptr;
 
   auto itti_msg = std::make_shared<itti_n1n2_message_transfer_request>(
       AMF_SERVER, TASK_AMF_APP);  // TODO: May not be used
@@ -202,9 +203,12 @@ void N1N2MessageCollectionDocumentApiImpl::n1_n2_message_transfer(
         Logger::amf_server().debug(
             "Key for PDU Session Context: SUPI (%s)", supi.c_str());
         std::shared_ptr<pdu_session_context> psc = {};
+
         if (!amf_app_inst->get_pdu_session_context(
                 supi, (uint8_t) n1N2MessageTransferReqData.getPduSessionId(),
                 psc)) {
+          Logger::amf_server().error(
+              "Cannot get PDU Session Context with SUPI (%s)", supi.c_str());
           send_response(code, response_json, response);
           return;
         }
@@ -214,7 +218,6 @@ void N1N2MessageCollectionDocumentApiImpl::n1_n2_message_transfer(
                 .getN1MessageContent()
                 .getContentId();
         Logger::amf_server().debug("N1 Content Id: %s", n1_content_id.c_str());
-
         if (parts.count(n1_content_id) == 0 ||
             parts[n1_content_id].body.size() == 0) {
           send_response(code, response_json, response);
@@ -240,14 +243,45 @@ void N1N2MessageCollectionDocumentApiImpl::n1_n2_message_transfer(
       } break;
 
       case N1MessageClass_anyOf::eN1MessageClass_anyOf::LPP: {
+        Logger::amf_server().info("RECEIVED AN LPP MESSAGE \n");
+
+        std::string n1_content_id =
+            n1N2MessageTransferReqData.getN1MessageContainer()
+                .getN1MessageContent()
+                .getContentId();
+        Logger::amf_server().debug("N1 Content Id: %s", n1_content_id.c_str());
+
+        if (parts.count(n1_content_id) == 0 ||
+            parts[n1_content_id].body.size() == 0) {
+          send_response(code, response_json, response);
+          return;
+        }
+        amf_conv::msg_str_2_msg_hex(
+            parts[n1_content_id].body.substr(
+                0, parts[n1_content_id].body.length()),
+            n1lpp);
+        oai::utils::output_wrapper::print_buffer(
+            "amf_server", "Received N1 LPP", (uint8_t*) bdata(n1lpp),
+            blength(n1lpp));
+
+        itti_msg->n1lpp        = bstrcpy(n1lpp);
+        itti_msg->is_n1lpp_set = true;
+
+        if (n1N2MessageTransferReqData.lcsCorrelationIdIsSet()) {
+          itti_msg->lcs_correlation_id = std::make_optional<std::string>(
+              n1N2MessageTransferReqData.getLcsCorrelationId());
+          Logger::amf_server().debug(
+              "LCS Correlation ID: %s",
+              n1N2MessageTransferReqData.getLcsCorrelationId().c_str());
+        }
+
+      } break;
         // N1 LPP Container Present
         // TODO:
-        response.send(
-            Pistache::Http::Code::Ok,
-            "N1N2MessageCollectionDocumentApiImpl::n1_n2_message_transfer API "
-            "(Unsupported N1 Message Class: LPP)");
-        return;
-      } break;
+        // response.send(
+        // Pistache::Http::Code::Ok,"N1N2MessageCollectionDocumentApiImpl::n1_n2_message_transfer
+        // API ""(Unsupported N1 Message Class: LPP)"); return;
+        //} break;
 
       default: {
         // TODO:
@@ -295,6 +329,7 @@ void N1N2MessageCollectionDocumentApiImpl::n1_n2_message_transfer(
         itti_msg->get_msg_name());
   }
 
+  oai::utils::utils::bdestroy_wrapper(&n1lpp);
   oai::utils::utils::bdestroy_wrapper(&n1sm);
   oai::utils::utils::bdestroy_wrapper(&n2sm);
   oai::utils::utils::bdestroy_wrapper(&nrppa_pdu);
