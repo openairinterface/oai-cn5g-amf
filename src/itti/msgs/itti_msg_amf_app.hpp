@@ -75,50 +75,59 @@ class itti_n1n2_message_transfer_request : public itti_msg_amf_app {
       const task_id_t origin, const task_id_t destination)
       : itti_msg_amf_app(N1N2_MESSAGE_TRANSFER_REQ, origin, destination) {
     supi             = {};
+    n1lpp            = nullptr;
     n1sm             = nullptr;
     n2sm             = nullptr;
     nrppa_pdu        = nullptr;
     routing_id       = nullptr;
     is_n2sm_set      = false;
     is_n1sm_set      = false;
+    is_n1lpp_set     = false;
     is_nrppa_pdu_set = false;
     is_ppi_set       = false;
 
-    n2sm_info_type = {};
-    pdu_session_id = 0;
-    ppi            = 0;
+    n2sm_info_type     = {};
+    pdu_session_id     = 0;
+    ppi                = 0;
+    lcs_correlation_id = std::nullopt;
   }
   itti_n1n2_message_transfer_request(
       const itti_n1n2_message_transfer_request& i)
       : itti_msg_amf_app(i) {
     supi             = i.supi;
+    n1lpp            = i.n1lpp;
     n1sm             = i.n1sm;
     n2sm             = i.n2sm;
     nrppa_pdu        = i.nrppa_pdu;
     routing_id       = i.routing_id;
     is_n2sm_set      = i.is_n2sm_set;
     is_n1sm_set      = i.is_n1sm_set;
+    is_n1lpp_set     = i.is_n1lpp_set;
     is_nrppa_pdu_set = i.is_nrppa_pdu_set;
     is_ppi_set       = i.is_ppi_set;
 
-    n2sm_info_type = i.n2sm_info_type;
-    pdu_session_id = i.pdu_session_id;
-    ppi            = i.ppi;
+    n2sm_info_type     = i.n2sm_info_type;
+    pdu_session_id     = i.pdu_session_id;
+    ppi                = i.ppi;
+    lcs_correlation_id = i.lcs_correlation_id;
   }
 
   std::string supi;
+  bstring n1lpp;
   bstring n1sm;
   bstring n2sm;
   bstring nrppa_pdu;
   bstring routing_id;
   bool is_n2sm_set;
   bool is_n1sm_set;
+  bool is_n1lpp_set;
   bool is_nrppa_pdu_set;
   uint8_t pdu_session_id;
   std::string n2sm_info_type;
   bool is_ppi_set;
   uint8_t ppi;
   // other parameters
+  std::optional<std::string> lcs_correlation_id;
 };
 
 class itti_non_ue_n2_message_transfer_request : public itti_msg_amf_app {

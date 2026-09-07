@@ -3,6 +3,7 @@
  */
 
 #include "amf_n1.hpp"
+#include <nlohmann/json.hpp>
 
 #include <bitset>
 
@@ -4841,7 +4842,8 @@ void amf_n1::ul_nas_transport_handle(
     // TODO:
   }
 
-  bstring sm_msg = nullptr;
+  bstring sm_msg  = nullptr;
+  bstring lpp_msg = nullptr;
 
   if (((request_type & 0x07) == kPduSessionInitialRequest) or
       ((request_type & 0x07) == kExistingPduSession)) {
@@ -4992,6 +4994,37 @@ void amf_n1::ul_nas_transport_handle(
         }
 
       } break;
+      case kLtePositioningProtocol: {
+        // Get payload container
+        ul_nas->GetPayloadContainer(lpp_msg);
+
+        uint32_t response_code  = 0;
+        nlohmann::json LPP_JSON = {};
+        std::string n1_msg      = {};
+        std::string n2_msg      = {};
+        std::string url         = {};
+
+        // TODO: remove hardcoded values
+        LPP_JSON["n1NotifySubscriptionId"]               = "1";
+        LPP_JSON["n1MessageContainer"]["n1MessageClass"] = "LPP";
+        LPP_JSON["n1MessageContainer"]["n1MessageContent"]["contentId"] =
+            "n1Msg";
+        std::string json_part = LPP_JSON.dump();
+        uint8_t http_version  = 1;
+
+        url = amf_cfg->lmf_addr.uri_root + "/nlmf/notifyN1";
+
+        amf_conv::octet_stream_2_hex_stream_bis(
+            (uint8_t*) bdata(lpp_msg), blength(lpp_msg), n1_msg);
+
+        amf_sbi_inst->send_http_request(
+            url, json_part, n1_msg, n2_msg, http_version, response_code);
+        if (response_code == 204) {
+          Logger::amf_n1().debug("Sent notification successfully! LPP");
+        }
+
+      } break;
+
       default: {
         Logger::amf_n1().debug("Transport message is not supported");
       }

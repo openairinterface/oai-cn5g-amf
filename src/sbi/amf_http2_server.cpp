@@ -1235,12 +1235,43 @@ void amf_http2_server::n1_n2_message_transfer_handler(
 
       case N1MessageClass_anyOf::eN1MessageClass_anyOf::LPP: {
         // N1 LPP Container Present
-        // TODO:
-        res.write_head(oai::common::sbi::http_status_code::BAD_REQUEST);
-        res.end(
-            "N1N2MessageCollectionDocumentApiImpl::n1_n2_message_transfer API "
-            "(Unsupported N1 Message Class: LPP)");
-        return;
+
+        std::string n1_content_id =
+            n1N2MessageTransferReqData.getN1MessageContainer()
+                .getN1MessageContent()
+                .getContentId();
+        Logger::amf_server().debug("N1 Content Id: %s", n1_content_id.c_str());
+        if (parts.count(n1_content_id) == 0 ||
+            parts[n1_content_id].body.size() == 0) {
+          code = oai::common::sbi::http_status_code::BAD_REQUEST;
+          response_json["cause"] =
+              n1_n2_message_transfer_cause_e2str[N1_MSG_NOT_TRANSFERRED];
+
+          res.write_head(code);
+          res.end(response_json.dump().c_str());
+          return;
+        }
+        bstring n1lpp = nullptr;
+
+        amf_conv::msg_str_2_msg_hex(
+            parts[n1_content_id].body.substr(
+                0, parts[n1_content_id].body.length()),
+            n1lpp);
+        oai::utils::output_wrapper::print_buffer(
+            "amf_server", "Received N1 LPP", (uint8_t*) bdata(n1lpp),
+            blength(n1lpp));
+
+        itti_msg->n1lpp        = bstrcpy(n1lpp);
+        itti_msg->is_n1lpp_set = true;
+
+        if (n1N2MessageTransferReqData.lcsCorrelationIdIsSet()) {
+          itti_msg->lcs_correlation_id = std::make_optional<std::string>(
+              n1N2MessageTransferReqData.getLcsCorrelationId());
+          Logger::amf_server().debug(
+              "LCS Correlation ID: %s",
+              n1N2MessageTransferReqData.getLcsCorrelationId().c_str());
+        }
+
       } break;
 
       default: {
@@ -1345,7 +1376,23 @@ void amf_http2_server::n1_message_notify_handler(
       }
     } break;
 
-    case N1MessageClass_anyOf::eN1MessageClass_anyOf::LPP: {
+    case N1MessageClass_anyOf::eN1MessageClass_anyOf::LPP: {  // UPLINK
+
+      std::string n1_content_id = n1MessageNotification.getN1MessageContainer()
+                                      .getN1MessageContent()
+                                      .getContentId();
+      Logger::amf_server().debug("N1 Content Id: %s", n1_content_id.c_str());
+      if (parts.count(n1_content_id) == 0 ||
+          parts[n1_content_id].body.size() == 0) {
+        code = oai::common::sbi::http_status_code::BAD_REQUEST;
+        response_json["cause"] =
+            n1_n2_message_transfer_cause_e2str[N1_MSG_NOT_TRANSFERRED];
+      } else {
+        itti_msg->notification_msg = n1MessageNotification;
+        itti_msg->ue_id            = supi;
+        itti_msg->n1sm             = parts[n1_content_id].body;
+      }
+
       // TODO:
     } break;
 

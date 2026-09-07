@@ -24,6 +24,8 @@ extern "C" {
 class amf_conv : public oai::utils::conv {
  public:
   static void msg_str_2_msg_hex(std::string msg, bstring& b);
+  static void octet_stream_2_hex_stream_bis(
+      uint8_t* buf, int len, std::string& out);
   static char* bstring2charString(bstring b);
   static unsigned char* format_string_as_hex(std::string str);
   static void bstring_2_string(const bstring& b_str, std::string& str);

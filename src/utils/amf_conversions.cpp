@@ -106,6 +106,20 @@ void amf_conv::msg_str_2_msg_hex(std::string msg, bstring& b) {
 }
 
 //------------------------------------------------------------------------------
+void amf_conv::octet_stream_2_hex_stream_bis(
+    uint8_t* buf, int len, std::string& out) {
+  out       = "";
+  char* tmp = (char*) calloc(1, 2 * len * sizeof(uint8_t) + 1);
+  for (int i = 0; i < len; i++) {
+    sprintf(tmp + 2 * i, "%02x", buf[i]);
+  }
+  tmp[2 * len] = '\0';
+  out          = tmp;
+  Logger::amf_n1().debug("Buffer: %s", out.c_str());
+  oai::utils::utils::free_wrapper((void**) &tmp);
+}
+
+//------------------------------------------------------------------------------
 void amf_conv::bstring_2_string(const bstring& b_str, std::string& str) {
   if (!b_str) return;
   auto b = bstrcpy(b_str);
