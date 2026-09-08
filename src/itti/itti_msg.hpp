@@ -185,17 +185,6 @@ class itti_msg_timeout : public itti_msg {
   std::string arg2_user;
 };
 
-class itti_msg_ping : public itti_msg {
- public:
-  itti_msg_ping(
-      const task_id_t origin, const task_id_t destination, uint32_t seq)
-      : itti_msg(HEALTH_PING, origin, destination), seq(seq) {}
-  itti_msg_ping(const itti_msg_ping& i) : itti_msg(i), seq(i.seq) {}
-  virtual ~itti_msg_ping(){};
-  static const char* get_msg_name() { return "HEALTH_PING"; };
-  uint32_t seq;
-};
-
 class itti_msg_terminate : public itti_msg {
  public:
   itti_msg_terminate(const task_id_t origin, const task_id_t destination)

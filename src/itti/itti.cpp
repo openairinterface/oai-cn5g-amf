@@ -281,22 +281,6 @@ std::shared_ptr<itti_msg> itti_mw::receive_msg(task_id_t task_id) {
 }
 
 //------------------------------------------------------------------------------
-std::shared_ptr<itti_msg> itti_mw::poll_msg(task_id_t task_id) {
-  if ((TASK_FIRST <= task_id) && (TASK_MAX > task_id)) {
-    if (itti_task_ctxts[task_id]) {
-      std::lock_guard<std::mutex> lk(itti_task_ctxts[task_id]->m_queue);
-      if (!itti_task_ctxts[task_id]->msg_queue.empty()) {
-        std::shared_ptr<itti_msg> msg =
-            itti_task_ctxts[task_id]->msg_queue.front();
-        itti_task_ctxts[task_id]->msg_queue.pop();
-        return msg;
-      }
-    }
-  }
-  return nullptr;
-}
-
-//------------------------------------------------------------------------------
 void itti_mw::wait_tasks_end(void) {
   Logger::itti().info("Waiting ITTI tasks closed");
   for (int task_idx = TASK_FIRST; task_idx < TASK_MAX; task_idx++) {
