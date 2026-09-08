@@ -13,7 +13,6 @@
 #include "Ngap_CauseRadioNetwork.h"  // Ngap_CauseRadioNetwork_t
 #include "utils.hpp"                 // bdestroy_wrapper
 
-using namespace sctp;
 typedef enum {
   NGAP_UE_INVALID_STATE,
   NGAP_UE_WAITING_CSR,  // Context Setup Response(CSR)
@@ -70,10 +69,10 @@ class ue_ngap_context {
   uint64_t amf_ue_ngap_id;         // 40bits
   uint32_t target_ran_ue_ngap_id;  // 32bits, for HO
 
-  sctp_stream_id_t sctp_stream_recv;    // used to decide which ue in gNB
-  sctp_stream_id_t sctp_stream_send;    // used to decide which ue in gNB
-  sctp_assoc_id_t gnb_assoc_id;         // to find which gnb this UE belongs to
-  sctp_assoc_id_t target_gnb_assoc_id;  // for HO
+  sctp::sctp_stream_id_t sctp_stream_recv;  // used to decide which ue in gNB
+  sctp::sctp_stream_id_t sctp_stream_send;  // used to decide which ue in gNB
+  sctp::sctp_assoc_id_t gnb_assoc_id;  // to find which gnb this UE belongs to
+  sctp::sctp_assoc_id_t target_gnb_assoc_id;  // for HO
 
   bool ue_context_request;
 
@@ -83,7 +82,7 @@ class ue_ngap_context {
   std ::string s_pointer;
   std ::string s_tmsi;
 
-  Tai_t tai;
+  oai::ngap::Tai_t tai;
 
   // State management, ue status over the air
   ng_ue_state_t ng_ue_state;

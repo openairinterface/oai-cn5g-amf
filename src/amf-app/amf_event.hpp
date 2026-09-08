@@ -2,6 +2,9 @@
  * SPDX-License-Identifier: LicenseRef-CSSL-1.0
  */
 
+#ifndef FILE_AMF_EVENT_HPP_SEEN
+#define FILE_AMF_EVENT_HPP_SEEN
+
 #include <boost/signals2.hpp>
 namespace bs2 = boost::signals2;
 
@@ -94,3 +97,5 @@ class amf_event {
       ue_communication_failure;  // Signal for UE Communication Failure Report
 };
 }  // namespace amf_application
+
+#endif

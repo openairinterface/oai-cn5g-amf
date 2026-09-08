@@ -448,8 +448,8 @@ void amf_sbi::handle_itti_message(
 //------------------------------------------------------------------------------
 void amf_sbi::handle_itti_message(
     itti_nsmf_pdusession_update_sm_context& itti_msg) {
-  std::shared_ptr<ue_context> uc = amf_app_inst->get_ue_context(
-      itti_msg.ran_ue_ngap_id, itti_msg.amf_ue_ngap_id);
+  std::shared_ptr<ue_context> uc =
+      amf_app_inst->get_ue_context(itti_msg.amf_ue_ngap_id);
   if (uc == nullptr) {
     resolve_promise_failure(itti_msg.promise_id);
     return;
@@ -543,10 +543,10 @@ void amf_sbi::handle_itti_message(itti_nsmf_pdusession_create_sm_context& smf) {
   Logger::amf_sbi().debug("Handle ITTI SMF_PDU_SESSION_CREATE_SM_CTX");
 
   std::shared_ptr<nas_context> nc = {};
-  if (!amf_n1_inst->amf_ue_id_2_nas_context(smf.amf_ue_ngap_id, nc)) return;
+  if (!amf_n1_inst->get_nas_ctx_by_amf_ue_id(smf.amf_ue_ngap_id, nc)) return;
 
   std::shared_ptr<ue_context> uc =
-      amf_app_inst->get_ue_context(nc->ran_ue_ngap_id, nc->amf_ue_ngap_id);
+      amf_app_inst->get_ue_context(nc->amf_ue_ngap_id);
   if (uc == nullptr) return;
 
   // Create PDU Session Context if not available

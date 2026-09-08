@@ -4,10 +4,10 @@
 
 #include "amf_app.hpp"
 
+#include <arpa/inet.h>
 #include <cerrno>
 #include <chrono>
 #include <cstring>
-#include <gmp.h>
 #include <random>
 
 #include <boost/uuid/random_generator.hpp>
@@ -363,8 +363,7 @@ uint64_t amf_app::generate_amf_ue_ngap_id() {
 
 //------------------------------------------------------------------------------
 std::shared_ptr<ue_context> amf_app::get_ue_context(
-    uint32_t ran_ue_ngap_id, uint64_t amf_ue_ngap_id) const {
-  (void) ran_ue_ngap_id;  // key is amf_ue_ngap_id (no composite key)
+    uint64_t amf_ue_ngap_id) const {
   Logger::amf_app().debug(
       "Key for UE context search: " AMF_UE_NGAP_ID_FMT, amf_ue_ngap_id);
   return ue_context_store_.find(amf_ue_ngap_id);
@@ -372,16 +371,12 @@ std::shared_ptr<ue_context> amf_app::get_ue_context(
 
 //------------------------------------------------------------------------------
 void amf_app::set_ue_context(
-    uint32_t ran_ue_ngap_id, uint64_t amf_ue_ngap_id,
-    const std::shared_ptr<ue_context>& uc) {
-  (void) ran_ue_ngap_id;  // key is amf_ue_ngap_id
+    uint64_t amf_ue_ngap_id, const std::shared_ptr<ue_context>& uc) {
   ue_context_store_.upsert(amf_ue_ngap_id, uc);
 }
 
 //------------------------------------------------------------------------------
-bool amf_app::remove_ue_context(
-    uint32_t ran_ue_ngap_id, uint64_t amf_ue_ngap_id) {
-  (void) ran_ue_ngap_id;  // key is amf_ue_ngap_id
+bool amf_app::remove_ue_context(uint64_t amf_ue_ngap_id) {
   return ue_context_store_.remove(amf_ue_ngap_id);
 }
 
@@ -2564,7 +2559,7 @@ uint32_t amf_app::generate_random_tmsi() {
 bool amf_app::generate_5g_guti(
     const uint32_t ranid, const long amfid, std::string& mcc, std::string& mnc,
     uint32_t& tmsi) {
-  std::shared_ptr<ue_context> uc = get_ue_context(ranid, amfid);
+  std::shared_ptr<ue_context> uc = get_ue_context(amfid);
 
   if (uc == nullptr) return false;
 
@@ -2989,7 +2984,7 @@ void amf_app::get_nrfs(std::unordered_set<std::string>& nrfs) {
         if (result.find(kSbiResponseJsonData) != result.end()) {
           nlohmann::json authorized_network_slice_info =
               result[kSbiResponseJsonData];
-          NsiInformation nsi_information = {};
+          oai::_3gpp::model::NsiInformation nsi_information = {};
           if (authorized_network_slice_info.find("nsiInformation") !=
               authorized_network_slice_info.end()) {
             try {

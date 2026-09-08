@@ -37,7 +37,6 @@ sctp_server::sctp_server(const char* address, const uint16_t port_num) {
   Logger::sctp().debug("Creating socket!");
   create_socket(address, port_num);
   app_         = nullptr;
-  sctp_desc_   = {};
   server_addr_ = {};
   events_      = {};
   sctp_ctx_    = {};

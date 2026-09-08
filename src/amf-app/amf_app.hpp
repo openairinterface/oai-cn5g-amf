@@ -32,9 +32,6 @@
 // Forward declaration
 class nas_context;
 
-using namespace oai::config;
-using namespace oai::_3gpp::model;
-
 namespace amf_application {
 
 #define TASK_AMF_APP_PERIODIC_STATISTICS (0)
@@ -446,33 +443,28 @@ class amf_app {
   bool update_amf_configuration(nlohmann::json& json_data);
 
   /*
-   * Find the UE Context associated with RAN UE NGAP ID and AMF UE NGAP ID
-   * @param [uint32_t] ran_ue_ngap_id: RAN UE NGAP ID
+   * Find the UE Context associated with AMF UE NGAP ID
    * @param [uint64_t] amf_ue_ngap_id: AMF UE NGAP ID
    * @return the ue_context if found, otherwise return nullptr
    */
-  std::shared_ptr<ue_context> get_ue_context(
-      uint32_t ran_ue_ngap_id, uint64_t amf_ue_ngap_id) const;
+  std::shared_ptr<ue_context> get_ue_context(uint64_t amf_ue_ngap_id) const;
 
   /*
-   * Store an UE context associated with RAN UE NGAP ID and AMF UE NGAP ID
-   * @param [uint32_t] ran_ue_ngap_id: RAN UE NGAP ID
+   * Store an UE context associated with AMF UE NGAP ID
    * @param [uint64_t] amf_ue_ngap_id: AMF UE NGAP ID
    * @param [std::shared_ptr<ue_context>&] uc: pointer to UE context
    * @return void
    */
   void set_ue_context(
-      uint32_t ran_ue_ngap_id, uint64_t amf_ue_ngap_id,
-      const std::shared_ptr<ue_context>& uc);
+      uint64_t amf_ue_ngap_id, const std::shared_ptr<ue_context>& uc);
 
   /*
-   * Remove UE context associated with RAN UE NGAP ID and AMF UE NGAP ID
-   * @param [uint32_t] ran_ue_ngap_id: RAN UE NGAP ID
+   * Remove UE context associated with AMF UE NGAP ID
    * @param [uint64_t] amf_ue_ngap_id: AMF UE NGAP ID
    * @return true if successful, otherwise return false
    */
 
-  bool remove_ue_context(uint32_t ran_ue_ngap_id, uint64_t amf_ue_ngap_id);
+  bool remove_ue_context(uint64_t amf_ue_ngap_id);
 
   /*
    * Find the UE Context associated with SUPI

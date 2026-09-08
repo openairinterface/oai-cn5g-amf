@@ -21,8 +21,6 @@ extern "C" {
 #include "Ngap_RRCEstablishmentCause.h"
 }
 
-using namespace oai::ngap;
-
 // Forward declarations
 class nas_context;
 class ue_ngap_context;
@@ -63,8 +61,8 @@ class ue_context {
 
   uint8_t rrc_estb_cause;
   bool is_ue_context_request;
-  NrCgi_t cgi;
-  Tai_t tai;
+  oai::ngap::NrCgi_t cgi;
+  oai::ngap::Tai_t tai;
   // pdu session id <-> pdu_session_contex
   std::map<std::uint8_t, std::shared_ptr<pdu_session_context>> pdu_sessions;
   mutable std::shared_mutex m_pdu_session;

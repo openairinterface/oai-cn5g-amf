@@ -5,9 +5,6 @@
 #ifndef _AMF_CONFIG_H_
 #define _AMF_CONFIG_H_
 
-#include <arpa/inet.h>
-#include <netinet/in.h>
-
 #include <nlohmann/json.hpp>
 
 #include "3gpp_24.501.hpp"
@@ -164,8 +161,6 @@ constexpr auto AMF_CONFIG_SCTP_TTL_DEFAULT_VALUE          = 100;
 constexpr uint32_t AMF_CONFIG_STATISTICS_TIMER_INTERVAL_DEFAULT_VALUE =
     20;  // in seconds
 constexpr auto AMF_CONFIG_DEFAULT_DNN_VALUE = "default";
-
-using namespace oai::common::sbi;
 
 namespace oai::config {
 
@@ -492,8 +487,8 @@ class amf_config : public config {
   unsigned int instance;
   std::string pid_dir;
   spdlog::level::level_enum amf_log_level;
-  interface_cfg_t n2;
-  interface_cfg_t sbi;
+  oai::common::sbi::interface_cfg_t n2;
+  oai::common::sbi::interface_cfg_t sbi;
   itti_cfg_t itti;
 
   uint32_t sctp_ttl;
@@ -508,13 +503,13 @@ class amf_config : public config {
   auth_conf_t auth_para;
   nas_conf_t nas_cfg;
   support_features_t support_features;
-  nf_addr_t smf_addr;
-  nf_addr_t nrf_addr;
-  nf_addr_t ausf_addr;
-  nf_addr_t udm_addr;
-  nf_addr_t nssf_addr;
-  nf_addr_t lmf_addr;
-  nf_addr_t pcf_addr;
+  oai::common::sbi::nf_addr_t smf_addr;
+  oai::common::sbi::nf_addr_t nrf_addr;
+  oai::common::sbi::nf_addr_t ausf_addr;
+  oai::common::sbi::nf_addr_t udm_addr;
+  oai::common::sbi::nf_addr_t nssf_addr;
+  oai::common::sbi::nf_addr_t lmf_addr;
+  oai::common::sbi::nf_addr_t pcf_addr;
 
   std::string default_dnn;
 };

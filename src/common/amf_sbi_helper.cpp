@@ -6,7 +6,6 @@
 
 #include <fmt/format.h>
 
-#include <boost/algorithm/string.hpp>
 #include <regex>
 #include <vector>
 

@@ -15,9 +15,9 @@ namespace bs2 = boost::signals2;
 namespace amf_application {
 
 // Signal for UE Location Report
-// SUPI, User Location, HTTP version
+// SUPI, User Location
 typedef bs2::signal_type<
-    void(std::string, oai::_3gpp::model::UserLocation, uint8_t),
+    void(std::string, oai::_3gpp::model::UserLocation),
     bs2::keywords::mutex_type<bs2::dummy_mutex>>::type ue_location_report_sig_t;
 
 // TODO: Presence-In-AOI-Report
@@ -25,38 +25,38 @@ typedef bs2::signal_type<
 // TODO: Access-Type-Report
 
 // Signal for UE Reachability Report
-// SUPI, status, HTTP version
+// SUPI, status
 typedef bs2::signal_type<
-    void(std::string, uint8_t, uint8_t),
+    void(std::string, uint8_t),
     bs2::keywords::mutex_type<bs2::dummy_mutex>>::type
     ue_reachability_status_sig_t;
 
 // Signal for UE Registration State Report
-// SUPI, registration state, HTTP version
+// SUPI, registration state, RAN UE NGAP ID, AMF UE NGAP ID
 typedef bs2::signal_type<
-    void(std::string, uint8_t, uint8_t, uint32_t, long),
+    void(std::string, uint8_t, uint32_t, long),
     bs2::keywords::mutex_type<bs2::dummy_mutex>>::type
     ue_registration_state_sig_t;
 
 // Signal for Connectivity State Report
-// SUPI, connectivity state, HTTP version
+// SUPI, connectivity state
 typedef bs2::signal_type<
-    void(std::string, uint8_t, uint8_t),
+    void(std::string, uint8_t),
     bs2::keywords::mutex_type<bs2::dummy_mutex>>::type
     ue_connectivity_state_sig_t;
 
 // Signal for Loss of Connectivity
-// SUPI, status, HTTP version,
+// SUPI, status,
 // RAN UE NGAP ID, AMF UE NGAP ID
 typedef bs2::signal_type<
-    void(std::string, uint8_t, uint8_t, uint32_t, long),
+    void(std::string, uint8_t, uint32_t, long),
     bs2::keywords::mutex_type<bs2::dummy_mutex>>::type
     ue_loss_of_connectivity_sig_t;
 
 // Signal for Communication Failure Report
-// SUPI, Communication Failure codes, HTTP version
+// SUPI, Communication Failure codes
 typedef bs2::signal_type<
-    void(std::string, oai::_3gpp::model::CommunicationFailure, uint8_t),
+    void(std::string, oai::_3gpp::model::CommunicationFailure),
     bs2::keywords::mutex_type<bs2::dummy_mutex>>::type
     ue_communication_failure_sig_t;
 

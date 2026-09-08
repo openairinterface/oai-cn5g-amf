@@ -18,9 +18,6 @@ extern "C" {
 #include "bstrlib.h"
 }
 
-using namespace sctp;
-using namespace oai::ngap;
-
 typedef enum {
   NGAP_INIT,
   NGAP_RESETING,
@@ -39,13 +36,13 @@ class gnb_context {
   ng_gnb_state_t ng_state;
   plmn_t plmn;
   e_Ngap_PagingDRX default_paging_drx;  // v32, v64, v128, v256
-  std::vector<SupportedTaItem> supported_ta_list;
-  std::optional<UeRetentionInformation> ue_retention_info;
+  std::vector<oai::ngap::SupportedTaItem> supported_ta_list;
+  std::optional<oai::ngap::UeRetentionInformation> ue_retention_info;
 
-  sctp_assoc_id_t sctp_assoc_id;
-  sctp_stream_id_t next_sctp_stream;
-  sctp_stream_id_t instreams;
-  sctp_stream_id_t outstreams;
+  sctp::sctp_assoc_id_t sctp_assoc_id;
+  sctp::sctp_stream_id_t next_sctp_stream;
+  sctp::sctp_stream_id_t instreams;
+  sctp::sctp_stream_id_t outstreams;
 };
 
 #endif

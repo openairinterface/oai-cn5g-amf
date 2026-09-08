@@ -37,9 +37,6 @@ typedef uint16_t sctp_stream_id_t;
 typedef uint32_t sctp_assoc_id_t;
 
 typedef struct sctp_association_s {
-  struct sctp_association_s* next_assoc;  // Next association in the list
-  struct sctp_association_s*
-      previous_assoc;               // Previous association in the list
   int sd;                           // Socket descriptor
   uint32_t ppid;                    // Payload protocol Identifier
   uint16_t instreams;               // Number of input streams negotiated
@@ -50,15 +47,6 @@ typedef struct sctp_association_s {
   struct sockaddr* peer_addresses;  // A list of peer addresses
   int nb_peer_addresses;
 } sctp_association_t;
-
-typedef struct sctp_descriptor_s {
-  // List of connected peers
-  struct sctp_association_s* available_connections_head;
-  struct sctp_association_s* available_connections_tail;
-  uint32_t number_of_connections;
-  uint16_t nb_instreams;
-  uint16_t nb_outstreams;
-} sctp_descriptor_t;
 
 class sctp_application {
  public:
@@ -107,7 +95,6 @@ class sctp_server {
   int socket_;
   sctp_application* app_;
   pthread_t thread_;
-  sctp_descriptor_t sctp_desc_;
   struct sockaddr_in server_addr_;
   struct sctp_event_subscribe events_;
   std::vector<sctp_association_t*> sctp_ctx_;
