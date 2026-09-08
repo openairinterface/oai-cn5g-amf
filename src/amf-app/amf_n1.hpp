@@ -134,7 +134,7 @@ class amf_n1 {
    * @param [std::shared_ptr<nas_context>&] nc: pointer to UE NAS context
    * @return true if the UE NAS context exists (and not null), otherwise false
    */
-  bool amf_ue_id_2_nas_context(
+  bool get_nas_ctx_by_amf_ue_id(
       const uint64_t& amf_ue_ngap_id, std::shared_ptr<nas_context>& nc) const;
 
   /*
@@ -661,61 +661,54 @@ class amf_n1 {
    * @param [std::string] supi: SUPI
    * @param [oai::_3gpp::model::UserLocation] user_location: User location
    * information
-   * @param [uint8_t] http_version: HTTP version (for the notification)
    * @return void
    */
   void handle_ue_location_change(
-      std::string supi, oai::_3gpp::model::UserLocation, uint8_t http_version);
+      std::string supi, oai::_3gpp::model::UserLocation);
 
   /*
    * Handle the UE Reachability Status Change event to trigger the notification
    * to the subscribed NFs
    * @param [std::string] supi: SUPI
    * @param [uint8_t] status: Reachability status
-   * @param [uint8_t] http_version: HTTP version (for the notification)
    * @return void
    */
-  void handle_ue_reachability_status_change(
-      std::string supi, uint8_t status, uint8_t http_version);
+  void handle_ue_reachability_status_change(std::string supi, uint8_t status);
 
   /*
    * Handle the UE Registration Status Change event to trigger the notification
    * to the subscribed NFs
    * @param [std::string] supi: SUPI
    * @param [uint8_t] status: Registration status
-   * @param [uint8_t] http_version: HTTP version (for the notification)
    * @param [uint32_t] ran_ue_ngap_id: RAN UE NGAP ID
    * @param [uint64_t] amf_ue_ngap_id: AMF UE NGAP ID
    * @return void
    */
   void handle_ue_registration_state_change(
-      std::string supi, uint8_t status, uint8_t http_version,
-      uint32_t ran_ue_ngap_id, uint64_t amf_ue_ngap_id);
+      std::string supi, uint8_t status, uint32_t ran_ue_ngap_id,
+      uint64_t amf_ue_ngap_id);
 
   /*
    * Handle the UE Connectivity State Change event to trigger the notification
    * to the subscribed NFs
    * @param [std::string] supi: SUPI
    * @param [uint8_t] status: UE Connectivity status
-   * @param [uint8_t] http_version: HTTP version (for the notification)
    * @return void
    */
-  void handle_ue_connectivity_state_change(
-      std::string supi, uint8_t status, uint8_t http_version);
+  void handle_ue_connectivity_state_change(std::string supi, uint8_t status);
 
   /*
    * Handle the UE Loss of Connectivity Change event to trigger the notification
    * to the subscribed NFs
    * @param [std::string] supi: SUPI
    * @param [uint8_t] status: UE Loss of Connectivity status
-   * @param [uint8_t] http_version: HTTP version (for the notification)
    * @param [uint32_t] ran_ue_ngap_id: RAN UE NGAP ID
    * @param [uint64_t] amf_ue_ngap_id: AMF UE NGAP ID
    * @return void
    */
   void handle_ue_loss_of_connectivity_change(
-      std::string supi, uint8_t status, uint8_t http_version,
-      uint32_t ran_ue_ngap_id, uint64_t amf_ue_ngap_id);
+      std::string supi, uint8_t status, uint32_t ran_ue_ngap_id,
+      uint64_t amf_ue_ngap_id);
 
   /*
    * Handle the UE Communication Failure event to trigger the notification to
@@ -723,12 +716,10 @@ class amf_n1 {
    * @param [std::string] supi: SUPI
    * @param [oai::_3gpp::model::CommunicationFailure] comm_failure:
    * Communication Failure reason
-   * @param [uint8_t] http_version: HTTP version (for the notification)
    * @return void
    */
   void handle_ue_communication_failure_change(
-      std::string supi, oai::_3gpp::model::CommunicationFailure,
-      uint8_t http_version);
+      std::string supi, oai::_3gpp::model::CommunicationFailure);
 
   /*
    * Trigger the UE Location Report notification to the subscribed NFs

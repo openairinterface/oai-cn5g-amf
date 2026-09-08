@@ -29,7 +29,6 @@
 #include "N1MessageNotifyApiImpl.h"
 #include "StatusNotifyApiImpl.h"
 
-#define PISTACHE_SERVER_THREADS 2
 #define PISTACHE_SERVER_MAX_PAYLOAD 32768
 
 #include "amf_app.hpp"
