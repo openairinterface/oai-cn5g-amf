@@ -42,7 +42,13 @@ bool normalize_ngap_open_types(
   const int len    = blength(payload);
 
   if (len < 12) return false;
-  if (data[0] != 0x00 || data[2] != 0x40 || data[3] == 0x00) return false;
+  const bool is_initiating_message = data[0] == 0x00 && data[2] == 0x40;
+  const bool is_pdu_session_resource_setup_response =
+      data[0] == 0x20 && data[1] == 0x1d && data[2] == 0x00;
+  if ((!is_initiating_message && !is_pdu_session_resource_setup_response) ||
+      data[3] == 0x00) {
+    return false;
+  }
 
   out.assign(data, data + len);
   bool normalized = false;
