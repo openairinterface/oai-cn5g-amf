@@ -9,6 +9,7 @@
 #include "logger.hpp"
 #include "ngap_message_callback.hpp"
 #include "ngap_utils.hpp"
+#include "output_wrapper.hpp"
 
 extern "C" {
 #include "Ngap_Cause.h"
@@ -20,12 +21,62 @@ extern "C" {
 #include "constr_TYPE.h"
 }
 
+#include <vector>
+
 using namespace sctp;
 using namespace oai::config;
 using namespace oai::ngap;
 
 extern std::unique_ptr<oai::config::amf_config> amf_cfg;
 extern amf_n2* amf_n2_inst;
+
+namespace {
+
+// Some gNB stacks encode NGAP open types with a leading APER padding
+// byte. The current generated decoder may either reject the whole PDU or decode
+// the padded value as a different IE ID.
+// Normalize only that exact IE shape and retry decoding.
+bool normalize_ngap_open_types(
+    const bstring payload, std::vector<uint8_t>& out) {
+  const auto* data = reinterpret_cast<const uint8_t*>(bdata(payload));
+  const int len    = blength(payload);
+
+  if (len < 12) return false;
+  const bool is_initiating_message = data[0] == 0x00 && data[2] == 0x40;
+  const bool is_pdu_session_resource_setup_response =
+      data[0] == 0x20 && data[1] == 0x1d && data[2] == 0x00;
+  if ((!is_initiating_message && !is_pdu_session_resource_setup_response) ||
+      data[3] == 0x00) {
+    return false;
+  }
+
+  out.assign(data, data + len);
+  bool normalized = false;
+
+  for (size_t i = 4; i + 4 < out.size(); ++i) {
+    const bool is_amf_ue_ngap_id_padding =
+        out[i] == 0x00 && out[i + 1] == 0x0a && out[i + 2] == 0x00 &&
+        out[i + 3] == 0x03 && out[i + 4] == 0x20;
+    const bool is_ran_ue_ngap_id_padding =
+        out[i] == 0x00 && out[i + 1] == 0x55 && out[i + 2] == 0x00 &&
+        out[i + 3] == 0x05 && out[i + 4] == 0xc0;
+
+    if (!is_amf_ue_ngap_id_padding && !is_ran_ue_ngap_id_padding) {
+      continue;
+    }
+
+    out[3] -= 1;
+    out[i + 3] -= 1;
+    out.erase(out.begin() + i + 4);
+    normalized = true;
+    --i;
+  }
+
+  if (!normalized) out.clear();
+  return normalized;
+}
+
+}  // namespace
 
 //------------------------------------------------------------------------------
 ngap_app::ngap_app(const std::string& address, const uint16_t port_num)
@@ -48,6 +99,18 @@ void ngap_app::handle_receive(
       "(%d), instreams (%d), outstreams (%d)",
       assoc_id, stream, instreams, outstreams);
 
+  std::vector<uint8_t> normalized_payload;
+  const void* decode_data = bdata(payload);
+  size_t decode_size      = blength(payload);
+  if (normalize_ngap_open_types(payload, normalized_payload)) {
+    Logger::ngap().warn(
+        "Normalizing padded NGAP integer open type(s), payload %d -> %zu "
+        "bytes",
+        blength(payload), normalized_payload.size());
+    decode_data = normalized_payload.data();
+    decode_size = normalized_payload.size();
+  }
+
   Ngap_NGAP_PDU_t* ngap_msg_pdu =
       (Ngap_NGAP_PDU_t*) calloc(1, sizeof(Ngap_NGAP_PDU_t));
   if (!ngap_msg_pdu) {
@@ -56,12 +119,18 @@ void ngap_app::handle_receive(
   }
 
   asn_dec_rval_t dec_ret = aper_decode(
-      NULL, &asn_DEF_Ngap_NGAP_PDU, (void**) &ngap_msg_pdu, bdata(payload),
-      blength(payload), 0, 0);
+      NULL, &asn_DEF_Ngap_NGAP_PDU, (void**) &ngap_msg_pdu, decode_data,
+      decode_size, 0, 0);
+
+  oai::utils::output_wrapper::print_buffer(
+      "ngap_app", "NGAP", (const uint8_t*) bdata(payload), blength(payload));
 
   if (dec_ret.code != RC_OK) {
     // Report via Error Indication
-    Logger::ngap().error("Decode NGAP message failed");
+    Logger::ngap().error(
+        "Decode NGAP message failed, code %d, consumed %zu bits, payload %d "
+        "bytes",
+        dec_ret.code, dec_ret.consumed, blength(payload));
     if (amf_n2_inst)
       amf_n2_inst->send_ng_error_indication(
           assoc_id, stream, std::nullopt, std::nullopt, Ngap_Cause_PR_protocol,
