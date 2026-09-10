@@ -12,7 +12,6 @@ add_library (AMF_NGAP STATIC
 set(NGAP_DIR "${SRC_TOP_DIR}/ngap")
 
 target_include_directories(AMF_NGAP PUBLIC ${SRC_TOP_DIR}/common)
-target_include_directories(AMF_NGAP PUBLIC ${SRC_TOP_DIR}/common/unicode)
 target_include_directories(AMF_NGAP PUBLIC ${SRC_TOP_DIR}/itti)
 target_include_directories(AMF_NGAP PUBLIC ${SRC_TOP_DIR}/itti/msgs)
 target_include_directories(AMF_NGAP PUBLIC ${SRC_TOP_DIR}/sctp)
