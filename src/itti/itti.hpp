@@ -160,12 +160,6 @@ class itti_mw {
    **/
   std::shared_ptr<itti_msg> receive_msg(task_id_t task_id);
 
-  /** \brief Try to retrieves a message in the queue associated to task_id.
-   \param task_id Task ID of the receiving task
-   \param received_msg Pointer to the allocated message
-   **/
-  std::shared_ptr<itti_msg> poll_msg(task_id_t task_id);
-
   /** \brief Start thread associated to the task
    * \param task_id task to start
    * \param start_routine entry point for the task

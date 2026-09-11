@@ -49,16 +49,7 @@ class itti_nas_signalling_establishment_request : public itti_msg_amf_app {
     _5g_s_tmsi           = {};
   }
   itti_nas_signalling_establishment_request(
-      const itti_nas_signalling_establishment_request& i)
-      : itti_msg_amf_app(i) {
-    rrc_cause            = i.rrc_cause;
-    ue_ctx_req           = i.ue_ctx_req;
-    cgi                  = i.cgi;
-    tai                  = i.tai;
-    nas_buf              = i.nas_buf;
-    is_5g_s_tmsi_present = i.is_5g_s_tmsi_present;
-    _5g_s_tmsi           = i._5g_s_tmsi;
-  }
+      const itti_nas_signalling_establishment_request&) = delete;
 
   int rrc_cause;
   int ue_ctx_req;
@@ -92,25 +83,7 @@ class itti_n1n2_message_transfer_request : public itti_msg_amf_app {
     lcs_correlation_id = std::nullopt;
   }
   itti_n1n2_message_transfer_request(
-      const itti_n1n2_message_transfer_request& i)
-      : itti_msg_amf_app(i) {
-    supi             = i.supi;
-    n1lpp            = i.n1lpp;
-    n1sm             = i.n1sm;
-    n2sm             = i.n2sm;
-    nrppa_pdu        = i.nrppa_pdu;
-    routing_id       = i.routing_id;
-    is_n2sm_set      = i.is_n2sm_set;
-    is_n1sm_set      = i.is_n1sm_set;
-    is_n1lpp_set     = i.is_n1lpp_set;
-    is_nrppa_pdu_set = i.is_nrppa_pdu_set;
-    is_ppi_set       = i.is_ppi_set;
-
-    n2sm_info_type     = i.n2sm_info_type;
-    pdu_session_id     = i.pdu_session_id;
-    ppi                = i.ppi;
-    lcs_correlation_id = i.lcs_correlation_id;
-  }
+      const itti_n1n2_message_transfer_request&) = delete;
 
   std::string supi;
   bstring n1lpp;
@@ -140,12 +113,7 @@ class itti_non_ue_n2_message_transfer_request : public itti_msg_amf_app {
     is_nrppa_pdu_set = false;
   }
   itti_non_ue_n2_message_transfer_request(
-      const itti_non_ue_n2_message_transfer_request& i)
-      : itti_msg_amf_app(i) {
-    nrppa_pdu        = i.nrppa_pdu;
-    routing_id       = i.routing_id;
-    is_nrppa_pdu_set = i.is_nrppa_pdu_set;
-  }
+      const itti_non_ue_n2_message_transfer_request&) = delete;
 
   bstring nrppa_pdu;
   bstring routing_id;

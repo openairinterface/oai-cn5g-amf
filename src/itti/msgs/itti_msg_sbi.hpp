@@ -70,15 +70,7 @@ class itti_nsmf_pdusession_create_sm_context : public itti_msg_n11 {
     plmn        = {};
   }
   itti_nsmf_pdusession_create_sm_context(
-      const itti_nsmf_pdusession_create_sm_context& i)
-      : itti_msg_n11(i) {
-    req_type    = i.req_type;
-    pdu_sess_id = i.pdu_sess_id;
-    dnn         = i.dnn;
-    sm_msg      = i.sm_msg;
-    snssai      = {};
-    plmn        = {};
-  }
+      const itti_nsmf_pdusession_create_sm_context&) = delete;
   virtual ~itti_nsmf_pdusession_create_sm_context() {
     oai::utils::utils::bdestroy_wrapper(&dnn);
     oai::utils::utils::bdestroy_wrapper(&sm_msg);
@@ -104,11 +96,7 @@ class itti_pdu_session_resource_setup_response : public itti_msg_n11 {
     n2sm           = nullptr;
   }
   itti_pdu_session_resource_setup_response(
-      const itti_pdu_session_resource_setup_response& i)
-      : itti_msg_n11(i) {
-    pdu_session_id = i.pdu_session_id;
-    n2sm           = i.n2sm;
-  }
+      const itti_pdu_session_resource_setup_response&) = delete;
   virtual ~itti_pdu_session_resource_setup_response() {
     oai::utils::utils::bdestroy_wrapper(&n2sm);
   }
@@ -139,19 +127,7 @@ class itti_nsmf_pdusession_update_sm_context : public itti_msg_n11 {
     up_cnx_state   = {};
   }
   itti_nsmf_pdusession_update_sm_context(
-      const itti_nsmf_pdusession_update_sm_context& i)
-      : itti_msg_n11(i) {
-    supi           = i.supi;
-    pdu_session_id = i.pdu_session_id;
-    n1sm           = i.n1sm;
-    is_n1sm_set    = i.is_n1sm_set;
-    n2sm           = i.n2sm;
-    is_n2sm_set    = i.is_n2sm_set;
-    n2sm_info_type = i.n2sm_info_type;
-    promise_id     = i.promise_id;
-    ho_state       = i.ho_state;
-    up_cnx_state   = i.up_cnx_state;
-  }
+      const itti_nsmf_pdusession_update_sm_context&) = delete;
   virtual ~itti_nsmf_pdusession_update_sm_context() {
     oai::utils::utils::bdestroy_wrapper(&n2sm);
   }
@@ -177,13 +153,7 @@ class itti_nsmf_pdusession_release_sm_context : public itti_msg_n11 {
       const task_id_t origin, const task_id_t destination)
       : itti_msg_n11(NSMF_PDU_SESSION_RELEASE_SM_CTX, origin, destination) {}
   itti_nsmf_pdusession_release_sm_context(
-      const itti_nsmf_pdusession_release_sm_context& i)
-      : itti_msg_n11(i) {
-    supi             = i.supi;
-    pdu_session_id   = i.pdu_session_id;
-    promise_id       = i.promise_id;
-    context_location = i.context_location;
-  }
+      const itti_nsmf_pdusession_release_sm_context&) = delete;
   virtual ~itti_nsmf_pdusession_release_sm_context() {}
   const char* get_msg_name() { return "NSMF_PDU_SESSION_RELEASE_SM_CTX"; };
 
@@ -393,8 +363,6 @@ class itti_sbi_msg : public itti_msg {
         return "PAGING";
       case TIME_OUT:
         return "TIME_OUT";
-      case HEALTH_PING:
-        return "HEALTH_PING";
       case TERMINATE:
         return "TERMINATE";
       case ITTI_MSG_TYPE_MAX:
@@ -416,8 +384,7 @@ class itti_sbi_register_nf_instance_request : public itti_sbi_msg {
         profile(),
         nrf_uri() {}
   itti_sbi_register_nf_instance_request(
-      const itti_sbi_register_nf_instance_request& i)
-      : itti_sbi_msg(i), profile(i.profile), nrf_uri(i.nrf_uri) {}
+      const itti_sbi_register_nf_instance_request&) = delete;
   itti_sbi_register_nf_instance_request(
       const itti_sbi_register_nf_instance_request& i, const task_id_t orig,
       const task_id_t dest)
@@ -618,8 +585,8 @@ class itti_sbi_event_exposure_request : public itti_sbi_msg {
   itti_sbi_event_exposure_request(const task_id_t orig, const task_id_t dest)
       : itti_sbi_msg(SBI_EVENT_EXPOSURE_REQUEST, orig, dest),
         event_exposure() {}
-  itti_sbi_event_exposure_request(const itti_sbi_event_exposure_request& i)
-      : itti_sbi_msg(i), event_exposure(i.event_exposure) {}
+  itti_sbi_event_exposure_request(const itti_sbi_event_exposure_request&) =
+      delete;
   itti_sbi_event_exposure_request(
       const itti_sbi_event_exposure_request& i, const task_id_t orig,
       const task_id_t dest)
@@ -635,8 +602,7 @@ class itti_sbi_notification_data : public itti_sbi_msg {
  public:
   itti_sbi_notification_data(const task_id_t orig, const task_id_t dest)
       : itti_sbi_msg(SBI_NOTIFICATION_DATA, orig, dest), notification_msg() {}
-  itti_sbi_notification_data(const itti_sbi_notification_data& i)
-      : itti_sbi_msg(i), notification_msg(i.notification_msg) {}
+  itti_sbi_notification_data(const itti_sbi_notification_data&) = delete;
   itti_sbi_notification_data(
       const itti_sbi_notification_data& i, const task_id_t orig,
       const task_id_t dest)
@@ -653,8 +619,8 @@ class itti_sbi_notify_subscribed_event : public itti_sbi_msg {
   itti_sbi_notify_subscribed_event(const task_id_t orig, const task_id_t dest)
       : itti_sbi_msg(SBI_NOTIFY_SUBSCRIBED_EVENT, orig, dest), notif_id() {}
 
-  itti_sbi_notify_subscribed_event(const itti_sbi_notify_subscribed_event& i)
-      : itti_sbi_msg(i), notif_id(i.notif_id) {}
+  itti_sbi_notify_subscribed_event(const itti_sbi_notify_subscribed_event&) =
+      delete;
   itti_sbi_notify_subscribed_event(
       const itti_sbi_notify_subscribed_event& i, const task_id_t orig,
       const task_id_t dest)
@@ -674,11 +640,8 @@ class itti_sbi_n1_message_notification : public itti_sbi_msg {
         notification_msg(),
         ue_id(),
         n1sm() {}
-  itti_sbi_n1_message_notification(const itti_sbi_n1_message_notification& i)
-      : itti_sbi_msg(i),
-        notification_msg(i.notification_msg),
-        ue_id(i.ue_id),
-        n1sm(i.n1sm) {}
+  itti_sbi_n1_message_notification(const itti_sbi_n1_message_notification&) =
+      delete;
   itti_sbi_n1_message_notification(
       const itti_sbi_n1_message_notification& i, const task_id_t orig,
       const task_id_t dest)
@@ -703,11 +666,8 @@ class itti_sbi_n1n2_message_subscribe : public itti_sbi_msg {
         ue_cxt_id(),
         subscription_data(),
         promise_id(pid) {}
-  itti_sbi_n1n2_message_subscribe(const itti_sbi_n1n2_message_subscribe& i)
-      : itti_sbi_msg(i),
-        ue_cxt_id(i.ue_cxt_id),
-        subscription_data(i.subscription_data),
-        promise_id() {}
+  itti_sbi_n1n2_message_subscribe(const itti_sbi_n1n2_message_subscribe&) =
+      delete;
   itti_sbi_n1n2_message_subscribe(
       const itti_sbi_n1n2_message_subscribe& i, const task_id_t orig,
       const task_id_t dest)
@@ -732,11 +692,8 @@ class itti_sbi_n1n2_message_unsubscribe : public itti_sbi_msg {
         ue_cxt_id(),
         subscription_id(),
         promise_id(pid) {}
-  itti_sbi_n1n2_message_unsubscribe(const itti_sbi_n1n2_message_unsubscribe& i)
-      : itti_sbi_msg(i),
-        ue_cxt_id(i.ue_cxt_id),
-        subscription_id(i.subscription_id),
-        promise_id() {}
+  itti_sbi_n1n2_message_unsubscribe(const itti_sbi_n1n2_message_unsubscribe&) =
+      delete;
   itti_sbi_n1n2_message_unsubscribe(
       const itti_sbi_n1n2_message_unsubscribe& i, const task_id_t orig,
       const task_id_t dest)
@@ -760,8 +717,8 @@ class itti_sbi_non_ue_n2_info_subscribe : public itti_sbi_msg {
       : itti_sbi_msg(SBI_NON_UE_N2_INFO_SUBSCRIBE, orig, dest),
         subscription_data(),
         promise_id(pid) {}
-  itti_sbi_non_ue_n2_info_subscribe(const itti_sbi_non_ue_n2_info_subscribe& i)
-      : itti_sbi_msg(i), subscription_data(i.subscription_data), promise_id() {}
+  itti_sbi_non_ue_n2_info_subscribe(const itti_sbi_non_ue_n2_info_subscribe&) =
+      delete;
   itti_sbi_non_ue_n2_info_subscribe(
       const itti_sbi_non_ue_n2_info_subscribe& i, const task_id_t orig,
       const task_id_t dest)
@@ -784,8 +741,7 @@ class itti_sbi_non_ue_n2_info_unsubscribe : public itti_sbi_msg {
         subscription_id(),
         promise_id(pid) {}
   itti_sbi_non_ue_n2_info_unsubscribe(
-      const itti_sbi_non_ue_n2_info_unsubscribe& i)
-      : itti_sbi_msg(i), subscription_id(i.subscription_id), promise_id() {}
+      const itti_sbi_non_ue_n2_info_unsubscribe&) = delete;
   itti_sbi_non_ue_n2_info_unsubscribe(
       const itti_sbi_non_ue_n2_info_unsubscribe& i, const task_id_t orig,
       const task_id_t dest)
@@ -836,12 +792,7 @@ class itti_sbi_pdu_session_release_notif : public itti_sbi_msg {
         pdu_session_id(),
         smContextStatusNotification() {}
   itti_sbi_pdu_session_release_notif(
-      const itti_sbi_pdu_session_release_notif& i)
-      : itti_sbi_msg(i),
-        promise_id(),
-        ue_id(),
-        pdu_session_id(),
-        smContextStatusNotification(i.smContextStatusNotification) {}
+      const itti_sbi_pdu_session_release_notif&) = delete;
   itti_sbi_pdu_session_release_notif(
       const itti_sbi_pdu_session_release_notif& i, const task_id_t orig,
       const task_id_t dest)
@@ -869,11 +820,7 @@ class itti_sbi_determine_location_request : public itti_sbi_msg {
         promise_id(pid),
         input_data() {}
   itti_sbi_determine_location_request(
-      const itti_sbi_determine_location_request& i)
-      : itti_sbi_msg(i) {
-    promise_id = i.promise_id;
-    input_data = i.input_data;
-  }
+      const itti_sbi_determine_location_request&) = delete;
   itti_sbi_determine_location_request(
       const itti_sbi_determine_location_request& i, const task_id_t orig,
       const task_id_t dest)
@@ -898,11 +845,7 @@ class itti_sbi_ue_authentication_request : public itti_sbi_msg {
         promise_id(pid),
         auth_info() {}
   itti_sbi_ue_authentication_request(
-      const itti_sbi_ue_authentication_request& i)
-      : itti_sbi_msg(i) {
-    promise_id = i.promise_id;
-    auth_info  = i.auth_info;
-  }
+      const itti_sbi_ue_authentication_request&) = delete;
   itti_sbi_ue_authentication_request(
       const itti_sbi_ue_authentication_request& i, const task_id_t orig,
       const task_id_t dest)
@@ -928,12 +871,7 @@ class itti_sbi_ue_authentication_confirmation : public itti_sbi_msg {
         promise_id(pid),
         confirmation_data() {}
   itti_sbi_ue_authentication_confirmation(
-      const itti_sbi_ue_authentication_confirmation& i)
-      : itti_sbi_msg(i) {
-    uri               = i.uri;
-    promise_id        = i.promise_id;
-    confirmation_data = i.confirmation_data;
-  }
+      const itti_sbi_ue_authentication_confirmation&) = delete;
   itti_sbi_ue_authentication_confirmation(
       const itti_sbi_ue_authentication_confirmation& i, const task_id_t orig,
       const task_id_t dest)
@@ -957,11 +895,7 @@ class itti_sbi_register_with_udm : public itti_sbi_msg {
   itti_sbi_register_with_udm(const task_id_t orig, const task_id_t dest)
       : itti_sbi_msg(SBI_REGISTER_WITH_UDM, orig, dest), supi() {}
 
-  itti_sbi_register_with_udm(const itti_sbi_register_with_udm& i)
-      : itti_sbi_msg(i) {
-    supi              = i.supi;
-    registration_data = i.registration_data;
-  }
+  itti_sbi_register_with_udm(const itti_sbi_register_with_udm&) = delete;
   virtual ~itti_sbi_register_with_udm(){};
   const char* get_msg_name() { return "SBI_REGISTER_WITH_UDM"; };
 
@@ -977,11 +911,7 @@ class itti_sbi_register_with_udm_response : public itti_sbi_msg {
       : itti_sbi_msg(SBI_REGISTER_WITH_UDM_RESPONSE, orig, dest), supi() {}
 
   itti_sbi_register_with_udm_response(
-      const itti_sbi_register_with_udm_response& i)
-      : itti_sbi_msg(i) {
-    supi          = i.supi;
-    response_data = i.response_data;
-  }
+      const itti_sbi_register_with_udm_response&) = delete;
   virtual ~itti_sbi_register_with_udm_response(){};
   const char* get_msg_name() { return "SBI_REGISTER_WITH_UDM_RESPONSE"; };
 
@@ -999,12 +929,7 @@ class itti_sbi_retrieve_am_data : public itti_sbi_msg {
         supi(),
         plmn_id() {}
 
-  itti_sbi_retrieve_am_data(const itti_sbi_retrieve_am_data& i)
-      : itti_sbi_msg(i) {
-    promise_id = i.promise_id;
-    supi       = i.supi;
-    plmn_id    = i.plmn_id;
-  }
+  itti_sbi_retrieve_am_data(const itti_sbi_retrieve_am_data&) = delete;
   virtual ~itti_sbi_retrieve_am_data(){};
   const char* get_msg_name() { return "SBI_RETRIEVE_AM_DATA"; };
 
@@ -1022,11 +947,7 @@ class itti_sbi_retrieve_am_data_response : public itti_sbi_msg {
         response_data() {}
 
   itti_sbi_retrieve_am_data_response(
-      const itti_sbi_retrieve_am_data_response& i)
-      : itti_sbi_msg(i) {
-    supi          = i.supi;
-    response_data = i.response_data;
-  }
+      const itti_sbi_retrieve_am_data_response&) = delete;
   virtual ~itti_sbi_retrieve_am_data_response(){};
   const char* get_msg_name() { return "SBI_RETRIEVE_AM_DATA_RESPONSE"; };
 
@@ -1044,11 +965,7 @@ class itti_sbi_retrieve_smf_selection_subscription_data : public itti_sbi_msg {
         plmn_id() {}
 
   itti_sbi_retrieve_smf_selection_subscription_data(
-      const itti_sbi_retrieve_smf_selection_subscription_data& i)
-      : itti_sbi_msg(i) {
-    supi    = i.supi;
-    plmn_id = i.plmn_id;
-  }
+      const itti_sbi_retrieve_smf_selection_subscription_data&) = delete;
   virtual ~itti_sbi_retrieve_smf_selection_subscription_data(){};
   const char* get_msg_name() {
     return "SBI_RETRIEVE_SMF_SELECTION_SUBSCRIPTION_DATA";
@@ -1070,11 +987,8 @@ class itti_sbi_retrieve_smf_selection_subscription_data_response
         response_data() {}
 
   itti_sbi_retrieve_smf_selection_subscription_data_response(
-      const itti_sbi_retrieve_smf_selection_subscription_data_response& i)
-      : itti_sbi_msg(i) {
-    supi          = i.supi;
-    response_data = i.response_data;
-  }
+      const itti_sbi_retrieve_smf_selection_subscription_data_response&) =
+      delete;
   virtual ~itti_sbi_retrieve_smf_selection_subscription_data_response(){};
   const char* get_msg_name() {
     return "SBI_RETRIEVE_SMF_SELECTION_SUBSCRIPTION_DATA_RESPONSE";
@@ -1095,13 +1009,7 @@ class itti_sbi_pcf_discovery : public itti_sbi_msg {
         plmn_id(),
         snssai() {}
 
-  itti_sbi_pcf_discovery(const itti_sbi_pcf_discovery& i) : itti_sbi_msg(i) {
-    promise_id = i.promise_id;
-    supi       = i.supi;
-    dnn        = i.dnn;
-    plmn_id    = i.plmn_id;
-    snssai     = i.snssai;
-  }
+  itti_sbi_pcf_discovery(const itti_sbi_pcf_discovery&) = delete;
   virtual ~itti_sbi_pcf_discovery(){};
   const char* get_msg_name() { return "SBI_PCF_DISCOVERY"; };
 
@@ -1118,10 +1026,8 @@ class itti_sbi_am_policy_association : public itti_sbi_msg {
       : itti_sbi_msg(SBI_AM_POLICY_ASSOCIATION, orig, dest),
         policy_assoc_req() {}
 
-  itti_sbi_am_policy_association(const itti_sbi_am_policy_association& i)
-      : itti_sbi_msg(i) {
-    policy_assoc_req = i.policy_assoc_req;
-  }
+  itti_sbi_am_policy_association(const itti_sbi_am_policy_association&) =
+      delete;
   virtual ~itti_sbi_am_policy_association(){};
   const char* get_msg_name() { return "SBI_AM_POLICY_ASSOCIATION"; };
 
@@ -1138,12 +1044,7 @@ class itti_sbi_am_policy_association_response : public itti_sbi_msg {
         policy_assoc_location() {}
 
   itti_sbi_am_policy_association_response(
-      const itti_sbi_am_policy_association_response& i)
-      : itti_sbi_msg(i) {
-    supi                  = i.supi;
-    response_data         = i.response_data;
-    policy_assoc_location = i.policy_assoc_location;
-  }
+      const itti_sbi_am_policy_association_response&) = delete;
   virtual ~itti_sbi_am_policy_association_response(){};
   const char* get_msg_name() { return "SBI_AM_POLICY_ASSOCIATION_RESPONSE"; };
 
@@ -1160,10 +1061,7 @@ class itti_sbi_am_policy_association_termination : public itti_sbi_msg {
         supi() {}
 
   itti_sbi_am_policy_association_termination(
-      const itti_sbi_am_policy_association_termination& i)
-      : itti_sbi_msg(i) {
-    supi = i.supi;
-  }
+      const itti_sbi_am_policy_association_termination&) = delete;
   virtual ~itti_sbi_am_policy_association_termination(){};
   const char* get_msg_name() {
     return "SBI_AM_POLICY_ASSOCIATION_TERMINATION";
@@ -1183,11 +1081,7 @@ class itti_sbi_am_policy_association_termination_response
         response_data() {}
 
   itti_sbi_am_policy_association_termination_response(
-      const itti_sbi_am_policy_association_termination_response& i)
-      : itti_sbi_msg(i) {
-    supi          = i.supi;
-    response_data = i.response_data;
-  }
+      const itti_sbi_am_policy_association_termination_response&) = delete;
   virtual ~itti_sbi_am_policy_association_termination_response(){};
   const char* get_msg_name() {
     return "SBI_AM_POLICY_ASSOCIATION_TERMINATION_RESPONSE";
@@ -1206,11 +1100,7 @@ class itti_sbi_am_policy_association_update : public itti_sbi_msg {
         policy_assoc_update_req() {}
 
   itti_sbi_am_policy_association_update(
-      const itti_sbi_am_policy_association_update& i)
-      : itti_sbi_msg(i) {
-    supi                    = i.supi;
-    policy_assoc_update_req = i.policy_assoc_update_req;
-  }
+      const itti_sbi_am_policy_association_update&) = delete;
   virtual ~itti_sbi_am_policy_association_update(){};
   const char* get_msg_name() { return "SBI_AM_POLICY_ASSOCIATION_UPDATE"; };
 
@@ -1227,11 +1117,7 @@ class itti_sbi_am_policy_association_update_response : public itti_sbi_msg {
         response_data() {}
 
   itti_sbi_am_policy_association_update_response(
-      const itti_sbi_am_policy_association_update_response& i)
-      : itti_sbi_msg(i) {
-    supi          = i.supi;
-    response_data = i.response_data;
-  }
+      const itti_sbi_am_policy_association_update_response&) = delete;
   virtual ~itti_sbi_am_policy_association_update_response(){};
   const char* get_msg_name() {
     return "SBI_AM_POLICY_ASSOCIATION_UPDATE_RESPONSE";
@@ -1248,10 +1134,7 @@ class itti_sbi_am_policy_association_retrieval : public itti_sbi_msg {
       : itti_sbi_msg(SBI_AM_POLICY_ASSOCIATION_RETRIEVAL, orig, dest), supi() {}
 
   itti_sbi_am_policy_association_retrieval(
-      const itti_sbi_am_policy_association_retrieval& i)
-      : itti_sbi_msg(i) {
-    supi = i.supi;
-  }
+      const itti_sbi_am_policy_association_retrieval&) = delete;
   virtual ~itti_sbi_am_policy_association_retrieval(){};
   const char* get_msg_name() { return "SBI_AM_POLICY_ASSOCIATION_RETRIEVAL"; };
 
@@ -1267,11 +1150,7 @@ class itti_sbi_am_policy_association_retrieval_response : public itti_sbi_msg {
         response_data() {}
 
   itti_sbi_am_policy_association_retrieval_response(
-      const itti_sbi_am_policy_association_retrieval_response& i)
-      : itti_sbi_msg(i) {
-    supi          = i.supi;
-    response_data = i.response_data;
-  }
+      const itti_sbi_am_policy_association_retrieval_response&) = delete;
   virtual ~itti_sbi_am_policy_association_retrieval_response(){};
   const char* get_msg_name() {
     return "SBI_AM_POLICY_ASSOCIATION_RETRIEVAL_RESPONSE";
@@ -1291,12 +1170,7 @@ class itti_sbi_am_policy_update_notification : public itti_sbi_msg {
         policy_update() {}
 
   itti_sbi_am_policy_update_notification(
-      const itti_sbi_am_policy_update_notification& i)
-      : itti_sbi_msg(i) {
-    promise_id    = i.promise_id;
-    supi          = i.supi;
-    policy_update = i.policy_update;
-  }
+      const itti_sbi_am_policy_update_notification&) = delete;
   virtual ~itti_sbi_am_policy_update_notification(){};
   const char* get_msg_name() { return "SBI_AM_POLICY_UPDATE_NOTIFICATION"; };
 
@@ -1317,12 +1191,7 @@ class itti_sbi_am_policy_association_termination_notification
         termination_notification() {}
 
   itti_sbi_am_policy_association_termination_notification(
-      const itti_sbi_am_policy_association_termination_notification& i)
-      : itti_sbi_msg(i) {
-    promise_id               = i.promise_id;
-    supi                     = i.supi;
-    termination_notification = i.termination_notification;
-  }
+      const itti_sbi_am_policy_association_termination_notification&) = delete;
   virtual ~itti_sbi_am_policy_association_termination_notification(){};
   const char* get_msg_name() {
     return "SBI_AM_POLICY_ASSOCIATION_TERMINATION_NOTIFICATION";
@@ -1342,12 +1211,8 @@ class itti_sbi_nudm_sdm_notification : public itti_sbi_msg {
         supi(),
         notification() {}
 
-  itti_sbi_nudm_sdm_notification(const itti_sbi_nudm_sdm_notification& i)
-      : itti_sbi_msg(i) {
-    promise_id   = i.promise_id;
-    supi         = i.supi;
-    notification = i.notification;
-  }
+  itti_sbi_nudm_sdm_notification(const itti_sbi_nudm_sdm_notification&) =
+      delete;
   virtual ~itti_sbi_nudm_sdm_notification() = default;
   const char* get_msg_name() { return "SBI_NUDM_SDM_NOTIFICATION"; }
 
@@ -1361,11 +1226,8 @@ class itti_sbi_sdm_subscribe : public itti_sbi_msg {
   itti_sbi_sdm_subscribe(const task_id_t orig, const task_id_t dest)
       : itti_sbi_msg(SBI_SDM_SUBSCRIBE, orig, dest), supi(), sdm_sub() {}
 
-  itti_sbi_sdm_subscribe(const itti_sbi_sdm_subscribe& i) : itti_sbi_msg(i) {
-    supi    = i.supi;
-    sdm_sub = i.sdm_sub;
-  }
-  virtual ~itti_sbi_sdm_subscribe() = default;
+  itti_sbi_sdm_subscribe(const itti_sbi_sdm_subscribe&) = delete;
+  virtual ~itti_sbi_sdm_subscribe()                     = default;
   const char* get_msg_name() { return "SBI_SDM_SUBSCRIBE"; }
 
   std::string supi;
@@ -1379,12 +1241,8 @@ class itti_sbi_sdm_unsubscribe : public itti_sbi_msg {
         supi(),
         subscription_id() {}
 
-  itti_sbi_sdm_unsubscribe(const itti_sbi_sdm_unsubscribe& i)
-      : itti_sbi_msg(i) {
-    supi            = i.supi;
-    subscription_id = i.subscription_id;
-  }
-  virtual ~itti_sbi_sdm_unsubscribe() = default;
+  itti_sbi_sdm_unsubscribe(const itti_sbi_sdm_unsubscribe&) = delete;
+  virtual ~itti_sbi_sdm_unsubscribe()                       = default;
   const char* get_msg_name() { return "SBI_SDM_UNSUBSCRIBE"; }
 
   std::string supi;
@@ -1399,10 +1257,7 @@ class itti_sbi_ue_context_in_smf_data_retrieval : public itti_sbi_msg {
         supi() {}
 
   itti_sbi_ue_context_in_smf_data_retrieval(
-      const itti_sbi_ue_context_in_smf_data_retrieval& i)
-      : itti_sbi_msg(i) {
-    supi = i.supi;
-  }
+      const itti_sbi_ue_context_in_smf_data_retrieval&) = delete;
   virtual ~itti_sbi_ue_context_in_smf_data_retrieval(){};
   const char* get_msg_name() { return "SBI_UE_CONTEXT_IN_SMF_DATA_RETRIEVAL"; };
 
@@ -1418,11 +1273,7 @@ class itti_sbi_ue_context_in_smf_data_retrieval_response : public itti_sbi_msg {
         response_data() {}
 
   itti_sbi_ue_context_in_smf_data_retrieval_response(
-      const itti_sbi_ue_context_in_smf_data_retrieval_response& i)
-      : itti_sbi_msg(i) {
-    supi          = i.supi;
-    response_data = i.response_data;
-  }
+      const itti_sbi_ue_context_in_smf_data_retrieval_response&) = delete;
   virtual ~itti_sbi_ue_context_in_smf_data_retrieval_response(){};
   const char* get_msg_name() {
     return "SBI_UE_CONTEXT_IN_SMF_DATA_RETRIEVAL_RESPONSE";
@@ -1441,11 +1292,7 @@ class itti_sbi_amf_status_change_subscribe_request : public itti_sbi_msg {
         promise_id(pid) {}
 
   itti_sbi_amf_status_change_subscribe_request(
-      const itti_sbi_amf_status_change_subscribe_request& i)
-      : itti_sbi_msg(i) {
-    promise_id        = i.promise_id;
-    subscription_data = i.subscription_data;
-  }
+      const itti_sbi_amf_status_change_subscribe_request&) = delete;
   virtual ~itti_sbi_amf_status_change_subscribe_request(){};
 
   uint32_t promise_id;
@@ -1461,11 +1308,7 @@ class itti_sbi_amf_status_change_unsubscribe_request : public itti_sbi_msg {
         promise_id(pid) {}
 
   itti_sbi_amf_status_change_unsubscribe_request(
-      const itti_sbi_amf_status_change_unsubscribe_request& i)
-      : itti_sbi_msg(i) {
-    promise_id      = i.promise_id;
-    subscription_id = i.subscription_id;
-  }
+      const itti_sbi_amf_status_change_unsubscribe_request&) = delete;
   virtual ~itti_sbi_amf_status_change_unsubscribe_request(){};
 
   uint32_t promise_id;
@@ -1482,12 +1325,7 @@ class itti_sbi_amf_status_change_subscribe_modify : public itti_sbi_msg {
         promise_id(pid) {}
 
   itti_sbi_amf_status_change_subscribe_modify(
-      const itti_sbi_amf_status_change_subscribe_modify& i)
-      : itti_sbi_msg(i) {
-    promise_id        = i.promise_id;
-    subscription_id   = i.subscription_id;
-    subscription_data = i.subscription_data;
-  }
+      const itti_sbi_amf_status_change_subscribe_modify&) = delete;
   virtual ~itti_sbi_amf_status_change_subscribe_modify(){};
 
   uint32_t promise_id;
@@ -1505,11 +1343,7 @@ class itti_sbi_amf_status_change_notification : public itti_sbi_msg {
         notification_uris() {}
 
   itti_sbi_amf_status_change_notification(
-      const itti_sbi_amf_status_change_notification& i)
-      : itti_sbi_msg(i) {
-    amf_status_change_notification = i.amf_status_change_notification;
-    notification_uris              = i.notification_uris;
-  }
+      const itti_sbi_amf_status_change_notification&) = delete;
   virtual ~itti_sbi_amf_status_change_notification(){};
 
   std::vector<std::string> notification_uris;
@@ -1526,12 +1360,7 @@ class itti_sbi_provide_domain_selection_info : public itti_sbi_msg {
         promise_id(pid) {}
 
   itti_sbi_provide_domain_selection_info(
-      const itti_sbi_provide_domain_selection_info& i)
-      : itti_sbi_msg(i) {
-    promise_id            = i.promise_id;
-    ue_context_id         = i.ue_context_id;
-    ue_context_info_class = i.ue_context_info_class;
-  }
+      const itti_sbi_provide_domain_selection_info&) = delete;
   virtual ~itti_sbi_provide_domain_selection_info(){};
 
   uint32_t promise_id;
@@ -1548,12 +1377,8 @@ class itti_sbi_provide_location_info : public itti_sbi_msg {
         request_loc_info(),
         promise_id(pid) {}
 
-  itti_sbi_provide_location_info(const itti_sbi_provide_location_info& i)
-      : itti_sbi_msg(i) {
-    promise_id       = i.promise_id;
-    ue_context_id    = i.ue_context_id;
-    request_loc_info = i.request_loc_info;
-  }
+  itti_sbi_provide_location_info(const itti_sbi_provide_location_info&) =
+      delete;
   virtual ~itti_sbi_provide_location_info(){};
 
   uint32_t promise_id;
