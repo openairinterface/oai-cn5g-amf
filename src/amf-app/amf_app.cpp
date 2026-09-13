@@ -671,7 +671,7 @@ void amf_app::handle_itti_message(
 
   // Update AMF UE NGAP ID
   std::shared_ptr<ue_ngap_context> unc = {};
-  if (!amf_n2_inst->ran_ue_id_2_ue_ngap_context(
+  if (!amf_n2_inst->get_ngap_ctx_by_ran_gnb(
           itti_msg.ran_ue_ngap_id, itti_msg.gnb_id, unc)) {
     Logger::amf_app().error(
         "Could not find UE NGAP Context with ran_ue_ngap_id "
@@ -842,7 +842,7 @@ void amf_app::handle_itti_message(itti_sbi_n1_message_notification& itti_msg) {
   // Step 4. Create UE NGAP Context if necessary
   // Create/Update UE NGAP Context
   std::shared_ptr<ue_ngap_context> unc = {};
-  if (!amf_n2_inst->ran_ue_id_2_ue_ngap_context(ran_ue_ngap_id, gnb_id, unc)) {
+  if (!amf_n2_inst->get_ngap_ctx_by_ran_gnb(ran_ue_ngap_id, gnb_id, unc)) {
     Logger::amf_app().debug(
         "Create a new UE NGAP context with ran_ue_ngap_id " RAN_UE_NGAP_ID_FMT,
         ran_ue_ngap_id);
