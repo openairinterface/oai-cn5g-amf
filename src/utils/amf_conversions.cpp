@@ -4,7 +4,6 @@
 
 #include "amf_conversions.hpp"
 
-#include <arpa/inet.h>
 #include <ctype.h>
 #include <inttypes.h>
 #include <stdbool.h>
@@ -13,7 +12,6 @@
 
 #include <boost/algorithm/string.hpp>
 #include <iomanip>
-#include <sstream>
 
 #include "amf.hpp"
 #include "logger.hpp"
@@ -117,19 +115,6 @@ void amf_conv::octet_stream_2_hex_stream_bis(
   out          = tmp;
   Logger::amf_n1().debug("Buffer: %s", out.c_str());
   oai::utils::utils::free_wrapper((void**) &tmp);
-}
-
-//------------------------------------------------------------------------------
-void amf_conv::bstring_2_string(const bstring& b_str, std::string& str) {
-  if (!b_str) return;
-  auto b = bstrcpy(b_str);
-  // std::string str_tmp((char*) bdata(b) , blength(b));
-  str.assign((char*) bdata(b), blength(b));
-}
-
-//------------------------------------------------------------------------------
-void amf_conv::string_2_bstring(const std::string& str, bstring& b_str) {
-  b_str = blk2bstr(str.c_str(), str.length());
 }
 
 //------------------------------------------------------------------------------

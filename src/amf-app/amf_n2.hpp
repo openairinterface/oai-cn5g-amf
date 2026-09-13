@@ -310,7 +310,7 @@ class amf_n2 : public oai::ngap::ngap_app {
    * existing UE NGAP context
    * @return true if the context exists and is not null, otherwise return false
    */
-  bool ran_ue_id_2_ue_ngap_context(
+  bool get_ngap_ctx_by_ran_gnb(
       uint32_t ran_ue_ngap_id, uint32_t gnb_id,
       std::shared_ptr<ue_ngap_context>& unc) const;
 
@@ -323,7 +323,7 @@ class amf_n2 : public oai::ngap::ngap_app {
    * existing UE NGAP context
    * @return true if the context exists and is not null, otherwise return false
    */
-  bool ran_ue_id_2_ue_ngap_context(
+  bool get_ngap_ctx_by_ran_amf(
       uint32_t ran_ue_ngap_id, uint64_t amf_ue_ngap_id,
       std::shared_ptr<ue_ngap_context>& unc) const;
 
@@ -346,15 +346,6 @@ class amf_n2 : public oai::ngap::ngap_app {
    * @return void
    */
   void remove_ran_ue_ngap_id_2_ngap_context(
-      uint32_t ran_ue_ngap_id, uint32_t gnb_id);
-
-  /*
-   * Remove UE Context associated with a RAN UE NGAP ID
-   * @param [uint32_t] ran_ue_ngap_id: RAN UE NGAP ID
-   * @param [uint32_t] gnb_id: gNB ID
-   * @return void
-   */
-  void remove_ue_context_with_ran_ue_ngap_id(
       uint32_t ran_ue_ngap_id, uint32_t gnb_id);
 
   /*
@@ -395,13 +386,6 @@ class amf_n2 : public oai::ngap::ngap_app {
    * @return void
    */
   void remove_amf_ue_ngap_id_2_ue_ngap_context(const uint64_t& amf_ue_ngap_id);
-
-  /*
-   * Remove UE Context associated with a AMF UE NGAP ID
-   * @param [const uint64_t&] amf_ue_ngap_id: AMF UE NGAP ID
-   * @return void
-   */
-  void remove_ue_context_with_amf_ue_ngap_id(const uint64_t& amf_ue_ngap_id);
 
   /*
    * Get list of UE Context associated with a gNB

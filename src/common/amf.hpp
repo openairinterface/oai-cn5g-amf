@@ -31,10 +31,6 @@ constexpr uint64_t INVALID_AMF_UE_NGAP_ID = 0x010000000000;  // 2^40
 
 // Event Subscription IDs)
 typedef uint32_t evsub_id_t;
-#define EVSUB_ID_FMT "0x%" PRIx32
-#define EVSUB_ID_SCAN_FMT SCNx32
-#define INVALID_EVSUB_ID ((evsub_id_t) 0x00000000)
-#define UNASSIGNED_EVSUB_ID ((evsub_id_t) 0x00000000)
 
 typedef uint32_t n1n2sub_id_t;
 

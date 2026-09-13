@@ -13,13 +13,11 @@
 #include "gNB_context.hpp"
 #include "sctp_server.hpp"
 
-using namespace sctp;
-
 class gnb_context_store {
  public:
   // Find by SCTP association id. Returns nullptr if absent or null
   std::shared_ptr<gnb_context> find_by_assoc(
-      const sctp_assoc_id_t& assoc_id) const {
+      const sctp::sctp_assoc_id_t& assoc_id) const {
     std::shared_lock lock(m_);
     auto it = by_assoc_.find(assoc_id);
     if (it != by_assoc_.end()) {
@@ -46,7 +44,7 @@ class gnb_context_store {
   }
 
   // True if a non-null gNB context exists for this association id
-  bool exists_by_assoc(const sctp_assoc_id_t& assoc_id) const {
+  bool exists_by_assoc(const sctp::sctp_assoc_id_t& assoc_id) const {
     std::shared_lock lock(m_);
     auto it = by_assoc_.find(assoc_id);
     return it != by_assoc_.end() && it->second != nullptr;
@@ -54,7 +52,8 @@ class gnb_context_store {
 
   // Insert/update the by-association-id index only
   void set_by_assoc(
-      const sctp_assoc_id_t& assoc_id, const std::shared_ptr<gnb_context>& gc) {
+      const sctp::sctp_assoc_id_t& assoc_id,
+      const std::shared_ptr<gnb_context>& gc) {
     std::unique_lock lock(m_);
     by_assoc_[assoc_id] = gc;
   }
@@ -67,8 +66,8 @@ class gnb_context_store {
   }
 
   // Copy all association id keys out under the lock
-  std::vector<sctp_assoc_id_t> all_assoc_ids() const {
-    std::vector<sctp_assoc_id_t> assoc_ids;
+  std::vector<sctp::sctp_assoc_id_t> all_assoc_ids() const {
+    std::vector<sctp::sctp_assoc_id_t> assoc_ids;
     std::shared_lock lock(m_);
     for (const auto& it : by_assoc_) {
       assoc_ids.push_back(it.first);
@@ -89,7 +88,7 @@ class gnb_context_store {
 
  private:
   std::map<long, std::shared_ptr<gnb_context>> by_gnbid_;
-  std::map<sctp_assoc_id_t, std::shared_ptr<gnb_context>> by_assoc_;
+  std::map<sctp::sctp_assoc_id_t, std::shared_ptr<gnb_context>> by_assoc_;
   mutable std::shared_mutex m_;
 };
 

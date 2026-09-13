@@ -74,7 +74,7 @@ void NonUEN2MessagesCollectionDocumentApiImpl::non_ue_n2_message_transfer(
   bstring nrppa_pdu  = nullptr;
   bstring routing_id = nullptr;
   amf_conv::msg_str_2_msg_hex(parts[n2_content_id].body, nrppa_pdu);
-  amf_conv::string_2_bstring(
+  amf_conv::string_to_bstring(
       n2InformationTransferReqData.getN2Information().getNrppaInfo().getNfId(),
       routing_id);
   auto itti_msg = std::make_shared<itti_non_ue_n2_message_transfer_request>(

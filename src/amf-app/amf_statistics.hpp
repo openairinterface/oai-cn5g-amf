@@ -18,7 +18,7 @@ constexpr auto kStatisticGnbStatusDisconnected = "Disconnected";
 typedef struct {
   uint32_t gnb_id;
   // TODO: list of PLMNs
-  std::vector<SupportedTaItem> plmn_list;
+  std::vector<oai::ngap::SupportedTaItem> plmn_list;
   std::string mcc;
   std::string mnc;
   std::string gnb_name;
