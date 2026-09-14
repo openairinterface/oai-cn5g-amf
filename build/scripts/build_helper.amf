@@ -3,7 +3,7 @@
 # -------------------------------------------------------------------------------
 # Install the build and runtime dependencies of the OAI AMF: distribution
 # packages plus the libraries that are built from source.
-# Ubuntu 24.04 and the RHEL/Rocky 9 family are the supported distributions.
+# Ubuntu 24.04 and CentOS Stream 10 are the supported distributions.
 # -------------------------------------------------------------------------------
 
 # -------------------------------------------------------------------------------
@@ -91,9 +91,7 @@ check_install_amf_deps(){
       pkg-config"
   elif [[ "$OS_BASEDISTRO" == "fedora" ]]; then
     PACKAGE_LIST="$PACKAGE_LIST \
-      mysql \
-      mysql-devel \
-      mysql-libs \
+      mariadb-connector-c-devel \
       libgcrypt-devel \
       lksctp-tools \
       lksctp-tools-devel \
@@ -102,7 +100,7 @@ check_install_amf_deps(){
       check \
       nettle-devel \
       libcurl-devel \
-      pkgconfig \
+      pkgconf-pkg-config \
       libasan"
   else
     echo_fatal "$OS_DISTRO is not a supported distribution."
