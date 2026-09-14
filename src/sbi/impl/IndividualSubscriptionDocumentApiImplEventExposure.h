@@ -30,7 +30,7 @@
 #include <optional>
 
 #include "AmfUpdatedEventSubscription.h"
-//#include "OneOfarrayAmfUpdateEventOptionItem.h"
+// #include "OneOfarrayAmfUpdateEventOptionItem.h"
 #include "ProblemDetails.h"
 #include "AmfUpdateEventOptionItem.h"
 #include <string>

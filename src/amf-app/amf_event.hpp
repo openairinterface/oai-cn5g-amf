@@ -11,8 +11,8 @@ namespace bs2 = boost::signals2;
 namespace amf_application {
 class amf_event {
  public:
-  amf_event()                 = default;
-  amf_event(amf_event const&) = delete;
+  amf_event()                      = default;
+  amf_event(amf_event const&)      = delete;
   void operator=(amf_event const&) = delete;
 
   static amf_event& get_instance() {

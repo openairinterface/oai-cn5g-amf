@@ -49,7 +49,7 @@ class itti_new_sctp_association : public itti_msg_n2 {
  public:
   itti_new_sctp_association(const task_id_t origin, const task_id_t destination)
       : itti_msg_n2(NEW_SCTP_ASSOCIATION, origin, destination) {}
-  virtual ~itti_new_sctp_association(){};
+  virtual ~itti_new_sctp_association() {};
 };
 
 class itti_ng_setup_request : public itti_msg_n2 {

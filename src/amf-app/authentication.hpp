@@ -38,7 +38,7 @@ typedef struct {
 class authentication {
  public:
   authentication();
-  virtual ~authentication(){};
+  virtual ~authentication() {};
 
   static authentication& get_instance() {
     static authentication instance;

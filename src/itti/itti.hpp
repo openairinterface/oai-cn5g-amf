@@ -132,7 +132,7 @@ class itti_mw {
 
  public:
   itti_mw();
-  itti_mw(itti_mw const&) = delete;
+  itti_mw(itti_mw const&)        = delete;
   void operator=(itti_mw const&) = delete;
   ~itti_mw();
 
