@@ -27,7 +27,7 @@
 
 #include <IndividualUeContextDocumentApi.h>
 
-#include <pistache/optional.h>
+#include <optional>
 
 #include "AssignEbiData.h"
 #include "AssignEbiError.h"

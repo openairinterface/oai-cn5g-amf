@@ -8,7 +8,7 @@
 #include "amf_app.hpp"
 #include <AMFConfigurationApi.h>
 #include <pistache/http.h>
-#include <pistache/optional.h>
+#include <optional>
 
 namespace oai::amf::api {
 
