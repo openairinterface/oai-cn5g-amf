@@ -27,7 +27,7 @@
 
 #include <NonUEN2MessageNotificationIndividualSubscriptionDocumentApi.h>
 
-#include <pistache/optional.h>
+#include <optional>
 
 #include "ProblemDetails.h"
 #include <string>

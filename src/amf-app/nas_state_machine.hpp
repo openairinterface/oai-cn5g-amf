@@ -55,13 +55,13 @@ enum class nas_event_e : uint8_t {
   T3550_FINAL_EXPIRY,       // §5.5.1.2.8c: 5th expiry of T3550 → REGISTERED
   T3560_FINAL_EXPIRY_AUTH,  // §5.4.1.3.7b: 5th expiry during auth → abort+N1
                             // release
-  T3560_FINAL_EXPIRY_SMC,  // §5.4.2.7b: 5th expiry during SMC → abort SMC only
-  T3570_FINAL_EXPIRY,      // §5.4.3.6b: 5th expiry of T3570 → abort
-  T3522_FINAL_EXPIRY,      // §5.5.2.3.5a: 5th expiry of T3522 → DEREGISTERED
-  T3555_FINAL_EXPIRY,      // §5.4.4.6a: 5th expiry of T3555 → abort
+  T3560_FINAL_EXPIRY_SMC,   // §5.4.2.7b: 5th expiry during SMC → abort SMC only
+  T3570_FINAL_EXPIRY,       // §5.4.3.6b: 5th expiry of T3570 → abort
+  T3522_FINAL_EXPIRY,       // §5.5.2.3.5a: 5th expiry of T3522 → DEREGISTERED
+  T3555_FINAL_EXPIRY,       // §5.4.4.6a: 5th expiry of T3555 → abort
 
   // Other
-  LOWER_LAYER_FAILURE,  // §5.4.1.3.7a, §5.4.2.7a, §5.4.3.6a, §5.5.2.3.5b
+  LOWER_LAYER_FAILURE,      // §5.4.1.3.7a, §5.4.2.7a, §5.4.3.6a, §5.5.2.3.5b
   IMPLICIT_DEREGISTRATION,  // §5.3.7: Mobile Reachable + Implicit Dereg timer
                             // cascade
 };

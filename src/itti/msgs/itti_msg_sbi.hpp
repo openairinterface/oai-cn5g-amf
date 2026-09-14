@@ -50,7 +50,7 @@ class itti_msg_n11 : public itti_msg {
     ran_ue_ngap_id = i.ran_ue_ngap_id;
     amf_ue_ngap_id = i.amf_ue_ngap_id;
   }
-  virtual ~itti_msg_n11(){};
+  virtual ~itti_msg_n11() {};
 
  public:
   uint64_t amf_ue_ngap_id;
@@ -402,7 +402,7 @@ class itti_sbi_register_nf_instance_response : public itti_sbi_msg {
   itti_sbi_register_nf_instance_response(
       const task_id_t orig, const task_id_t dest)
       : itti_sbi_msg(SBI_REGISTER_NF_INSTANCE_RESPONSE, orig, dest) {}
-  virtual ~itti_sbi_register_nf_instance_response(){};
+  virtual ~itti_sbi_register_nf_instance_response() {};
   const char* get_msg_name() { return "SBI_REGISTER_NF_INSTANCE_RESPONSE"; };
 
   amf_application::amf_profile profile;
@@ -416,7 +416,7 @@ class itti_sbi_update_nf_instance_request : public itti_sbi_msg {
   itti_sbi_update_nf_instance_request(
       const task_id_t orig, const task_id_t dest)
       : itti_sbi_msg(SBI_UPDATE_NF_INSTANCE_REQUEST, orig, dest) {}
-  virtual ~itti_sbi_update_nf_instance_request(){};
+  virtual ~itti_sbi_update_nf_instance_request() {};
   const char* get_msg_name() { return "SBI_UPDATE_NF_INSTANCE_REQUEST"; };
 
   std::vector<oai::_3gpp::model::PatchItem> patch_items;
@@ -430,7 +430,7 @@ class itti_sbi_update_nf_instance_response : public itti_sbi_msg {
   itti_sbi_update_nf_instance_response(
       const task_id_t orig, const task_id_t dest)
       : itti_sbi_msg(SBI_UPDATE_NF_INSTANCE_RESPONSE, orig, dest) {}
-  virtual ~itti_sbi_update_nf_instance_response(){};
+  virtual ~itti_sbi_update_nf_instance_response() {};
   const char* get_msg_name() { return "SBI_UPDATE_NF_INSTANCE_RESPONSE"; };
 
   std::string amf_instance_id;
@@ -444,7 +444,7 @@ class itti_sbi_deregister_nf_instance_request : public itti_sbi_msg {
   itti_sbi_deregister_nf_instance_request(
       const task_id_t orig, const task_id_t dest)
       : itti_sbi_msg(SBI_DEREGISTER_NF_INSTANCE_REQUEST, orig, dest) {}
-  virtual ~itti_sbi_deregister_nf_instance_request(){};
+  virtual ~itti_sbi_deregister_nf_instance_request() {};
   const char* get_msg_name() { return "SBI_DEREGISTER_NF_INSTANCE_REQUEST"; };
 
   std::string amf_instance_id;
@@ -458,7 +458,7 @@ class itti_sbi_deregister_nf_instance_response : public itti_sbi_msg {
       const task_id_t orig, const task_id_t dest)
       : itti_sbi_msg(SBI_DEREGISTER_NF_INSTANCE_RESPONSE, orig, dest),
         http_response_code() {}
-  virtual ~itti_sbi_deregister_nf_instance_response(){};
+  virtual ~itti_sbi_deregister_nf_instance_response() {};
   const char* get_msg_name() { return "SBI_DEREGISTER_NF_INSTANCE_RESPONSE"; };
 
   std::string amf_instance_id;
@@ -474,7 +474,7 @@ class itti_sbi_slice_selection_subscription_data : public itti_sbi_msg {
   itti_sbi_slice_selection_subscription_data(
       const task_id_t orig, const task_id_t dest)
       : itti_sbi_msg(SBI_SLICE_SELECTION_SUBSCRIPTION_DATA, orig, dest) {}
-  virtual ~itti_sbi_slice_selection_subscription_data(){};
+  virtual ~itti_sbi_slice_selection_subscription_data() {};
   const char* get_msg_name() {
     return "SBI_SLICE_SELECTION_SUBSCRIPTION_DATA";
   };
@@ -490,7 +490,7 @@ class itti_sbi_network_slice_selection_information : public itti_sbi_msg {
   itti_sbi_network_slice_selection_information(
       const task_id_t orig, const task_id_t dest)
       : itti_sbi_msg(SBI_NETWORK_SLICE_SELECTION_INFORMATION, orig, dest) {}
-  virtual ~itti_sbi_network_slice_selection_information(){};
+  virtual ~itti_sbi_network_slice_selection_information() {};
   const char* get_msg_name() {
     return "SBI_NETWORK_SLICE_SELECTION_INFORMATION";
   };
@@ -507,7 +507,7 @@ class itti_sbi_network_slice_selection_discovery : public itti_sbi_msg {
   itti_sbi_network_slice_selection_discovery(
       const task_id_t orig, const task_id_t dest)
       : itti_sbi_msg(SBI_NETWORK_SLICE_SELECTION_DISCOVERY, orig, dest) {}
-  virtual ~itti_sbi_network_slice_selection_discovery(){};
+  virtual ~itti_sbi_network_slice_selection_discovery() {};
   const char* get_msg_name() {
     return "SBI_NETWORK_SLICE_SELECTION_DISCOVERY";
   };
@@ -524,7 +524,7 @@ class itti_sbi_nf_instance_discovery : public itti_sbi_msg {
   itti_sbi_nf_instance_discovery(const task_id_t orig, const task_id_t dest)
       : itti_sbi_msg(SBI_NF_INSTANCE_DISCOVERY, orig, dest),
         target_amf_set_is_set(false) {}
-  virtual ~itti_sbi_nf_instance_discovery(){};
+  virtual ~itti_sbi_nf_instance_discovery() {};
   const char* get_msg_name() { return "SBI_NF_INSTANCE_DISCOVERY"; };
 
   std::string target_amf_set;
@@ -591,7 +591,7 @@ class itti_sbi_event_exposure_request : public itti_sbi_msg {
       const itti_sbi_event_exposure_request& i, const task_id_t orig,
       const task_id_t dest)
       : itti_sbi_msg(i, orig, dest), event_exposure(i.event_exposure) {}
-  virtual ~itti_sbi_event_exposure_request(){};
+  virtual ~itti_sbi_event_exposure_request() {};
   const char* get_msg_name() { return "SBI_EVENT_EXPOSURE_REQUEST"; };
 
   event_exposure_msg event_exposure;
@@ -607,7 +607,7 @@ class itti_sbi_notification_data : public itti_sbi_msg {
       const itti_sbi_notification_data& i, const task_id_t orig,
       const task_id_t dest)
       : itti_sbi_msg(i, orig, dest), notification_msg(i.notification_msg) {}
-  virtual ~itti_sbi_notification_data(){};
+  virtual ~itti_sbi_notification_data() {};
   const char* get_msg_name() { return "SBI_NOTIFICATION_DATA"; };
 
   data_notification_msg notification_msg;
@@ -625,7 +625,7 @@ class itti_sbi_notify_subscribed_event : public itti_sbi_msg {
       const itti_sbi_notify_subscribed_event& i, const task_id_t orig,
       const task_id_t dest)
       : itti_sbi_msg(i, orig, dest), notif_id(i.notif_id) {}
-  virtual ~itti_sbi_notify_subscribed_event(){};
+  virtual ~itti_sbi_notify_subscribed_event() {};
   const char* get_msg_name() { return "SBI_NOTIFY_SUBSCRIBED_EVENT"; };
 
   std::string notif_id;
@@ -649,7 +649,7 @@ class itti_sbi_n1_message_notification : public itti_sbi_msg {
         notification_msg(i.notification_msg),
         ue_id(i.ue_id),
         n1sm(i.n1sm) {}
-  virtual ~itti_sbi_n1_message_notification(){};
+  virtual ~itti_sbi_n1_message_notification() {};
   const char* get_msg_name() { return "SBI_N1_MESSAGE_NOTIFICATION"; };
 
   oai::_3gpp::model::N1MessageNotification notification_msg;
@@ -675,7 +675,7 @@ class itti_sbi_n1n2_message_subscribe : public itti_sbi_msg {
         ue_cxt_id(i.ue_cxt_id),
         subscription_data(i.subscription_data),
         promise_id(i.promise_id) {}
-  virtual ~itti_sbi_n1n2_message_subscribe(){};
+  virtual ~itti_sbi_n1n2_message_subscribe() {};
   const char* get_msg_name() { return "SBI_N1N2_MESSAGE_SUBSCRIBE"; };
 
   std::string ue_cxt_id;
@@ -701,7 +701,7 @@ class itti_sbi_n1n2_message_unsubscribe : public itti_sbi_msg {
         ue_cxt_id(i.ue_cxt_id),
         subscription_id(i.subscription_id),
         promise_id(i.promise_id) {}
-  virtual ~itti_sbi_n1n2_message_unsubscribe(){};
+  virtual ~itti_sbi_n1n2_message_unsubscribe() {};
   const char* get_msg_name() { return "SBI_N1N2_MESSAGE_UNSUBSCRIBE"; };
 
   std::string ue_cxt_id;
@@ -725,7 +725,7 @@ class itti_sbi_non_ue_n2_info_subscribe : public itti_sbi_msg {
       : itti_sbi_msg(i, orig, dest),
         subscription_data(i.subscription_data),
         promise_id(i.promise_id) {}
-  virtual ~itti_sbi_non_ue_n2_info_subscribe(){};
+  virtual ~itti_sbi_non_ue_n2_info_subscribe() {};
   const char* get_msg_name() { return "NON UE N2 INFO SUBSCRIBE"; };
 
   oai::_3gpp::model::NonUeN2InfoSubscriptionCreateData subscription_data;
@@ -748,7 +748,7 @@ class itti_sbi_non_ue_n2_info_unsubscribe : public itti_sbi_msg {
       : itti_sbi_msg(i, orig, dest),
         subscription_id(i.subscription_id),
         promise_id(i.promise_id) {}
-  virtual ~itti_sbi_non_ue_n2_info_unsubscribe(){};
+  virtual ~itti_sbi_non_ue_n2_info_unsubscribe() {};
   const char* get_msg_name() { return "NON UE N2 INFO UNSUBSCRIBE"; };
 
   std::string subscription_id;
@@ -761,7 +761,7 @@ class itti_sbi_amf_configuration : public itti_sbi_msg {
   itti_sbi_amf_configuration(
       const task_id_t orig, const task_id_t dest, uint32_t pid)
       : itti_sbi_msg(SBI_AMF_CONFIGURATION, orig, dest), promise_id(pid) {}
-  virtual ~itti_sbi_amf_configuration(){};
+  virtual ~itti_sbi_amf_configuration() {};
   const char* get_msg_name() { return "SBI_AMF_CONFIGURATION"; };
 
   uint32_t promise_id;
@@ -774,7 +774,7 @@ class itti_sbi_update_amf_configuration : public itti_sbi_msg {
       const task_id_t orig, const task_id_t dest, uint32_t pid)
       : itti_sbi_msg(SBI_UPDATE_AMF_CONFIGURATION, orig, dest),
         promise_id(pid) {}
-  virtual ~itti_sbi_update_amf_configuration(){};
+  virtual ~itti_sbi_update_amf_configuration() {};
   const char* get_msg_name() { return "SBI_UPDATE_AMF_CONFIGURATION"; };
 
   uint32_t promise_id;
@@ -802,7 +802,7 @@ class itti_sbi_pdu_session_release_notif : public itti_sbi_msg {
         pdu_session_id(i.pdu_session_id),
         smContextStatusNotification(i.smContextStatusNotification) {}
 
-  virtual ~itti_sbi_pdu_session_release_notif(){};
+  virtual ~itti_sbi_pdu_session_release_notif() {};
   const char* get_msg_name() { return "SBI_PDU_SESSION_RELEASE_NOTIF"; };
 
   uint32_t promise_id;
@@ -829,7 +829,7 @@ class itti_sbi_determine_location_request : public itti_sbi_msg {
     input_data = i.input_data;
   }
 
-  virtual ~itti_sbi_determine_location_request(){};
+  virtual ~itti_sbi_determine_location_request() {};
   const char* get_msg_name() { return "SBI_DETERMINE_LOCATION_REQUEST"; };
 
   uint32_t promise_id;
@@ -854,7 +854,7 @@ class itti_sbi_ue_authentication_request : public itti_sbi_msg {
     auth_info  = i.auth_info;
   }
 
-  virtual ~itti_sbi_ue_authentication_request(){};
+  virtual ~itti_sbi_ue_authentication_request() {};
   const char* get_msg_name() { return "SBI_UE_AUTHENTICATION_REQUEST"; };
 
   uint32_t promise_id;
@@ -881,7 +881,7 @@ class itti_sbi_ue_authentication_confirmation : public itti_sbi_msg {
     confirmation_data = i.confirmation_data;
   }
 
-  virtual ~itti_sbi_ue_authentication_confirmation(){};
+  virtual ~itti_sbi_ue_authentication_confirmation() {};
   const char* get_msg_name() { return "SBI_UE_AUTHENTICATION_CONFIRMATION"; };
 
   std::string uri;
@@ -896,7 +896,7 @@ class itti_sbi_register_with_udm : public itti_sbi_msg {
       : itti_sbi_msg(SBI_REGISTER_WITH_UDM, orig, dest), supi() {}
 
   itti_sbi_register_with_udm(const itti_sbi_register_with_udm&) = delete;
-  virtual ~itti_sbi_register_with_udm(){};
+  virtual ~itti_sbi_register_with_udm() {};
   const char* get_msg_name() { return "SBI_REGISTER_WITH_UDM"; };
 
   std::string supi;
@@ -912,7 +912,7 @@ class itti_sbi_register_with_udm_response : public itti_sbi_msg {
 
   itti_sbi_register_with_udm_response(
       const itti_sbi_register_with_udm_response&) = delete;
-  virtual ~itti_sbi_register_with_udm_response(){};
+  virtual ~itti_sbi_register_with_udm_response() {};
   const char* get_msg_name() { return "SBI_REGISTER_WITH_UDM_RESPONSE"; };
 
   std::string supi;
@@ -930,7 +930,7 @@ class itti_sbi_retrieve_am_data : public itti_sbi_msg {
         plmn_id() {}
 
   itti_sbi_retrieve_am_data(const itti_sbi_retrieve_am_data&) = delete;
-  virtual ~itti_sbi_retrieve_am_data(){};
+  virtual ~itti_sbi_retrieve_am_data() {};
   const char* get_msg_name() { return "SBI_RETRIEVE_AM_DATA"; };
 
   uint32_t promise_id;
@@ -948,7 +948,7 @@ class itti_sbi_retrieve_am_data_response : public itti_sbi_msg {
 
   itti_sbi_retrieve_am_data_response(
       const itti_sbi_retrieve_am_data_response&) = delete;
-  virtual ~itti_sbi_retrieve_am_data_response(){};
+  virtual ~itti_sbi_retrieve_am_data_response() {};
   const char* get_msg_name() { return "SBI_RETRIEVE_AM_DATA_RESPONSE"; };
 
   std::string supi;
@@ -966,7 +966,7 @@ class itti_sbi_retrieve_smf_selection_subscription_data : public itti_sbi_msg {
 
   itti_sbi_retrieve_smf_selection_subscription_data(
       const itti_sbi_retrieve_smf_selection_subscription_data&) = delete;
-  virtual ~itti_sbi_retrieve_smf_selection_subscription_data(){};
+  virtual ~itti_sbi_retrieve_smf_selection_subscription_data() {};
   const char* get_msg_name() {
     return "SBI_RETRIEVE_SMF_SELECTION_SUBSCRIPTION_DATA";
   };
@@ -989,7 +989,7 @@ class itti_sbi_retrieve_smf_selection_subscription_data_response
   itti_sbi_retrieve_smf_selection_subscription_data_response(
       const itti_sbi_retrieve_smf_selection_subscription_data_response&) =
       delete;
-  virtual ~itti_sbi_retrieve_smf_selection_subscription_data_response(){};
+  virtual ~itti_sbi_retrieve_smf_selection_subscription_data_response() {};
   const char* get_msg_name() {
     return "SBI_RETRIEVE_SMF_SELECTION_SUBSCRIPTION_DATA_RESPONSE";
   };
@@ -1010,7 +1010,7 @@ class itti_sbi_pcf_discovery : public itti_sbi_msg {
         snssai() {}
 
   itti_sbi_pcf_discovery(const itti_sbi_pcf_discovery&) = delete;
-  virtual ~itti_sbi_pcf_discovery(){};
+  virtual ~itti_sbi_pcf_discovery() {};
   const char* get_msg_name() { return "SBI_PCF_DISCOVERY"; };
 
   uint32_t promise_id;
@@ -1028,7 +1028,7 @@ class itti_sbi_am_policy_association : public itti_sbi_msg {
 
   itti_sbi_am_policy_association(const itti_sbi_am_policy_association&) =
       delete;
-  virtual ~itti_sbi_am_policy_association(){};
+  virtual ~itti_sbi_am_policy_association() {};
   const char* get_msg_name() { return "SBI_AM_POLICY_ASSOCIATION"; };
 
   oai::_3gpp::model::PolicyAssociationRequest policy_assoc_req;
@@ -1045,7 +1045,7 @@ class itti_sbi_am_policy_association_response : public itti_sbi_msg {
 
   itti_sbi_am_policy_association_response(
       const itti_sbi_am_policy_association_response&) = delete;
-  virtual ~itti_sbi_am_policy_association_response(){};
+  virtual ~itti_sbi_am_policy_association_response() {};
   const char* get_msg_name() { return "SBI_AM_POLICY_ASSOCIATION_RESPONSE"; };
 
   std::string supi;
@@ -1062,7 +1062,7 @@ class itti_sbi_am_policy_association_termination : public itti_sbi_msg {
 
   itti_sbi_am_policy_association_termination(
       const itti_sbi_am_policy_association_termination&) = delete;
-  virtual ~itti_sbi_am_policy_association_termination(){};
+  virtual ~itti_sbi_am_policy_association_termination() {};
   const char* get_msg_name() {
     return "SBI_AM_POLICY_ASSOCIATION_TERMINATION";
   };
@@ -1082,7 +1082,7 @@ class itti_sbi_am_policy_association_termination_response
 
   itti_sbi_am_policy_association_termination_response(
       const itti_sbi_am_policy_association_termination_response&) = delete;
-  virtual ~itti_sbi_am_policy_association_termination_response(){};
+  virtual ~itti_sbi_am_policy_association_termination_response() {};
   const char* get_msg_name() {
     return "SBI_AM_POLICY_ASSOCIATION_TERMINATION_RESPONSE";
   };
@@ -1101,7 +1101,7 @@ class itti_sbi_am_policy_association_update : public itti_sbi_msg {
 
   itti_sbi_am_policy_association_update(
       const itti_sbi_am_policy_association_update&) = delete;
-  virtual ~itti_sbi_am_policy_association_update(){};
+  virtual ~itti_sbi_am_policy_association_update() {};
   const char* get_msg_name() { return "SBI_AM_POLICY_ASSOCIATION_UPDATE"; };
 
   std::string supi;
@@ -1118,7 +1118,7 @@ class itti_sbi_am_policy_association_update_response : public itti_sbi_msg {
 
   itti_sbi_am_policy_association_update_response(
       const itti_sbi_am_policy_association_update_response&) = delete;
-  virtual ~itti_sbi_am_policy_association_update_response(){};
+  virtual ~itti_sbi_am_policy_association_update_response() {};
   const char* get_msg_name() {
     return "SBI_AM_POLICY_ASSOCIATION_UPDATE_RESPONSE";
   };
@@ -1135,7 +1135,7 @@ class itti_sbi_am_policy_association_retrieval : public itti_sbi_msg {
 
   itti_sbi_am_policy_association_retrieval(
       const itti_sbi_am_policy_association_retrieval&) = delete;
-  virtual ~itti_sbi_am_policy_association_retrieval(){};
+  virtual ~itti_sbi_am_policy_association_retrieval() {};
   const char* get_msg_name() { return "SBI_AM_POLICY_ASSOCIATION_RETRIEVAL"; };
 
   std::string supi;
@@ -1151,7 +1151,7 @@ class itti_sbi_am_policy_association_retrieval_response : public itti_sbi_msg {
 
   itti_sbi_am_policy_association_retrieval_response(
       const itti_sbi_am_policy_association_retrieval_response&) = delete;
-  virtual ~itti_sbi_am_policy_association_retrieval_response(){};
+  virtual ~itti_sbi_am_policy_association_retrieval_response() {};
   const char* get_msg_name() {
     return "SBI_AM_POLICY_ASSOCIATION_RETRIEVAL_RESPONSE";
   };
@@ -1171,7 +1171,7 @@ class itti_sbi_am_policy_update_notification : public itti_sbi_msg {
 
   itti_sbi_am_policy_update_notification(
       const itti_sbi_am_policy_update_notification&) = delete;
-  virtual ~itti_sbi_am_policy_update_notification(){};
+  virtual ~itti_sbi_am_policy_update_notification() {};
   const char* get_msg_name() { return "SBI_AM_POLICY_UPDATE_NOTIFICATION"; };
 
   std::string supi;
@@ -1192,7 +1192,7 @@ class itti_sbi_am_policy_association_termination_notification
 
   itti_sbi_am_policy_association_termination_notification(
       const itti_sbi_am_policy_association_termination_notification&) = delete;
-  virtual ~itti_sbi_am_policy_association_termination_notification(){};
+  virtual ~itti_sbi_am_policy_association_termination_notification() {};
   const char* get_msg_name() {
     return "SBI_AM_POLICY_ASSOCIATION_TERMINATION_NOTIFICATION";
   };
@@ -1258,7 +1258,7 @@ class itti_sbi_ue_context_in_smf_data_retrieval : public itti_sbi_msg {
 
   itti_sbi_ue_context_in_smf_data_retrieval(
       const itti_sbi_ue_context_in_smf_data_retrieval&) = delete;
-  virtual ~itti_sbi_ue_context_in_smf_data_retrieval(){};
+  virtual ~itti_sbi_ue_context_in_smf_data_retrieval() {};
   const char* get_msg_name() { return "SBI_UE_CONTEXT_IN_SMF_DATA_RETRIEVAL"; };
 
   std::string supi;
@@ -1274,7 +1274,7 @@ class itti_sbi_ue_context_in_smf_data_retrieval_response : public itti_sbi_msg {
 
   itti_sbi_ue_context_in_smf_data_retrieval_response(
       const itti_sbi_ue_context_in_smf_data_retrieval_response&) = delete;
-  virtual ~itti_sbi_ue_context_in_smf_data_retrieval_response(){};
+  virtual ~itti_sbi_ue_context_in_smf_data_retrieval_response() {};
   const char* get_msg_name() {
     return "SBI_UE_CONTEXT_IN_SMF_DATA_RETRIEVAL_RESPONSE";
   };
@@ -1293,7 +1293,7 @@ class itti_sbi_amf_status_change_subscribe_request : public itti_sbi_msg {
 
   itti_sbi_amf_status_change_subscribe_request(
       const itti_sbi_amf_status_change_subscribe_request&) = delete;
-  virtual ~itti_sbi_amf_status_change_subscribe_request(){};
+  virtual ~itti_sbi_amf_status_change_subscribe_request() {};
 
   uint32_t promise_id;
   oai::_3gpp::model::SubscriptionData subscription_data;
@@ -1309,7 +1309,7 @@ class itti_sbi_amf_status_change_unsubscribe_request : public itti_sbi_msg {
 
   itti_sbi_amf_status_change_unsubscribe_request(
       const itti_sbi_amf_status_change_unsubscribe_request&) = delete;
-  virtual ~itti_sbi_amf_status_change_unsubscribe_request(){};
+  virtual ~itti_sbi_amf_status_change_unsubscribe_request() {};
 
   uint32_t promise_id;
   std::string subscription_id;
@@ -1326,7 +1326,7 @@ class itti_sbi_amf_status_change_subscribe_modify : public itti_sbi_msg {
 
   itti_sbi_amf_status_change_subscribe_modify(
       const itti_sbi_amf_status_change_subscribe_modify&) = delete;
-  virtual ~itti_sbi_amf_status_change_subscribe_modify(){};
+  virtual ~itti_sbi_amf_status_change_subscribe_modify() {};
 
   uint32_t promise_id;
   std::string subscription_id;
@@ -1344,7 +1344,7 @@ class itti_sbi_amf_status_change_notification : public itti_sbi_msg {
 
   itti_sbi_amf_status_change_notification(
       const itti_sbi_amf_status_change_notification&) = delete;
-  virtual ~itti_sbi_amf_status_change_notification(){};
+  virtual ~itti_sbi_amf_status_change_notification() {};
 
   std::vector<std::string> notification_uris;
   oai::_3gpp::model::AmfStatusChangeNotification amf_status_change_notification;
@@ -1361,7 +1361,7 @@ class itti_sbi_provide_domain_selection_info : public itti_sbi_msg {
 
   itti_sbi_provide_domain_selection_info(
       const itti_sbi_provide_domain_selection_info&) = delete;
-  virtual ~itti_sbi_provide_domain_selection_info(){};
+  virtual ~itti_sbi_provide_domain_selection_info() {};
 
   uint32_t promise_id;
   std::string ue_context_id;
@@ -1379,7 +1379,7 @@ class itti_sbi_provide_location_info : public itti_sbi_msg {
 
   itti_sbi_provide_location_info(const itti_sbi_provide_location_info&) =
       delete;
-  virtual ~itti_sbi_provide_location_info(){};
+  virtual ~itti_sbi_provide_location_info() {};
 
   uint32_t promise_id;
   std::string ue_context_id;

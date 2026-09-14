@@ -20,11 +20,6 @@ Source: https://github.com/google/googletest
 Author: Google
 License: BSD 3-Clause License
 
-Folly
-Source: https://github.com/facebook/folly
-Author: Facebook
-License: Apache License 2.0
-
 fmt
 Source: https://github.com/fmtlib/fmt
 Author: Hello World Foundation
@@ -50,6 +45,11 @@ Source: https://github.com/gabime/spdlog
 Author: Gabi Melman (gmelman1@gmail.com)
 License: MIT License
 
+yaml-cpp
+Source: https://github.com/jbeder/yaml-cpp
+Author: Jesse Beder
+License: MIT License
+
 ------------------------------------------------------------------
 
 Optional:
@@ -68,8 +68,8 @@ Credits for work contributed from Sprint in Apache 2.0 License:
 
 The following files include contributions from Sprint and are licensed under Apache License 2.0:
 
-- src/oai_amf/options.hpp
-- src/oai_amf/options.cpp
+- src/oai-amf/options.hpp
+- src/oai-amf/options.cpp
 
 ------------------------------------------------------------------
 

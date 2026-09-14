@@ -36,7 +36,7 @@ class amf_http2_server {
   amf_http2_server(
       std::string addr, uint32_t port, amf_application::amf_app* amf_app_inst)
       : m_address(addr), m_port(port), server(), m_amf_app(amf_app_inst) {}
-  virtual ~amf_http2_server(){};
+  virtual ~amf_http2_server() {};
   void start();
   void init(size_t thr) {}
 

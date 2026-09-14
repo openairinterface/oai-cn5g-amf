@@ -99,7 +99,7 @@ static uint32_t _S1(uint32_t w) {
   uint8_t srw0 = SR[(uint8_t) ((w >> 24) & 0xff)];
   uint8_t srw1 = SR[(uint8_t) ((w >> 16) & 0xff)];
   uint8_t srw2 = SR[(uint8_t) ((w >> 8) & 0xff)];
-  uint8_t srw3 = SR[(uint8_t) ((w) &0xff)];
+  uint8_t srw3 = SR[(uint8_t) ((w) & 0xff)];
 
   r0 = ((_MULx(srw0, 0x1b)) ^ (srw1) ^ (srw2) ^ ((_MULx(srw3, 0x1b)) ^ srw3));
   r1 = (((_MULx(srw0, 0x1b)) ^ srw0) ^ (_MULx(srw1, 0x1b)) ^ (srw2) ^ (srw3));
@@ -124,7 +124,7 @@ static uint32_t _S2(uint32_t w) {
   uint8_t sqw0 = SQ[(uint8_t) ((w >> 24) & 0xff)];
   uint8_t sqw1 = SQ[(uint8_t) ((w >> 16) & 0xff)];
   uint8_t sqw2 = SQ[(uint8_t) ((w >> 8) & 0xff)];
-  uint8_t sqw3 = SQ[(uint8_t) ((w) &0xff)];
+  uint8_t sqw3 = SQ[(uint8_t) ((w) & 0xff)];
 
   r0 = ((_MULx(sqw0, 0x69)) ^ (sqw1) ^ (sqw2) ^ ((_MULx(sqw3, 0x69)) ^ sqw3));
   r1 = (((_MULx(sqw0, 0x69)) ^ sqw0) ^ (_MULx(sqw1, 0x69)) ^ (sqw2) ^ (sqw3));
