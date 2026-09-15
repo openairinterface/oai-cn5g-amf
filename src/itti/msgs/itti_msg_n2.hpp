@@ -476,9 +476,7 @@ class itti_path_switch_request : public itti_msg_n2 {
       : itti_msg_n2(PATH_SWITCH_REQUEST, origin, destination) {
     path_switch_req = nullptr;
   }
-  itti_path_switch_request(const itti_path_switch_request& i) : itti_msg_n2(i) {
-    path_switch_req = i.path_switch_req;
-  }
+  itti_path_switch_request(const itti_path_switch_request&) = delete;
   virtual ~itti_path_switch_request() {}
 
   std::shared_ptr<PathSwitchRequestMsg> path_switch_req;
@@ -491,10 +489,7 @@ class itti_path_switch_request_ack : public itti_msg_n2 {
       : itti_msg_n2(PATH_SWITCH_REQUEST_ACK, origin, destination) {
     path_switch_req_ack = nullptr;
   }
-  itti_path_switch_request_ack(const itti_path_switch_request_ack& i)
-      : itti_msg_n2(i) {
-    path_switch_req_ack = i.path_switch_req_ack;
-  }
+  itti_path_switch_request_ack(const itti_path_switch_request_ack&) = delete;
   virtual ~itti_path_switch_request_ack() {}
 
   std::shared_ptr<PathSwitchRequestAckMsg> path_switch_req_ack;
@@ -508,10 +503,7 @@ class itti_ue_context_modification_request : public itti_msg_n2 {
     ue_ctx_mod_req = nullptr;
   }
   itti_ue_context_modification_request(
-      const itti_ue_context_modification_request& i)
-      : itti_msg_n2(i) {
-    ue_ctx_mod_req = i.ue_ctx_mod_req;
-  }
+      const itti_ue_context_modification_request&) = delete;
   virtual ~itti_ue_context_modification_request() {}
 
   std::shared_ptr<UeContextModificationRequestMsg> ue_ctx_mod_req;
@@ -525,10 +517,7 @@ class itti_ue_context_modification_response : public itti_msg_n2 {
     ue_ctx_mod_resp = nullptr;
   }
   itti_ue_context_modification_response(
-      const itti_ue_context_modification_response& i)
-      : itti_msg_n2(i) {
-    ue_ctx_mod_resp = i.ue_ctx_mod_resp;
-  }
+      const itti_ue_context_modification_response&) = delete;
   virtual ~itti_ue_context_modification_response() {}
 
   std::shared_ptr<UeContextModificationResponseMsg> ue_ctx_mod_resp;
@@ -542,10 +531,7 @@ class itti_ue_context_modification_failure : public itti_msg_n2 {
     ue_ctx_mod_fail = nullptr;
   }
   itti_ue_context_modification_failure(
-      const itti_ue_context_modification_failure& i)
-      : itti_msg_n2(i) {
-    ue_ctx_mod_fail = i.ue_ctx_mod_fail;
-  }
+      const itti_ue_context_modification_failure&) = delete;
   virtual ~itti_ue_context_modification_failure() {}
 
   std::shared_ptr<UeContextModificationFailureMsg> ue_ctx_mod_fail;
