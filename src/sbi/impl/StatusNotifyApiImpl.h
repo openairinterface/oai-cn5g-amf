@@ -29,7 +29,7 @@
 #include <pistache/router.h>
 #include <memory>
 
-#include <pistache/optional.h>
+#include <optional>
 
 #include "StatusNotifyApi.h"
 #include "ProblemDetails.h"

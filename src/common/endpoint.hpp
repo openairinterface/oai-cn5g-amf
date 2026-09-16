@@ -17,11 +17,11 @@ class endpoint {
   struct sockaddr_storage addr_storage;
   socklen_t addr_storage_len;
   endpoint()
-      : addr_storage(), addr_storage_len(sizeof(struct sockaddr_storage)){};
+      : addr_storage(), addr_storage_len(sizeof(struct sockaddr_storage)) {};
   endpoint(const endpoint& e)
-      : addr_storage(e.addr_storage), addr_storage_len(e.addr_storage_len){};
+      : addr_storage(e.addr_storage), addr_storage_len(e.addr_storage_len) {};
   endpoint(const struct sockaddr_storage& addr, const socklen_t len)
-      : addr_storage(addr), addr_storage_len(len){};
+      : addr_storage(addr), addr_storage_len(len) {};
   endpoint(const struct in_addr& addr, const uint16_t port) {
     struct sockaddr_in* addr_in = (struct sockaddr_in*) &addr_storage;
     addr_in->sin_family         = AF_INET;

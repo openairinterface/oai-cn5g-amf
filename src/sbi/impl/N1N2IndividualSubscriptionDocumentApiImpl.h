@@ -27,7 +27,7 @@
 
 #include <N1N2IndividualSubscriptionDocumentApi.h>
 
-#include <pistache/optional.h>
+#include <optional>
 
 #include "ProblemDetails.h"
 #include <string>

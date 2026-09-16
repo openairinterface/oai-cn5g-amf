@@ -49,10 +49,10 @@ class ue_ngap_context {
     ue_radio_cap_ind    = nullptr;
   }
 
-  ue_ngap_context(const ue_ngap_context&) = delete;
-  ue_ngap_context(ue_ngap_context&&)      = delete;
+  ue_ngap_context(const ue_ngap_context&)            = delete;
+  ue_ngap_context(ue_ngap_context&&)                 = delete;
   ue_ngap_context& operator=(const ue_ngap_context&) = delete;
-  ue_ngap_context& operator=(ue_ngap_context&&) = delete;
+  ue_ngap_context& operator=(ue_ngap_context&&)      = delete;
 
   virtual ~ue_ngap_context() {
     delete[] initial_ue_msg.buf;

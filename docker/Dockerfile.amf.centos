@@ -4,85 +4,86 @@
 
 #---------------------------------------------------------------------
 #
-# Dockerfile for the Open-Air-Interface AMF service
-#   Valid for Rocky Linux 9.+
+# Dockerfile for the OpenAirInterface AMF service
+#   Valid for CentOS Stream 10
 #
 #---------------------------------------------------------------------
 
 #---------------------------------------------------------------------
 # BUILDER IMAGE
 #---------------------------------------------------------------------
-FROM docker.io/rockylinux:9 AS oai-amf-builder
+
+FROM quay.io/centos/centos:stream10 AS oai-amf-builder
 
 ENV IS_DOCKERFILE=1
 
-RUN dnf install 'dnf-command(config-manager)' -y && \
-    dnf install epel-release -y && crb enable && \
+# meson and ninja-build come from CRB. EL 10 ships no mysql packages, so
+# build_helper.amf takes the MySQL client API from mariadb-connector-c-devel.
+# boost-devel is installed here because build_helper.amf lists it only for
+# Ubuntu. The other build_amf dependencies are in BaseOS/AppStream.
+RUN dnf config-manager --set-enabled crb && \
+    dnf install epel-release -y && \
     dnf update -y && \
-    # here just to display the current version
+    # Log the exact OS release used for the build.
     cat /etc/os-release && \
     dnf install -y \
         psmisc \
         git \
         diffutils \
-        file \
-        gcc-c++ \
-        ninja-build \
-        boost-devel \
-        openssl-devel \
-        openssl \
+        libasan \
         wget \
-        libasan && \
+        file \
+        boost-devel && \
+    # Libraries built from source are installed under /usr/local, which is not
+    # on the default loader path on EL. This is also needed for the ldd check.
     echo "/usr/local/lib" > /etc/ld.so.conf.d/local-lib.conf && \
     echo "/usr/local/lib64" >> /etc/ld.so.conf.d/local-lib.conf
 
-# Some GIT configuration command quite useful
+# Git configuration
 RUN git config --global https.postBuffer 123289600 && \
     git config --global http.sslverify false
 
-# Copying source code
-WORKDIR /openair-amf/
+# Copy source code
+WORKDIR /openair-amf
 COPY . /openair-amf
 
-# Installing all the needed libraries/packages to build and run AMF
+# Install and Build AMF
 WORKDIR /openair-amf/build/scripts
 RUN ./build_amf --install-deps --force
-
-# Building AMF
-WORKDIR /openair-amf/build/scripts
-RUN ldconfig && \
-    ./build_amf --clean --Verbose --build-type Release --jobs && \
+RUN ./build_amf --clean --Verbose --build-type Release --jobs && \
     ldd /openair-amf/build/amf/build/amf && \
     mv /openair-amf/build/amf/build/amf /openair-amf/build/amf/build/oai_amf
 
-FROM mikefarah/yq:latest as yq-source
+FROM mikefarah/yq:latest AS yq-source
 
 #---------------------------------------------------------------------
 # TARGET IMAGE
 #---------------------------------------------------------------------
-FROM docker.io/rockylinux:9-minimal as oai-amf
+FROM quay.io/centos/centos:stream10-minimal AS oai-amf
 ENV TZ=Europe/Paris
-# We install some debug tools for the moment in addition of mandatory libraries
 
 RUN microdnf update -y && \
     microdnf install -y \
-# Debug Tools that are not mandatory
+# Timezone data, and debugging/networking utilities
       tzdata \
       procps-ng \
       psmisc \
       net-tools \
       iputils \
       tcpdump \
-# Mandatory packages for the NF to run
-      lksctp-tools \
+# Runtime dependencies of oai_amf
       libicu \
       boost \
       libevent \
+      nettle \
+      gmp \
+      lksctp-tools \
+      mariadb-connector-c \
       findutils && \
     microdnf clean all -y && \
     rm -rf /var/cache/yum /var/cache/dnf
 
-# Copying executable and generated libraries
+# Copy executable and generated libraries
 WORKDIR /openair-amf/bin
 COPY --from=oai-amf-builder \
     /openair-amf/build/amf/build/oai_amf \
@@ -90,33 +91,37 @@ COPY --from=oai-amf-builder \
     ./
 COPY --from=yq-source /usr/bin/yq /usr/bin
 
+# Only the libraries built from source; the rest come from the packages above.
+# pistache (meson) and nghttp2 (autotools) install into lib, the CMake-built
+# spdlog, fmt, yaml-cpp and cpr into lib64.
 COPY --from=oai-amf-builder \
-    /usr/local/lib64/libpistache.so.0 \
+    /usr/local/lib/libpistache.so* \
     /usr/local/lib/libnghttp2_asio.so \
     /usr/local/lib/libnghttp2_asio.so.1 \
     /usr/local/lib64/libspdlog.so \
     /usr/local/lib64/libfmt.so \
     /usr/local/lib64/libyaml-cpp.so.0.* \
-    /usr/local/lib64/libcpr.so.1 \
-    /usr/lib64/mysql/libmysqlclient.so.21 \
+    /usr/local/lib64/libcpr.so.1* \
     /usr/lib64/
 
 RUN ldconfig && \
-    ldd /openair-amf/bin/oai_amf
+    ldd /openair-amf/bin/oai_amf && \
+    # ldd exits 0 even when a library is missing, so check its output
+    ! ldd /openair-amf/bin/oai_amf | grep -q 'not found'
 
-# Copying template configuration files
 WORKDIR /openair-amf/etc
 COPY --from=oai-amf-builder \
     /openair-amf/etc/config.yaml ./
 
 WORKDIR /openair-amf
 
-# expose ports
+# Expose ports
 EXPOSE 80/tcp 9090/tcp 38412/sctp
-# healthcheck
+
+# Configure healthcheck
 HEALTHCHECK --interval=10s \
             --timeout=15s \
             --retries=6 \
     CMD /openair-amf/bin/healthcheck.sh
 
-CMD ["/openair-amf/bin/oai_amf", "-c", "/openair-amf/etc/config.yaml", "-o"]
+CMD ["/openair-amf/bin/oai_amf", "-c" , "/openair-amf/etc/config.yaml", "-o"]

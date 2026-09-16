@@ -31,10 +31,10 @@ class ue_context {
  public:
   ue_context();
   virtual ~ue_context();
-  ue_context(const ue_context&) = delete;
-  ue_context(ue_context&&)      = delete;
+  ue_context(const ue_context&)            = delete;
+  ue_context(ue_context&&)                 = delete;
   ue_context& operator=(const ue_context&) = delete;
-  ue_context& operator=(ue_context&&) = delete;
+  ue_context& operator=(ue_context&&)      = delete;
   bool get_pdu_session_context(
       std::uint8_t session_id,
       std::shared_ptr<pdu_session_context>& context) const;

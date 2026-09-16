@@ -27,7 +27,7 @@
 
 #include <NonUEN2MessagesCollectionDocumentApi.h>
 
-#include <pistache/optional.h>
+#include <optional>
 
 #include "N2InformationTransferError.h"
 #include "N2InformationTransferReqData.h"

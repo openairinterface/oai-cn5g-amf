@@ -27,10 +27,10 @@
 
 #include <IndividualSubscriptionDocumentApiEventExposure.h>
 
-#include <pistache/optional.h>
+#include <optional>
 
 #include "AmfUpdatedEventSubscription.h"
-//#include "OneOfarrayAmfUpdateEventOptionItem.h"
+// #include "OneOfarrayAmfUpdateEventOptionItem.h"
 #include "ProblemDetails.h"
 #include "AmfUpdateEventOptionItem.h"
 #include <string>
