@@ -4,9 +4,6 @@
 
 #include "amf_n2.hpp"
 
-#include <boost/chrono/chrono.hpp>
-#include <boost/chrono/duration.hpp>
-
 #include "3gpp_24.501.hpp"
 #include "PagingDrx.hpp"
 #include "DownlinkNasTransport.hpp"
@@ -323,7 +320,7 @@ void amf_n2::handle_itti_message(std::shared_ptr<itti_paging>& itti_msg) {
 
   // Get UE NGAP Context
   std::shared_ptr<ue_ngap_context> unc = {};
-  if (!ran_ue_id_2_ue_ngap_context(
+  if (!get_ngap_ctx_by_ran_amf(
           itti_msg->ran_ue_ngap_id, itti_msg->amf_ue_ngap_id, unc))
     return;
 
@@ -341,7 +338,7 @@ void amf_n2::handle_itti_message(std::shared_ptr<itti_paging>& itti_msg) {
 
   // get NAS context
   std::shared_ptr<nas_context> nc = {};
-  if (!amf_n1_inst->amf_ue_id_2_nas_context(itti_msg->amf_ue_ngap_id, nc) ||
+  if (!amf_n1_inst->get_nas_ctx_by_amf_ue_id(itti_msg->amf_ue_ngap_id, nc) ||
       (nc == nullptr)) {
     Logger::amf_n2().warn(
         "No existed nas_context with amf_ue_ngap_id(" AMF_UE_NGAP_ID_FMT ")",
@@ -663,7 +660,7 @@ void amf_n2::handle_itti_message(std::shared_ptr<itti_ng_reset>& itti_msg) {
         }
       } else if (ue.getRanUeNgapId(ran_ue_ngap_id)) {
         std::shared_ptr<ue_ngap_context> unc = {};
-        if (ran_ue_id_2_ue_ngap_context(ran_ue_ngap_id, gc->gnb_id, unc)) {
+        if (get_ngap_ctx_by_ran_gnb(ran_ue_ngap_id, gc->gnb_id, unc)) {
           release_ngap_context_only(
               unc->amf_ue_ngap_id, ran_ue_ngap_id, gc->gnb_id);
         }
@@ -712,8 +709,8 @@ void amf_n2::handle_itti_message(std::shared_ptr<itti_ng_shutdown>& itti_msg) {
   // Release all PDUs session for the associated UEs
   for (auto context : ue_contexts) {
     // Get UE Context
-    std::shared_ptr<ue_context> uc = amf_app_inst->get_ue_context(
-        context->ran_ue_ngap_id, context->amf_ue_ngap_id);
+    std::shared_ptr<ue_context> uc =
+        amf_app_inst->get_ue_context(context->amf_ue_ngap_id);
     if (uc == nullptr) {
       continue;
     }
@@ -823,7 +820,7 @@ void amf_n2::handle_itti_message(
   }
 
   std::shared_ptr<ue_ngap_context> unc = {};
-  if (!ran_ue_id_2_ue_ngap_context(ran_ue_ngap_id, gc->gnb_id, unc)) {
+  if (!get_ngap_ctx_by_ran_gnb(ran_ue_ngap_id, gc->gnb_id, unc)) {
     Logger::amf_n2().debug(
         "Create a new UE NGAP context with ran_ue_ngap_id " RAN_UE_NGAP_ID_FMT,
         ran_ue_ngap_id);
@@ -918,7 +915,7 @@ void amf_n2::handle_itti_message(
   }
 
   std::shared_ptr<ue_ngap_context> unc = {};
-  if (!ran_ue_id_2_ue_ngap_context(ran_ue_ngap_id, gc->gnb_id, unc)) return;
+  if (!get_ngap_ctx_by_ran_gnb(ran_ue_ngap_id, gc->gnb_id, unc)) return;
 
   if (unc->amf_ue_ngap_id != amf_ue_ngap_id) {
     // Abort
@@ -993,7 +990,7 @@ void amf_n2::handle_itti_message(
 
   // Get UE NGAP Context
   std::shared_ptr<ue_ngap_context> unc = {};
-  if (!ran_ue_id_2_ue_ngap_context(
+  if (!get_ngap_ctx_by_ran_amf(
           dl_nas_transport->ran_ue_ngap_id, dl_nas_transport->amf_ue_ngap_id,
           unc))
     return;
@@ -1031,7 +1028,7 @@ void amf_n2::handle_itti_message(
 
   // Get UE NGAP Context
   std::shared_ptr<ue_ngap_context> unc = {};
-  if (!ran_ue_id_2_ue_ngap_context(
+  if (!get_ngap_ctx_by_ran_amf(
           itti_msg->ran_ue_ngap_id, itti_msg->amf_ue_ngap_id, unc))
     return;
 
@@ -1044,7 +1041,7 @@ void amf_n2::handle_itti_message(
   }
 
   std::shared_ptr<nas_context> nc = {};
-  if (!amf_n1_inst->amf_ue_id_2_nas_context(itti_msg->amf_ue_ngap_id, nc))
+  if (!amf_n1_inst->get_nas_ctx_by_amf_ue_id(itti_msg->amf_ue_ngap_id, nc))
     return;
 
   auto msg = std::make_unique<InitialContextSetupRequestMsg>();
@@ -1179,7 +1176,7 @@ void amf_n2::handle_itti_message(
 
   // Get UE NGAP Context
   std::shared_ptr<ue_ngap_context> unc = {};
-  if (!ran_ue_id_2_ue_ngap_context(
+  if (!get_ngap_ctx_by_ran_amf(
           itti_msg->ran_ue_ngap_id, itti_msg->amf_ue_ngap_id, unc))
     return;
 
@@ -1191,7 +1188,7 @@ void amf_n2::handle_itti_message(
   }
 
   std::shared_ptr<nas_context> nc = {};
-  if (!amf_n1_inst->amf_ue_id_2_nas_context(itti_msg->amf_ue_ngap_id, nc)) {
+  if (!amf_n1_inst->get_nas_ctx_by_amf_ue_id(itti_msg->amf_ue_ngap_id, nc)) {
     Logger::amf_n2().error(
         "No existing NAS context with amf_ue_ngap_id(" AMF_UE_NGAP_ID_FMT ")",
         itti_msg->amf_ue_ngap_id);
@@ -1278,7 +1275,7 @@ void amf_n2::handle_itti_message(
 
   // Get UE NGAP Context
   std::shared_ptr<ue_ngap_context> unc = {};
-  if (!ran_ue_id_2_ue_ngap_context(
+  if (!get_ngap_ctx_by_ran_amf(
           itti_msg->ran_ue_ngap_id, itti_msg->amf_ue_ngap_id, unc))
     return;
 
@@ -1340,7 +1337,7 @@ void amf_n2::handle_itti_message(
 
   // Get UE NGAP Context
   std::shared_ptr<ue_ngap_context> unc = {};
-  if (!ran_ue_id_2_ue_ngap_context(
+  if (!get_ngap_ctx_by_ran_amf(
           itti_msg->ran_ue_ngap_id, itti_msg->amf_ue_ngap_id, unc))
     return;
 
@@ -1441,7 +1438,7 @@ void amf_n2::handle_itti_message(
 
   // Get UE NGAP Context
   std::shared_ptr<ue_ngap_context> unc = {};
-  if (!ran_ue_id_2_ue_ngap_context(
+  if (!get_ngap_ctx_by_ran_amf(
           itti_msg->ran_ue_ngap_id, itti_msg->amf_ue_ngap_id, unc))
     return;
 
@@ -1478,7 +1475,7 @@ void amf_n2::handle_itti_message(
 
   // Send ITTI to N11 SBI, notify CommunicationFailure Report, RAN Cause
   std::shared_ptr<nas_context> nc = {};
-  if (!amf_n1_inst->amf_ue_id_2_nas_context(itti_msg->amf_ue_ngap_id, nc)) {
+  if (!amf_n1_inst->get_nas_ctx_by_amf_ue_id(itti_msg->amf_ue_ngap_id, nc)) {
     Logger::amf_n2().warn(
         "Could not notify RAN caused CommunicationFailure."
         "No existing nas_context with amf_ue_ngap_id(" AMF_UE_NGAP_ID_FMT ")",
@@ -1571,8 +1568,7 @@ void amf_n2::handle_itti_message(
   }
 
   // Get UE Context
-  std::shared_ptr<ue_context> uc =
-      amf_app_inst->get_ue_context(ran_ue_ngap_id, amf_ue_ngap_id);
+  std::shared_ptr<ue_context> uc = amf_app_inst->get_ue_context(amf_ue_ngap_id);
 
   if (uc == nullptr) {
     // UE context has already been torn down (e.g. a completed UE-initiated
@@ -1606,7 +1602,7 @@ void amf_n2::handle_itti_message(
 
   // Change UE status from CM-CONNECTED to CM-IDLE
   std::shared_ptr<nas_context> nc = {};
-  if (!amf_n1_inst->amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) {
+  if (!amf_n1_inst->get_nas_ctx_by_amf_ue_id(amf_ue_ngap_id, nc)) {
     Logger::amf_n2().warn(
         "No existed nas_context with amf_ue_ngap_id (" AMF_UE_NGAP_ID_FMT ")",
         amf_ue_ngap_id);
@@ -1788,7 +1784,7 @@ void amf_n2::handle_itti_message(
 
   // Store UE Radio Capability in UE NGAP Context
   std::shared_ptr<ue_ngap_context> unc = {};
-  if (!ran_ue_id_2_ue_ngap_context(ran_ue_ngap_id, gc->gnb_id, unc)) return;
+  if (!get_ngap_ctx_by_ran_gnb(ran_ue_ngap_id, gc->gnb_id, unc)) return;
 
   unc->ue_radio_cap_ind = blk2bstr(ue_radio_cap.buf, ue_radio_cap.size);
 }
@@ -1813,8 +1809,7 @@ bool amf_n2::handle_itti_message(
       gc->gnb_name.c_str(), gc->gnb_id);
 
   std::shared_ptr<ue_ngap_context> unc = {};
-  if (!ran_ue_id_2_ue_ngap_context(ran_ue_ngap_id, gc->gnb_id, unc))
-    return false;
+  if (!get_ngap_ctx_by_ran_gnb(ran_ue_ngap_id, gc->gnb_id, unc)) return false;
 
   if (unc->amf_ue_ngap_id != amf_ue_ngap_id) {
     Logger::amf_n2().error(
@@ -1912,7 +1907,7 @@ bool amf_n2::handle_itti_message(
 
   // Security context
   std::shared_ptr<nas_context> nc = {};
-  if (!amf_n1_inst->amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) return false;
+  if (!amf_n1_inst->get_nas_ctx_by_amf_ue_id(amf_ue_ngap_id, nc)) return false;
 
   if (!nc->security_ctx.has_value()) {
     Logger::amf_n2().error("No Security Context found");
@@ -2140,7 +2135,7 @@ void amf_n2::handle_itti_message(
       itti_msg->handover_request_ack->getTargetToSourceTransparentContainer();
 
   std::shared_ptr<nas_context> nc = {};
-  if (!amf_n1_inst->amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) return;
+  if (!amf_n1_inst->get_nas_ctx_by_amf_ue_id(amf_ue_ngap_id, nc)) return;
 
   // Send PDUSessionUpdateSMContextRequest to SMF for all associated PDU
   // sessions
@@ -2286,11 +2281,10 @@ void amf_n2::handle_itti_message(
   }
 
   std::shared_ptr<nas_context> nc = {};
-  if (!amf_n1_inst->amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) return;
+  if (!amf_n1_inst->get_nas_ctx_by_amf_ue_id(amf_ue_ngap_id, nc)) return;
 
-  uint32_t old_ran_ue_ngap_id = unc->ran_ue_ngap_id;
-  std::shared_ptr<ue_context> uc =
-      amf_app_inst->get_ue_context(old_ran_ue_ngap_id, amf_ue_ngap_id);
+  uint32_t old_ran_ue_ngap_id    = unc->ran_ue_ngap_id;
+  std::shared_ptr<ue_context> uc = amf_app_inst->get_ue_context(amf_ue_ngap_id);
 
   if (uc == nullptr) {
     Logger::amf_n2().warn(
@@ -2419,7 +2413,7 @@ void amf_n2::handle_itti_message(
   amf_app_inst->unbind_ran_gnb(old_ran, old_gnb);
   amf_app_inst->bind_ran_gnb(uc->ran_ue_ngap_id, uc->gnb_id, uc);
 
-  amf_app_inst->set_ue_context(ran_ue_ngap_id, amf_ue_ngap_id, uc);
+  amf_app_inst->set_ue_context(amf_ue_ngap_id, uc);
 
   // Retrieve new location from the UE and notify generate location change
   // signal
@@ -2453,8 +2447,7 @@ void amf_n2::handle_itti_message(
   nr_location.setGlobalGnbId(ranid);
 
   user_location.setNrLocation(nr_location);
-  amf_n1_inst->event_sub.ue_location_report(
-      nc->supi, user_location, amf_cfg->support_features.http_version);
+  amf_n1_inst->event_sub.ue_location_report(nc->supi, user_location);
 }
 
 //------------------------------------------------------------------------------
@@ -2532,7 +2525,7 @@ void amf_n2::handle_itti_message(std::shared_ptr<itti_rereoute_nas>& itti_msg) {
 
   // Get UE NGAP Context
   std::shared_ptr<ue_ngap_context> unc = {};
-  if (!ran_ue_id_2_ue_ngap_context(
+  if (!get_ngap_ctx_by_ran_amf(
           itti_msg->ran_ue_ngap_id, itti_msg->amf_ue_ngap_id, unc))
     return;
 
@@ -2571,7 +2564,7 @@ void amf_n2::handle_itti_message(
 
   // Get UE NGAP Context
   std::shared_ptr<ue_ngap_context> unc = {};
-  if (!ran_ue_id_2_ue_ngap_context(
+  if (!get_ngap_ctx_by_ran_amf(
           itti_msg->ran_ue_ngap_id, itti_msg->amf_ue_ngap_id, unc))
     return;
 
@@ -2656,7 +2649,7 @@ void amf_n2::handle_itti_message(
 
   // Get UE NGAP Context
   std::shared_ptr<ue_ngap_context> unc = {};
-  if (!ran_ue_id_2_ue_ngap_context(
+  if (!get_ngap_ctx_by_ran_amf(
           itti_msg->ran_ue_ngap_id, itti_msg->amf_ue_ngap_id, unc))
     return;
 
@@ -2668,8 +2661,8 @@ void amf_n2::handle_itti_message(
   }
 
   // Find subscribed LMFs
-  std::shared_ptr<ue_context> uc = amf_app_inst->get_ue_context(
-      itti_msg->ran_ue_ngap_id, itti_msg->amf_ue_ngap_id);
+  std::shared_ptr<ue_context> uc =
+      amf_app_inst->get_ue_context(itti_msg->amf_ue_ngap_id);
   if (uc == nullptr) return;
 
   std::optional<oai::_3gpp::model::N1MessageClass_anyOf::eN1MessageClass_anyOf>
@@ -2730,7 +2723,7 @@ void amf_n2::handle_itti_message(
 
   // Find subscribed LMF based on Routing ID
   std::string lmf_id = {};
-  amf_conv::bstring_2_string(itti_msg->routing_id, lmf_id);
+  amf_conv::bstring_to_string(itti_msg->routing_id, lmf_id);
 
   auto n2_info_class = oai::_3gpp::model::N2InformationClass_anyOf::
       eN2InformationClass_anyOf::NRPPA;
@@ -2855,7 +2848,7 @@ void amf_n2::send_ng_setup_failure(
 }
 
 //------------------------------------------------------------------------------
-bool amf_n2::ran_ue_id_2_ue_ngap_context(
+bool amf_n2::get_ngap_ctx_by_ran_gnb(
     uint32_t ran_ue_ngap_id, uint32_t gnb_id,
     std::shared_ptr<ue_ngap_context>& unc) const {
   std::shared_ptr<ue_context> uc =
@@ -2884,11 +2877,10 @@ bool amf_n2::ran_ue_id_2_ue_ngap_context(
 }
 
 //------------------------------------------------------------------------------
-bool amf_n2::ran_ue_id_2_ue_ngap_context(
+bool amf_n2::get_ngap_ctx_by_ran_amf(
     uint32_t ran_ue_ngap_id, uint64_t amf_ue_ngap_id,
     std::shared_ptr<ue_ngap_context>& unc) const {
-  std::shared_ptr<ue_context> uc =
-      amf_app_inst->get_ue_context(ran_ue_ngap_id, amf_ue_ngap_id);
+  std::shared_ptr<ue_context> uc = amf_app_inst->get_ue_context(amf_ue_ngap_id);
   if (uc == nullptr || uc->get_ngap_ctx() == nullptr) {
     Logger::amf_n2().warn(
         "No UE NGAP context with AMF UE NGAP ID "
@@ -2945,7 +2937,7 @@ void amf_n2::release_ngap_context_only(
     const uint32_t& gnb_id) {
   std::shared_ptr<nas_context> nc = {};
 
-  if (amf_n1_inst->amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) {
+  if (amf_n1_inst->get_nas_ctx_by_amf_ue_id(amf_ue_ngap_id, nc)) {
     Logger::amf_n2().info(
         "Releasing NGAP/N2 context only for SUPI %s. Keep 5GMM state, set "
         "CM-IDLE.",
@@ -2966,45 +2958,6 @@ void amf_n2::release_ngap_context_only(
   }
   amf_app_inst->unbind_ran_gnb(ran_ue_ngap_id, gnb_id);
 
-  {
-    std::lock_guard<std::mutex> lock(m_pending_ngap_);
-    pending_ngap_by_ran_gnb_.erase(std::make_pair(ran_ue_ngap_id, gnb_id));
-  }
-}
-
-//------------------------------------------------------------------------------
-void amf_n2::remove_ue_context_with_ran_ue_ngap_id(
-    uint32_t ran_ue_ngap_id, uint32_t gnb_id) {
-  // Remove NAS context if still available
-  std::shared_ptr<ue_ngap_context> unc = {};
-
-  if (!ran_ue_id_2_ue_ngap_context(ran_ue_ngap_id, gnb_id, unc)) return;
-
-  const uint64_t amf_ue_ngap_id = unc->amf_ue_ngap_id;
-
-  // Remove all NAS context if still exist
-  std::shared_ptr<nas_context> nc = {};
-  if (amf_n1_inst->amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) {
-    amf_n1_inst->handle_nas_event(
-        nc, oai::amf::nas::nas_event_e::IMPLICIT_DEREGISTRATION);
-
-    // Trigger UE Loss of Connectivity Status Notify
-    Logger::amf_n2().debug(
-        "Signal the UE Loss of Connectivity Event notification for SUPI %s",
-        nc->supi.c_str());
-    amf_n1_inst->event_sub.ue_loss_of_connectivity(
-        nc->supi, DEREGISTERED, amf_cfg->support_features.http_version,
-        ran_ue_ngap_id, amf_ue_ngap_id);
-  } else {
-    Logger::amf_n2().warn(
-        "No existed nas_context with amf_ue_ngap_id(" AMF_UE_NGAP_ID_FMT ")",
-        amf_ue_ngap_id);
-  }
-
-  // Full release: drop the context and purge every index (by_amf_id_, by_supi_
-  // via uc->supi, by_guti_ via uc->guti, by_ran_gnb_ via <uc->ran,uc->gnb>).
-  // This also frees the nested nas_ctx/ngap_ctx.
-  amf_app_inst->remove_ue_context(ran_ue_ngap_id, amf_ue_ngap_id);
   {
     std::lock_guard<std::mutex> lock(m_pending_ngap_);
     pending_ngap_by_ran_gnb_.erase(std::make_pair(ran_ue_ngap_id, gnb_id));
@@ -3096,45 +3049,6 @@ void amf_n2::remove_amf_ue_ngap_id_2_ue_ngap_context(
 }
 
 //------------------------------------------------------------------------------
-void amf_n2::remove_ue_context_with_amf_ue_ngap_id(
-    const uint64_t& amf_ue_ngap_id) {
-  // Verify ran_ue_ngap_id/gnb_id before removing the context
-  std::shared_ptr<ue_context> uc =
-      amf_app_inst->find_ue_by_amf_ue_ngap_id(amf_ue_ngap_id);
-  const uint32_t ran_ue_ngap_id = uc ? uc->ran_ue_ngap_id : 0;
-  const uint32_t gnb_id         = uc ? uc->gnb_id : 0;
-
-  // Remove all NAS context if still exist
-  std::shared_ptr<nas_context> nc = {};
-  if (amf_n1_inst->amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) {
-    amf_n1_inst->handle_nas_event(
-        nc, oai::amf::nas::nas_event_e::IMPLICIT_DEREGISTRATION);
-
-    // Trigger UE Loss of Connectivity Status Notify
-    Logger::amf_n2().debug(
-        "Signal the UE Loss of Connectivity Event notification for SUPI %s",
-        nc->supi.c_str());
-    amf_n1_inst->event_sub.ue_loss_of_connectivity(
-        nc->supi, DEREGISTERED, amf_cfg->support_features.http_version,
-        nc->ran_ue_ngap_id, amf_ue_ngap_id);
-  } else {
-    Logger::amf_n2().warn(
-        "No existed nas_context with amf_ue_ngap_id(" AMF_UE_NGAP_ID_FMT ")",
-        amf_ue_ngap_id);
-  }
-
-  // Full release: drop the context and purge every index (by_amf_id_, by_supi_,
-  // by_guti_, by_ran_gnb_), freeing the nested nas_ctx/ngap_ctx.
-  amf_app_inst->remove_ue_context(ran_ue_ngap_id, amf_ue_ngap_id);
-
-  // Erase pending one as well, if any
-  {
-    std::lock_guard<std::mutex> lock(m_pending_ngap_);
-    pending_ngap_by_ran_gnb_.erase(std::make_pair(ran_ue_ngap_id, gnb_id));
-  }
-}
-
-//------------------------------------------------------------------------------
 bool amf_n2::get_common_plmn(
     const std::vector<SupportedTaItem>& list,
     std::vector<SupportedTaItem>& result) {
@@ -3199,7 +3113,7 @@ bool amf_n2::get_common_NSSAI(
   // Get UE NGAP Context
   std::shared_ptr<ue_ngap_context> unc = {};
 
-  if (!ran_ue_id_2_ue_ngap_context(ran_ue_ngap_id, gnb_id, unc)) return false;
+  if (!get_ngap_ctx_by_ran_gnb(ran_ue_ngap_id, gnb_id, unc)) return false;
 
   // Get gNB Context
   std::shared_ptr<gnb_context> gc = {};

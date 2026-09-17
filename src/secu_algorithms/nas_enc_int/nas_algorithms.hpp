@@ -29,24 +29,6 @@ extern "C" {
 #define SECU_DIRECTION_UPLINK 0
 #define SECU_DIRECTION_DOWNLINK 1
 
-#define derive_key_nas_enc(aLGiD, kseaf, kNAS)                                 \
-  Authentication_5gaka::derive_knas(NAS_ENC_ALG, aLGiD, kseaf, kNAS)
-
-#define derive_key_nas_int(aLGiD, kseaf, kNAS)                                 \
-  Authentication_5gaka::derive_knas(NAS_INT_ALG, aLGiD, kseaf, kNAS)
-
-#define derive_key_rrc_enc(aLGiD, kseaf, kNAS)                                 \
-  Authentication_5gaka::derive_knas(RRC_ENC_ALG, aLGiD, kseaf, kNAS)
-
-#define derive_key_rrc_int(aLGiD, kseaf, kNAS)                                 \
-  Authentication_5gaka::derive_knas(RRC_INT_ALG, aLGiD, kseaf, kNAS)
-
-#define derive_key_up_enc(aLGiD, kseaf, kNAS)                                  \
-  Authentication_5gaka::derive_knas(UP_ENC_ALG, aLGiD, kseaf, kNAS)
-
-#define derive_key_up_int(aLGiD, kseaf, kNAS)                                  \
-  Authentication_5gaka::derive_knas(UP_INT_ALG, aLGiD, kseaf, kNAS)
-
 typedef struct {
   uint8_t* key;
   uint32_t key_length;

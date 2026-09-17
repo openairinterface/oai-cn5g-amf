@@ -3,9 +3,9 @@
  */
 
 #include "amf_n1.hpp"
-#include <nlohmann/json.hpp>
 
 #include <bitset>
+#include <netinet/in.h>
 
 #include "3gpp_24.501.hpp"
 #include "AmfEventReport.h"
@@ -163,33 +163,32 @@ amf_n1::amf_n1()
 
   // EventExposure: subscribe to UE Location Report
   ee_ue_location_report_connection = event_sub.subscribe_ue_location_report(
-      boost::bind(&amf_n1::handle_ue_location_change, this, _1, _2, _3));
+      boost::bind(&amf_n1::handle_ue_location_change, this, _1, _2));
 
   // EventExposure: subscribe to UE Reachability Status change
   ee_ue_reachability_status_connection =
       event_sub.subscribe_ue_reachability_status(boost::bind(
-          &amf_n1::handle_ue_reachability_status_change, this, _1, _2, _3));
+          &amf_n1::handle_ue_reachability_status_change, this, _1, _2));
 
   // EventExposure: subscribe to UE Registration State change
   ee_ue_registration_state_connection =
       event_sub.subscribe_ue_registration_state(boost::bind(
-          &amf_n1::handle_ue_registration_state_change, this, _1, _2, _3, _4,
-          _5));
+          &amf_n1::handle_ue_registration_state_change, this, _1, _2, _3, _4));
 
   // EventExposure: subscribe to UE Connectivity State change
   ee_ue_connectivity_state_connection =
       event_sub.subscribe_ue_connectivity_state(boost::bind(
-          &amf_n1::handle_ue_connectivity_state_change, this, _1, _2, _3));
+          &amf_n1::handle_ue_connectivity_state_change, this, _1, _2));
 
   // EventExposure: subscribe to UE Loss of Connectivity change
   ee_ue_loss_of_connectivity_connection =
       event_sub.subscribe_ue_loss_of_connectivity(boost::bind(
-          &amf_n1::handle_ue_loss_of_connectivity_change, this, _1, _2, _3, _4,
-          _5));
+          &amf_n1::handle_ue_loss_of_connectivity_change, this, _1, _2, _3,
+          _4));
   // EventExposure: subscribe to UE Communication Failure Report
   ee_ue_communication_failure_connection =
       event_sub.subscribe_ue_communication_failure(boost::bind(
-          &amf_n1::handle_ue_communication_failure_change, this, _1, _2, _3));
+          &amf_n1::handle_ue_communication_failure_change, this, _1, _2));
 
   Logger::amf_n1().startup("AMF N1 started");
 }
@@ -216,7 +215,7 @@ void amf_n1::handle_itti_message(itti_downlink_nas_transfer& itti_msg) {
   uint64_t amf_ue_ngap_id         = itti_msg.amf_ue_ngap_id;
   uint32_t ran_ue_ngap_id         = itti_msg.ran_ue_ngap_id;
   std::shared_ptr<nas_context> nc = {};
-  if (!amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) return;
+  if (!get_nas_ctx_by_amf_ue_id(amf_ue_ngap_id, nc)) return;
 
   if (!nc->security_ctx.has_value()) {
     Logger::amf_n1().error("No Security Context found");
@@ -260,7 +259,7 @@ void amf_n1::handle_itti_message(itti_downlink_nas_transfer& itti_msg) {
 
       // Get NSSAI
       std::shared_ptr<nas_context> nc = {};
-      if (!amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) return;
+      if (!get_nas_ctx_by_amf_ue_id(amf_ue_ngap_id, nc)) return;
 
       std::shared_ptr<pdu_session_context> psc = {};
       if (!amf_app_inst->get_pdu_session_context(
@@ -279,7 +278,7 @@ void amf_n1::handle_itti_message(itti_downlink_nas_transfer& itti_msg) {
 
     } else {
       std::shared_ptr<ue_context> uc =
-          amf_app_inst->get_ue_context(ran_ue_ngap_id, amf_ue_ngap_id);
+          amf_app_inst->get_ue_context(amf_ue_ngap_id);
       if (uc == nullptr) return;
 
       if (uc->is_ue_context_request) {
@@ -438,8 +437,7 @@ void amf_n1::handle_itti_message(itti_uplink_nas_data_ind& nas_data_ind) {
       stacs.display();
 
       event_sub.ue_registration_state(
-          nc->supi, _5GMM_REGISTERED, amf_cfg->support_features.http_version,
-          ran_ue_ngap_id, amf_ue_ngap_id);
+          nc->supi, _5GMM_REGISTERED, ran_ue_ngap_id, amf_ue_ngap_id);
 
     } else {
       Logger::amf_n1().error(
@@ -448,7 +446,7 @@ void amf_n1::handle_itti_message(itti_uplink_nas_data_ind& nas_data_ind) {
       // return;
     }
   } else {
-    if (amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) {
+    if (get_nas_ctx_by_amf_ue_id(amf_ue_ngap_id, nc)) {
       Logger::amf_n1().debug(
           "Existing nas_context with amf_ue_ngap_id " AMF_UE_NGAP_ID_FMT,
           amf_ue_ngap_id);
@@ -772,8 +770,7 @@ void amf_n1::nas_signalling_establishment_request_handle(
       Logger::amf_n1().debug(
           "Signal the UE Reachability Status Event notification for SUPI %s",
           nc->supi.c_str());
-      event_sub.ue_reachability_status(
-          nc->supi, CM_CONNECTED, amf_cfg->support_features.http_version);
+      event_sub.ue_reachability_status(nc->supi, CM_CONNECTED);
     }
   } else {
     Logger::amf_n1().debug(
@@ -845,7 +842,7 @@ void amf_n1::uplink_nas_msg_handle(
 
   std::shared_ptr<nas_context> nc = {};
 
-  if (!amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) {
+  if (!get_nas_ctx_by_amf_ue_id(amf_ue_ngap_id, nc)) {
     Logger::amf_n1().error("No NAS context available for this UE, ignoring...");
     return;
   }
@@ -943,7 +940,7 @@ void amf_n1::uplink_nas_msg_handle(
         Logger::amf_n1().debug(
             "Received Service Request message (UplinkNasTransport), "
             "handling...");
-        if (amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) {
+        if (get_nas_ctx_by_amf_ue_id(amf_ue_ngap_id, nc)) {
           if (!service_request_handle(
                   nc, ran_ue_ngap_id, amf_ue_ngap_id, plain_msg, cause)) {
             // Send Service Reject with appropriate cause
@@ -961,7 +958,7 @@ void amf_n1::uplink_nas_msg_handle(
         std::string snn =
             amf_conv::get_serving_network_name(plmn.mnc, plmn.mcc);
         Logger::amf_n1().debug("Serving network name %s", snn.c_str());
-        if (amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) {
+        if (get_nas_ctx_by_amf_ue_id(amf_ue_ngap_id, nc)) {
           if (!registration_request_handle(
                   nc, ran_ue_ngap_id, amf_ue_ngap_id, snn, plain_msg, cause)) {
             // Send Registration Reject with appropriate cause
@@ -1059,7 +1056,7 @@ bool amf_n1::identity_response_handle(
   }
 
   std::shared_ptr<nas_context> nc = {};
-  if (amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) {
+  if (get_nas_ctx_by_amf_ue_id(amf_ue_ngap_id, nc)) {
     Logger::amf_n1().debug(
         "Find nas_context by amf_ue_ngap_id (" AMF_UE_NGAP_ID_FMT ")",
         amf_ue_ngap_id);
@@ -1090,8 +1087,7 @@ bool amf_n1::identity_response_handle(
   Logger::amf_n1().debug("Identity Response: SUPI %s ", nc->supi.c_str());
 
   // Update UE context if exists
-  std::shared_ptr<ue_context> uc =
-      amf_app_inst->get_ue_context(ran_ue_ngap_id, amf_ue_ngap_id);
+  std::shared_ptr<ue_context> uc = amf_app_inst->get_ue_context(amf_ue_ngap_id);
   if (uc != nullptr) {
     // Update UE context
     uc->supi = nc->supi;
@@ -1165,8 +1161,7 @@ bool amf_n1::service_request_handle(
     return false;
   }
 
-  std::shared_ptr<ue_context> uc =
-      amf_app_inst->get_ue_context(ran_ue_ngap_id, amf_ue_ngap_id);
+  std::shared_ptr<ue_context> uc = amf_app_inst->get_ue_context(amf_ue_ngap_id);
 
   if (uc == nullptr) {
     cause = k5gmmCauseUeIdentityCannotBeDerived;
@@ -1425,8 +1420,7 @@ bool amf_n1::service_request_handle(
     return false;
   }
 
-  std::shared_ptr<ue_context> uc =
-      amf_app_inst->get_ue_context(ran_ue_ngap_id, amf_ue_ngap_id);
+  std::shared_ptr<ue_context> uc = amf_app_inst->get_ue_context(amf_ue_ngap_id);
 
   if (uc == nullptr) {
     cause = k5gmmCauseUeIdentityCannotBeDerived;
@@ -1559,8 +1553,8 @@ bool amf_n1::service_request_handle(
         "necessary");
 
     // Get UE Context
-    std::shared_ptr<ue_context> old_uc_tmp = amf_app_inst->get_ue_context(
-        nc->old_ran_ue_ngap_id, nc->old_amf_ue_ngap_id);
+    std::shared_ptr<ue_context> old_uc_tmp =
+        amf_app_inst->get_ue_context(nc->old_amf_ue_ngap_id);
     if (old_uc_tmp == nullptr) {
       Logger::amf_n1().error(
           "No UE context for AMF UE NGAP ID "
@@ -1572,7 +1566,7 @@ bool amf_n1::service_request_handle(
       // uc->copy_pdu_sessions(old_uc);
 
       std::shared_ptr<ue_ngap_context> unc = {};
-      if (!amf_n2_inst->ran_ue_id_2_ue_ngap_context(
+      if (!amf_n2_inst->get_ngap_ctx_by_ran_gnb(
               nc->old_ran_ue_ngap_id, old_uc_tmp->gnb_id, unc)) {
         Logger::amf_n1().warn(
             "No UE NGAP context with ran_ue_ngap_id (" RAN_UE_NGAP_ID_FMT ")",
@@ -1868,8 +1862,7 @@ bool amf_n1::service_request_handle(
     stacs.display();
 
     event_sub.ue_registration_state(
-        nc->supi, _5GMM_REGISTERED, amf_cfg->support_features.http_version,
-        ran_ue_ngap_id, amf_ue_ngap_id);
+        nc->supi, _5GMM_REGISTERED, ran_ue_ngap_id, amf_ue_ngap_id);
 
     oai::utils::utils::bdestroy_wrapper(&protected_nas);
   }
@@ -1948,15 +1941,13 @@ bool amf_n1::registration_request_handle(
   nc->registration_request_is_set = true;
 
   // Find UE context
-  std::shared_ptr<ue_context> uc =
-      amf_app_inst->get_ue_context(ran_ue_ngap_id, amf_ue_ngap_id);
+  std::shared_ptr<ue_context> uc = amf_app_inst->get_ue_context(amf_ue_ngap_id);
   if (uc == nullptr) {
     cause = k5gmmCauseIllegalUe;  // TODO: verify the cause
     return false;
   }
   std::shared_ptr<ue_ngap_context> unc = {};
-  if (!amf_n2_inst->ran_ue_id_2_ue_ngap_context(
-          ran_ue_ngap_id, uc->gnb_id, unc)) {
+  if (!amf_n2_inst->get_ngap_ctx_by_ran_gnb(ran_ue_ngap_id, uc->gnb_id, unc)) {
     Logger::amf_n1().debug(
         "No existed UE NGAP context with ran_ue_ngap_id (" RAN_UE_NGAP_ID_FMT
         "), amf_ue_ngap_id (" AMF_UE_NGAP_ID_FMT ")",
@@ -2033,8 +2024,7 @@ bool amf_n1::registration_request_handle(
               "Signal the UE Reachability Status Event notification for SUPI "
               "%s",
               nc->supi.c_str());
-          event_sub.ue_reachability_status(
-              nc->supi, CM_CONNECTED, amf_cfg->support_features.http_version);
+          event_sub.ue_reachability_status(nc->supi, CM_CONNECTED);
         }
 
         // Update UE context
@@ -2138,8 +2128,7 @@ bool amf_n1::registration_request_handle(
               "Signal the UE Reachability Status Event notification for SUPI "
               "%s",
               nc->supi.c_str());
-          event_sub.ue_reachability_status(
-              nc->supi, CM_CONNECTED, amf_cfg->support_features.http_version);
+          event_sub.ue_reachability_status(nc->supi, CM_CONNECTED);
         }
       }
     } break;
@@ -2174,7 +2163,7 @@ bool amf_n1::registration_request_handle(
       if (uc) uc.reset();
 
       std::shared_ptr<ue_ngap_context> unc = {};
-      if (!amf_n2_inst->ran_ue_id_2_ue_ngap_context(
+      if (!amf_n2_inst->get_ngap_ctx_by_ran_gnb(
               ran_ue_ngap_id, uc->gnb_id, unc)) {
         cause = k5gmmCauseIllegalUe;  // TODO: verify the cause
         return false;
@@ -2214,8 +2203,7 @@ bool amf_n1::registration_request_handle(
     stacs.display();
 
     event_sub.ue_registration_state(
-        nc->supi, _5GMM_REGISTERED, amf_cfg->support_features.http_version,
-        ran_ue_ngap_id, amf_ue_ngap_id);
+        nc->supi, _5GMM_REGISTERED, ran_ue_ngap_id, amf_ue_ngap_id);
   }
 
   if (nc->security_ctx.has_value())
@@ -2465,7 +2453,7 @@ std::shared_ptr<ue_context> amf_n1::rekey_nas_owner_on_guti_rereg(
 }
 
 //------------------------------------------------------------------------------
-bool amf_n1::amf_ue_id_2_nas_context(
+bool amf_n1::get_nas_ctx_by_amf_ue_id(
     const uint64_t& amf_ue_ngap_id, std::shared_ptr<nas_context>& nc) const {
   auto uc = amf_app_inst->find_ue_by_amf_ue_ngap_id(amf_ue_ngap_id);
   if (!uc || !uc->get_nas_ctx()) {
@@ -2592,7 +2580,7 @@ void amf_n1::send_registration_reject_msg(
     uint8_t cause_value) {
   // Update NAS State machine
   std::shared_ptr<nas_context> nc = {};
-  if (amf_ue_id_2_nas_context(amf_ue_ngap_id, nc) && nc) {
+  if (get_nas_ctx_by_amf_ue_id(amf_ue_ngap_id, nc) && nc) {
     handle_nas_event(nc, oai::amf::nas::nas_event_e::REGISTRATION_REJECT_SENT);
     nas_procedure_manager_.complete_specific_procedure(*nc);
   }
@@ -2619,8 +2607,7 @@ void amf_n1::send_registration_reject_msg(
 
   // Trigger CommunicationFailure Report notify
   oai::_3gpp::model::CommunicationFailure comm_failure = {};
-  std::shared_ptr<ue_context> uc =
-      amf_app_inst->get_ue_context(ran_ue_ngap_id, amf_ue_ngap_id);
+  std::shared_ptr<ue_context> uc = amf_app_inst->get_ue_context(amf_ue_ngap_id);
   if (uc == nullptr) {
     Logger::amf_n1().warn(
         "Cannot find the UE context, unable to notify CommunicationFailure "
@@ -2633,8 +2620,7 @@ void amf_n1::send_registration_reject_msg(
       "%s",
       supi.c_str());
   comm_failure.setNasReleaseCode(std::to_string(cause_value));
-  event_sub.ue_communication_failure(
-      supi, comm_failure, amf_cfg->support_features.http_version);
+  event_sub.ue_communication_failure(supi, comm_failure);
 }
 
 //------------------------------------------------------------------------------
@@ -2661,7 +2647,7 @@ void amf_n1::send_authentication_reject_msg(
 
   // Update NAS State machine
   std::shared_ptr<nas_context> nc = {};
-  if (amf_ue_id_2_nas_context(amf_ue_ngap_id, nc) && nc) {
+  if (get_nas_ctx_by_amf_ue_id(amf_ue_ngap_id, nc) && nc) {
     handle_nas_event(
         nc, oai::amf::nas::nas_event_e::AUTHENTICATION_REJECT_SENT);
   }
@@ -3293,7 +3279,7 @@ bool amf_n1::authentication_response_handle(
   }
 
   std::shared_ptr<nas_context> nc = {};
-  if (!amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) {
+  if (!get_nas_ctx_by_amf_ue_id(amf_ue_ngap_id, nc)) {
     cause = k5gmmCauseIllegalUe;
     return false;
   }
@@ -3419,7 +3405,7 @@ bool amf_n1::authentication_failure_handle(
   }
 
   std::shared_ptr<nas_context> nc = {};
-  if (!amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) {
+  if (!get_nas_ctx_by_amf_ue_id(amf_ue_ngap_id, nc)) {
     cause = k5gmmCauseIllegalUe;  // TODO: to verify the cause value
     // Reset the failure counter
     nc->registration_attempt_counter = 0;
@@ -3678,15 +3664,14 @@ bool amf_n1::security_mode_complete_handle(
     return false;
   }
 
-  std::shared_ptr<ue_context> uc =
-      amf_app_inst->get_ue_context(ran_ue_ngap_id, amf_ue_ngap_id);
+  std::shared_ptr<ue_context> uc = amf_app_inst->get_ue_context(amf_ue_ngap_id);
   if (uc == nullptr) {
     cause = k5gmmCauseIllegalUe;
     return false;
   }
 
   std::shared_ptr<nas_context> nc = {};
-  if (!amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) {
+  if (!get_nas_ctx_by_amf_ue_id(amf_ue_ngap_id, nc)) {
     cause = k5gmmCauseIllegalUe;
     return false;
   }
@@ -4064,8 +4049,7 @@ bool amf_n1::security_mode_complete_handle(
   Logger::amf_n1().debug(
       "Signal the UE Connectivity Status Event notification for SUPI %s",
       nc->supi.c_str());
-  event_sub.ue_connectivity_state(
-      nc->supi, CM_CONNECTED, amf_cfg->support_features.http_version);
+  event_sub.ue_connectivity_state(nc->supi, CM_CONNECTED);
 
   return true;
 }
@@ -4087,7 +4071,7 @@ bool amf_n1::security_mode_reject_handle(
   }
 
   std::shared_ptr<nas_context> nc = {};
-  if (amf_ue_id_2_nas_context(amf_ue_ngap_id, nc) && nc) {
+  if (get_nas_ctx_by_amf_ue_id(amf_ue_ngap_id, nc) && nc) {
     // Stop T3560, enter SECURITY_MODE_REJECT_RECEIVED event
     nas_timer_manager_.stop_timer(nas_timer_type_e::T3560, nc);
     handle_nas_event(
@@ -4113,15 +4097,14 @@ bool amf_n1::registration_complete_handle(
     return false;
   }
 
-  std::shared_ptr<ue_context> uc =
-      amf_app_inst->get_ue_context(ran_ue_ngap_id, amf_ue_ngap_id);
+  std::shared_ptr<ue_context> uc = amf_app_inst->get_ue_context(amf_ue_ngap_id);
   if (uc == nullptr) {
     cause = k5gmmCauseUeIdentityCannotBeDerived;
     return false;
   }
 
   std::shared_ptr<nas_context> nc = {};
-  if (!amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) {
+  if (!get_nas_ctx_by_amf_ue_id(amf_ue_ngap_id, nc)) {
     cause = k5gmmCauseUeIdentityCannotBeDerived;
     return false;
   }
@@ -4155,8 +4138,7 @@ bool amf_n1::registration_complete_handle(
       "Signal the UE Registration State Event notification for SUPI %s",
       nc->supi.c_str());
   event_sub.ue_registration_state(
-      nc->supi, _5GMM_REGISTERED, amf_cfg->support_features.http_version,
-      ran_ue_ngap_id, amf_ue_ngap_id);
+      nc->supi, _5GMM_REGISTERED, ran_ue_ngap_id, amf_ue_ngap_id);
 
   // Check follow-on-request indicator
   if (!nc->follow_on_req_pending_ind and
@@ -4506,7 +4488,7 @@ bool amf_n1::ue_initiate_de_registration_handle(
   }
 
   std::shared_ptr<nas_context> nc = {};
-  if (!amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) {
+  if (!get_nas_ctx_by_amf_ue_id(amf_ue_ngap_id, nc)) {
     cause = k5gmmCauseUeIdentityCannotBeDerived;
     return false;
   }
@@ -4575,12 +4557,11 @@ bool amf_n1::ue_initiate_de_registration_handle(
   // Get list of PDU sessions
   std::vector<std::shared_ptr<pdu_session_context>> sessions_ctx;
   // Use the validated IDs from the incoming message (already checked above
-  // via check_nas_event/amf_ue_id_2_nas_context). The UE context store is
+  // via check_nas_event/get_nas_ctx_by_amf_ue_id). The UE context store is
   // keyed by amf_ue_ngap_id; relying on nc->amf_ue_ngap_id here would miss
   // the context after a GUTI re-registration rekey, dropping the
   // de-registration silently.
-  std::shared_ptr<ue_context> uc =
-      amf_app_inst->get_ue_context(ran_ue_ngap_id, amf_ue_ngap_id);
+  std::shared_ptr<ue_context> uc = amf_app_inst->get_ue_context(amf_ue_ngap_id);
 
   if (uc == nullptr) {
     cause = k5gmmCauseIllegalUe;
@@ -4735,16 +4716,14 @@ bool amf_n1::ue_initiate_de_registration_handle(
       "Signal the UE Registration State Event notification for SUPI %s",
       nc->supi.c_str());
   event_sub.ue_registration_state(
-      nc->supi, _5GMM_DEREGISTERED, amf_cfg->support_features.http_version,
-      ran_ue_ngap_id, amf_ue_ngap_id);
+      nc->supi, _5GMM_DEREGISTERED, ran_ue_ngap_id, amf_ue_ngap_id);
 
   // Trigger UE Loss of Connectivity Status Notify
   Logger::amf_n1().debug(
       "Signal the UE Loss of Connectivity Event notification for SUPI %s",
       nc->supi.c_str());
   event_sub.ue_loss_of_connectivity(
-      nc->supi, DEREGISTERED, amf_cfg->support_features.http_version,
-      ran_ue_ngap_id, amf_ue_ngap_id);
+      nc->supi, DEREGISTERED, ran_ue_ngap_id, amf_ue_ngap_id);
 
   // TODO: put once this scenario is implemented
   // Trigger UE Loss of Connectivity Status Notify
@@ -4812,8 +4791,7 @@ bool amf_n1::ue_initiate_de_registration_handle(
   Logger::amf_n1().debug(
       "Signal the UE Connectivity Status Event notification for SUPI %s",
       nc->supi.c_str());
-  event_sub.ue_connectivity_state(
-      nc->supi, CM_IDLE, amf_cfg->support_features.http_version);
+  event_sub.ue_connectivity_state(nc->supi, CM_IDLE);
 
   return true;
 }
@@ -4856,7 +4834,7 @@ void amf_n1::ul_nas_transport_handle(
           "Requested/Configured NSSAI!");
 
       std::shared_ptr<nas_context> nc = {};
-      if (!amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) return;
+      if (!get_nas_ctx_by_amf_ue_id(amf_ue_ngap_id, nc)) return;
 
       // TODO: Only use the first one for now if there's multiple requested
       // NSSAI since we don't know which slice associated with this PDU
@@ -4881,8 +4859,8 @@ void amf_n1::ul_nas_transport_handle(
         if (!found) {
           std::vector<struct SNSSAI_s> common_nssais;
           // Find UE Context
-          std::shared_ptr<ue_context> uc = amf_app_inst->get_ue_context(
-              nc->ran_ue_ngap_id, nc->amf_ue_ngap_id);
+          std::shared_ptr<ue_context> uc =
+              amf_app_inst->get_ue_context(nc->amf_ue_ngap_id);
           if (uc == nullptr) return;
 
           amf_n2_inst->get_common_NSSAI(
@@ -5049,7 +5027,7 @@ bool amf_n1::run_mobility_registration_update_procedure(
   // TODO: process with timers: T3513, T3565
 
   std::shared_ptr<ue_context> uc =
-      amf_app_inst->get_ue_context(nc->ran_ue_ngap_id, nc->amf_ue_ngap_id);
+      amf_app_inst->get_ue_context(nc->amf_ue_ngap_id);
   if (uc == nullptr) {
     cause = k5gmmCauseMessageTypeNotCompatible;
     return false;
@@ -5261,7 +5239,7 @@ bool amf_n1::run_periodic_registration_update_procedure(
 
   // Get UE context
   std::shared_ptr<ue_context> uc =
-      amf_app_inst->get_ue_context(nc->ran_ue_ngap_id, nc->amf_ue_ngap_id);
+      amf_app_inst->get_ue_context(nc->amf_ue_ngap_id);
   if (uc == nullptr) {
     cause = k5gmmCauseIllegalUe;
     return false;
@@ -5359,7 +5337,7 @@ bool amf_n1::run_periodic_registration_update_procedure(
 
   // Get UE context
   std::shared_ptr<ue_context> uc =
-      amf_app_inst->get_ue_context(nc->ran_ue_ngap_id, nc->amf_ue_ngap_id);
+      amf_app_inst->get_ue_context(nc->amf_ue_ngap_id);
   if (uc == nullptr) {
     cause = k5gmmCauseIllegalUe;
     return false;
@@ -5451,14 +5429,12 @@ oai::amf::nas::transition_result_t amf_n1::handle_nas_event(
   if (result.new_state == _5GMM_REGISTERED &&
       result.old_state != _5GMM_REGISTERED) {
     event_sub.ue_registration_state(
-        nc->supi, _5GMM_REGISTERED, amf_cfg->support_features.http_version,
-        nc->ran_ue_ngap_id, nc->amf_ue_ngap_id);
+        nc->supi, _5GMM_REGISTERED, nc->ran_ue_ngap_id, nc->amf_ue_ngap_id);
   } else if (
       result.new_state == _5GMM_DEREGISTERED &&
       result.old_state != _5GMM_DEREGISTERED) {
     event_sub.ue_registration_state(
-        nc->supi, _5GMM_DEREGISTERED, amf_cfg->support_features.http_version,
-        nc->ran_ue_ngap_id, nc->amf_ue_ngap_id);
+        nc->supi, _5GMM_DEREGISTERED, nc->ran_ue_ngap_id, nc->amf_ue_ngap_id);
   }
 
   Logger::amf_n1().info(
@@ -5478,7 +5454,7 @@ bool amf_n1::check_nas_event(
 
   // Get NAS context
   std::shared_ptr<nas_context> nc = {};
-  if (!amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) {
+  if (!get_nas_ctx_by_amf_ue_id(amf_ue_ngap_id, nc)) {
     return false;
   }
 
@@ -5517,10 +5493,27 @@ void amf_n1::get_5gcm_state(
   std::shared_lock lock(m_nas_context);
   state = nc->nas_status;
 }
+//------------------------------------------------------------------------------
+static bool init_event_notification(
+    const std::shared_ptr<amf_subscription>& i, const std::string& supi,
+    event_notification& ev_notif,
+    oai::_3gpp::model::AmfEventReport& event_report) {
+  // TODO: use the anyUE field from the subscription request
+  if (i->supi_is_set && std::strcmp(i->supi.c_str(), supi.c_str()))
+    return false;
+
+  ev_notif = {};
+  ev_notif.set_notify_correlation_id(i->notify_correlation_id);
+  ev_notif.set_notify_uri(i->notify_uri);  // Direct subscription
+  // ev_notif.set_subs_change_notify_correlation_id(i->notify_uri);
+
+  event_report = {};
+  return true;
+}
 
 //------------------------------------------------------------------------------
 void amf_n1::handle_ue_location_change(
-    std::string supi, UserLocation user_location, uint8_t http_version) {
+    std::string supi, UserLocation user_location) {
   Logger::amf_n1().debug(
       "Send request to SBI to trigger UE Location Report (SUPI "
       "%s )",
@@ -5539,16 +5532,9 @@ void amf_n1::handle_ue_location_change(
 
     for (auto i : subscriptions) {
       // Avoid repeated notifications
-      // TODO: use the anyUE field from the subscription request
-      if (i->supi_is_set && std::strcmp(i->supi.c_str(), supi.c_str()))
-        continue;
-
-      event_notification ev_notif = {};
-      ev_notif.set_notify_correlation_id(i->notify_correlation_id);
-      ev_notif.set_notify_uri(i->notify_uri);  // Direct subscription
-      // ev_notif.set_subs_change_notify_correlation_id(i->notify_uri);
-
-      oai::_3gpp::model::AmfEventReport event_report = {};
+      event_notification ev_notif;
+      oai::_3gpp::model::AmfEventReport event_report;
+      if (!init_event_notification(i, supi, ev_notif, event_report)) continue;
       oai::_3gpp::model::AmfEventType amf_event_type = {};
       amf_event_type.setEnumValue(
           AmfEventType_anyOf::eAmfEventType_anyOf::LOCATION_REPORT);
@@ -5577,7 +5563,7 @@ void amf_n1::handle_ue_location_change(
 
 //------------------------------------------------------------------------------
 void amf_n1::handle_ue_reachability_status_change(
-    std::string supi, uint8_t status, uint8_t http_version) {
+    std::string supi, uint8_t status) {
   Logger::amf_n1().debug(
       "Send request to SBI to trigger UE Reachability Report (SUPI "
       "%s )",
@@ -5597,16 +5583,9 @@ void amf_n1::handle_ue_reachability_status_change(
 
     for (auto i : subscriptions) {
       // Avoid repeated notifications
-      // TODO: use the anyUE field from the subscription request
-      if (i->supi_is_set && std::strcmp(i->supi.c_str(), supi.c_str()))
-        continue;
-
-      event_notification ev_notif = {};
-      ev_notif.set_notify_correlation_id(i->notify_correlation_id);
-      ev_notif.set_notify_uri(i->notify_uri);  // Direct subscription
-      // ev_notif.set_subs_change_notify_correlation_id(i->notify_uri);
-
-      oai::_3gpp::model::AmfEventReport event_report = {};
+      event_notification ev_notif;
+      oai::_3gpp::model::AmfEventReport event_report;
+      if (!init_event_notification(i, supi, ev_notif, event_report)) continue;
       oai::_3gpp::model::AmfEventType amf_event_type = {};
       amf_event_type.setEnumValue(
           AmfEventType_anyOf::eAmfEventType_anyOf::REACHABILITY_REPORT);
@@ -5642,8 +5621,8 @@ void amf_n1::handle_ue_reachability_status_change(
 
 //------------------------------------------------------------------------------
 void amf_n1::handle_ue_registration_state_change(
-    std::string supi, uint8_t status, uint8_t http_version,
-    uint32_t ran_ue_ngap_id, uint64_t amf_ue_ngap_id) {
+    std::string supi, uint8_t status, uint32_t ran_ue_ngap_id,
+    uint64_t amf_ue_ngap_id) {
   Logger::amf_n1().debug(
       "Send request to SBI to trigger UE Registration State Report (SUPI "
       "%s )",
@@ -5663,16 +5642,9 @@ void amf_n1::handle_ue_registration_state_change(
 
     for (auto i : subscriptions) {
       // Avoid repeated notifications
-      // TODO: use the anyUE field from the subscription request
-      if (i->supi_is_set && std::strcmp(i->supi.c_str(), supi.c_str()))
-        continue;
-
-      event_notification ev_notif = {};
-      ev_notif.set_notify_correlation_id(i->notify_correlation_id);
-      ev_notif.set_notify_uri(i->notify_uri);  // Direct subscription
-      // ev_notif.set_subs_change_notify_correlation_id(i->notify_uri);
-
-      oai::_3gpp::model::AmfEventReport event_report = {};
+      event_notification ev_notif;
+      oai::_3gpp::model::AmfEventReport event_report;
+      if (!init_event_notification(i, supi, ev_notif, event_report)) continue;
 
       oai::_3gpp::model::AmfEventType amf_event_type = {};
       amf_event_type.setEnumValue(
@@ -5720,7 +5692,7 @@ void amf_n1::handle_ue_registration_state_change(
 
 //------------------------------------------------------------------------------
 void amf_n1::handle_ue_connectivity_state_change(
-    std::string supi, uint8_t status, uint8_t http_version) {
+    std::string supi, uint8_t status) {
   Logger::amf_n1().debug(
       "Send request to SBI to trigger UE Connectivity State Report (SUPI "
       "%s )",
@@ -5740,16 +5712,9 @@ void amf_n1::handle_ue_connectivity_state_change(
 
     for (auto i : subscriptions) {
       // Avoid repeated notifications
-      // TODO: use the anyUE field from the subscription request
-      if (i->supi_is_set && std::strcmp(i->supi.c_str(), supi.c_str()))
-        continue;
-
-      event_notification ev_notif = {};
-      ev_notif.set_notify_correlation_id(i->notify_correlation_id);
-      ev_notif.set_notify_uri(i->notify_uri);  // Direct subscription
-      // ev_notif.set_subs_change_notify_correlation_id(i->notify_uri);
-
-      oai::_3gpp::model::AmfEventReport event_report = {};
+      event_notification ev_notif;
+      oai::_3gpp::model::AmfEventReport event_report;
+      if (!init_event_notification(i, supi, ev_notif, event_report)) continue;
 
       oai::_3gpp::model::AmfEventType amf_event_type = {};
       amf_event_type.setEnumValue(
@@ -5793,8 +5758,7 @@ void amf_n1::handle_ue_connectivity_state_change(
 
 //------------------------------------------------------------------------------
 void amf_n1::handle_ue_communication_failure_change(
-    std::string supi, oai::_3gpp::model::CommunicationFailure comm_failure,
-    uint8_t http_version) {
+    std::string supi, oai::_3gpp::model::CommunicationFailure comm_failure) {
   Logger::amf_n1().debug(
       "Send request to SBI to trigger UE Communication Failure Report (SUPI "
       "%s )",
@@ -5813,16 +5777,9 @@ void amf_n1::handle_ue_communication_failure_change(
 
     for (auto i : subscriptions) {
       // Avoid repeated notifications
-      // TODO: use the anyUE field from the subscription request
-      if (i->supi_is_set && std::strcmp(i->supi.c_str(), supi.c_str()))
-        continue;
-
-      event_notification ev_notif = {};
-      ev_notif.set_notify_correlation_id(i->notify_correlation_id);
-      ev_notif.set_notify_uri(i->notify_uri);  // Direct subscription
-      // ev_notif.set_subs_change_notify_correlation_id(i->notify_uri);
-
-      oai::_3gpp::model::AmfEventReport event_report = {};
+      event_notification ev_notif;
+      oai::_3gpp::model::AmfEventReport event_report;
+      if (!init_event_notification(i, supi, ev_notif, event_report)) continue;
       oai::_3gpp::model::AmfEventType amf_event_type = {};
       amf_event_type.setEnumValue(AmfEventType_anyOf::eAmfEventType_anyOf::
                                       COMMUNICATION_FAILURE_REPORT);
@@ -5851,8 +5808,8 @@ void amf_n1::handle_ue_communication_failure_change(
 
 //------------------------------------------------------------------------------
 void amf_n1::handle_ue_loss_of_connectivity_change(
-    std::string supi, uint8_t status, uint8_t http_version,
-    uint32_t ran_ue_ngap_id, uint64_t amf_ue_ngap_id) {
+    std::string supi, uint8_t status, uint32_t ran_ue_ngap_id,
+    uint64_t amf_ue_ngap_id) {
   Logger::amf_n1().debug(
       "Send request to SBI to trigger UE Loss of Connectivity (SUPI "
       "%s )",
@@ -5924,13 +5881,11 @@ void amf_n1::handle_ue_loss_of_connectivity_change(
 void amf_n1::trigger_ue_location_report(
     const uint32_t ran_ue_ngap_id, const uint64_t amf_ue_ngap_id) {
   // Find UE context
-  std::shared_ptr<ue_context> uc =
-      amf_app_inst->get_ue_context(ran_ue_ngap_id, amf_ue_ngap_id);
+  std::shared_ptr<ue_context> uc = amf_app_inst->get_ue_context(amf_ue_ngap_id);
   if (uc == nullptr) return;
 
   std::shared_ptr<ue_ngap_context> unc = {};
-  if (amf_n2_inst->ran_ue_id_2_ue_ngap_context(
-          ran_ue_ngap_id, uc->gnb_id, unc)) {
+  if (amf_n2_inst->get_ngap_ctx_by_ran_gnb(ran_ue_ngap_id, uc->gnb_id, unc)) {
     std::shared_ptr<gnb_context> gc = {};
     if (!amf_n2_inst->assoc_id_2_gnb_context(unc->gnb_assoc_id, gc)) {
       Logger::amf_n1().error(
@@ -5985,8 +5940,7 @@ void amf_n1::trigger_ue_location_report(
       Logger::amf_n1().debug(
           "Signal the UE Location Report Event notification for SUPI %s",
           supi.c_str());
-      event_sub.ue_location_report(
-          supi, user_location, amf_cfg->support_features.http_version);
+      event_sub.ue_location_report(supi, user_location);
     }
   }
 }
@@ -6032,7 +5986,7 @@ void amf_n1::initialize_registration_accept(
 
   // Find UE Context
   std::shared_ptr<ue_context> uc =
-      amf_app_inst->get_ue_context(nc->ran_ue_ngap_id, nc->amf_ue_ngap_id);
+      amf_app_inst->get_ue_context(nc->amf_ue_ngap_id);
   if (uc == nullptr) return;
 
   // TAI List
@@ -6236,7 +6190,7 @@ void amf_n1::mobile_reachable_timer_timeout(
   }
 
   std::shared_ptr<nas_context> nc = {};
-  if (!amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) return;
+  if (!get_nas_ctx_by_amf_ue_id(amf_ue_ngap_id, nc)) return;
 
   set_mobile_reachable_timer_timeout(nc, true);
 
@@ -6245,9 +6199,7 @@ void amf_n1::mobile_reachable_timer_timeout(
       "Signal the UE Loss of Connectivity Event notification for SUPI %s",
       nc->supi.c_str());
   event_sub.ue_loss_of_connectivity(
-      nc->supi, MAX_DETECTION_TIME_EXPIRED,
-      amf_cfg->support_features.http_version, nc->ran_ue_ngap_id,
-      amf_ue_ngap_id);
+      nc->supi, MAX_DETECTION_TIME_EXPIRED, nc->ran_ue_ngap_id, amf_ue_ngap_id);
 
   // TODO: Start the implicit de-registration timer
   timer_id_t tid = itti_inst->timer_setup(
@@ -6273,7 +6225,7 @@ void amf_n1::implicit_deregistration_timer_timeout(
   }
 
   std::shared_ptr<nas_context> nc = {};
-  if (!amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) return;
+  if (!get_nas_ctx_by_amf_ue_id(amf_ue_ngap_id, nc)) return;
 
   // Implicitly de-register UE
   // TODO (4.2.2.3.3 Network-initiated Deregistration @3GPP TS 23.502V16.0.0):
@@ -6283,7 +6235,7 @@ void amf_n1::implicit_deregistration_timer_timeout(
 
   // Send PDU Session Release SM Context Request to SMF for each PDU Session
   std::shared_ptr<ue_context> uc =
-      amf_app_inst->get_ue_context(nc->ran_ue_ngap_id, nc->amf_ue_ngap_id);
+      amf_app_inst->get_ue_context(nc->amf_ue_ngap_id);
 
   if (uc == nullptr) return;
 
@@ -6381,15 +6333,14 @@ void amf_n1::implicit_deregistration_timer_timeout(
   Logger::amf_n1().debug(
       "Signal the UE Connectivity Status Event notification for SUPI %s",
       nc->supi.c_str());
-  event_sub.ue_connectivity_state(
-      nc->supi, CM_IDLE, amf_cfg->support_features.http_version);
+  event_sub.ue_connectivity_state(nc->supi, CM_IDLE);
 
   // Finally, remove the UE context: this completes the
   // CM-IDLE -> mobile-reachable timer -> implicit de-registration ->
   // context-removal lifecycle (TS 24.501 §5.3.7). This runs only AFTER the
   // SM context releases toward SMF above have completed (or timed out), so
   // the SBI handler's by-SUPI lookup cannot race the removal.
-  if (amf_app_inst->remove_ue_context(nc->ran_ue_ngap_id, amf_ue_ngap_id)) {
+  if (amf_app_inst->remove_ue_context(amf_ue_ngap_id)) {
     Logger::amf_n1().debug(
         "Removed UE context (amf_ue_ngap_id " AMF_UE_NGAP_ID_FMT
         ") after implicit de-registration",
@@ -6590,7 +6541,7 @@ bool amf_n1::reroute_registration_request(
 //------------------------------------------------------------------------------
 bool amf_n1::check_requested_nssai(const std::shared_ptr<nas_context>& nc) {
   std::shared_ptr<ue_context> uc =
-      amf_app_inst->get_ue_context(nc->ran_ue_ngap_id, nc->amf_ue_ngap_id);
+      amf_app_inst->get_ue_context(nc->amf_ue_ngap_id);
   if (uc == nullptr) return false;
 
   // If there no requested NSSAIs
@@ -6635,7 +6586,7 @@ bool amf_n1::check_subscribed_nssai(
   // Check if the AMF can serve all the requested/subscribed S-NSSAIs
 
   std::shared_ptr<ue_context> uc =
-      amf_app_inst->get_ue_context(nc->ran_ue_ngap_id, nc->amf_ue_ngap_id);
+      amf_app_inst->get_ue_context(nc->amf_ue_ngap_id);
   if (uc == nullptr) return false;
 
   bool result = false;
@@ -6743,7 +6694,7 @@ bool amf_n1::get_slice_selection_subscription_data(
         "Get the Slice Selection Subscription Data from UDM");
 
     std::shared_ptr<ue_context> uc =
-        amf_app_inst->get_ue_context(nc->ran_ue_ngap_id, nc->amf_ue_ngap_id);
+        amf_app_inst->get_ue_context(nc->amf_ue_ngap_id);
     if (uc == nullptr) return false;
 
     auto itti_msg =
@@ -6872,12 +6823,12 @@ bool amf_n1::get_slice_selection_subscription_data_from_conf_file(
 
   // Get UE context
   std::shared_ptr<ue_context> uc =
-      amf_app_inst->get_ue_context(nc->ran_ue_ngap_id, nc->amf_ue_ngap_id);
+      amf_app_inst->get_ue_context(nc->amf_ue_ngap_id);
   if (uc == nullptr) return false;
 
   // Get UE NGAP Context
   std::shared_ptr<ue_ngap_context> unc = {};
-  if (!amf_n2_inst->ran_ue_id_2_ue_ngap_context(
+  if (!amf_n2_inst->get_ngap_ctx_by_ran_gnb(
           nc->ran_ue_ngap_id, uc->gnb_id, unc))
     return false;
 
@@ -6944,7 +6895,7 @@ bool amf_n1::get_network_slice_selection(
       "Get the Network Slice Selection Information from NSSF");
 
   std::shared_ptr<ue_context> uc =
-      amf_app_inst->get_ue_context(nc->ran_ue_ngap_id, nc->amf_ue_ngap_id);
+      amf_app_inst->get_ue_context(nc->amf_ue_ngap_id);
   if (uc == nullptr) return false;
 
   if (amf_cfg->support_features.enable_nssf) {
@@ -7486,7 +7437,7 @@ static bool resolve_nas_context_for_timer(
         amf_ue_ngap_id_str.c_str(), e.what());
     return false;
   }
-  if (!self->amf_ue_id_2_nas_context(amf_ue_ngap_id_out, nc_out)) {
+  if (!self->get_nas_ctx_by_amf_ue_id(amf_ue_ngap_id_out, nc_out)) {
     Logger::amf_n1().warn(
         "Timer expiry: NAS context not found for AMF UE NGAP ID %lu",
         amf_ue_ngap_id_out);
@@ -7867,7 +7818,7 @@ bool amf_n1::configuration_update_complete_handle(
       "Received Configuration Update Complete message, processing");
 
   std::shared_ptr<nas_context> nc;
-  if (!amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) {
+  if (!get_nas_ctx_by_amf_ue_id(amf_ue_ngap_id, nc)) {
     Logger::amf_n1().error(
         "Configuration Update Complete: NAS context not found for "
         "UE %lu",
