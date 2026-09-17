@@ -164,6 +164,13 @@ class amf_n1 {
       const std::string& imsi, std::shared_ptr<nas_context>&) const;
 
   /*
+   * Get the UE Connection Management (CM) state for a SUPI [TS 23.501 §5.3.2]
+   * @param [const std::string&] supi: UE SUPI
+   * @return CM_CONNECTED or CM_IDLE (defaults to CM_CONNECTED if no context)
+   */
+  cm_state_t get_ue_cm_state(const std::string& supi);
+
+  /*
    * Store an UE NAS context associated with an SUPI
    * @param [const std::string&] imsi: UE SUPI
    * @param [const std::shared_ptr<nas_context>&] nc: pointer to UE NAS context
