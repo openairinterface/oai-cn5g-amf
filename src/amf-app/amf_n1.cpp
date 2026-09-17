@@ -214,6 +214,8 @@ amf_n1::~amf_n1() {
 }
 
 //------------------------------------------------------------------------------
+// TODO: DL NAS to a CM-IDLE UE is dropped at the SCTP layer; buffer it and
+// page the UE instead (TS 23.502 §4.2.3.2).
 void amf_n1::handle_itti_message(itti_downlink_nas_transfer& itti_msg) {
   uint64_t amf_ue_ngap_id         = itti_msg.amf_ue_ngap_id;
   uint32_t ran_ue_ngap_id         = itti_msg.ran_ue_ngap_id;
@@ -2544,6 +2546,21 @@ bool amf_n1::supi_2_nas_context(
   if (!uc || !uc->get_nas_ctx()) return false;
   nc = uc->get_nas_ctx();
   return true;
+}
+
+//------------------------------------------------------------------------------
+cm_state_t amf_n1::get_ue_cm_state(const std::string& supi) {
+  // TODO: a missing NAS context is treated as CM-CONNECTED so the relay
+  // proceeds. Without a context the UE is not registered (TS 23.501
+  // §5.3.2.2.2) and has no CM state (§5.3.3.2), so N1N2MessageTransfer should
+  // be rejected with 404 CONTEXT_NOT_FOUND (TS 29.518 Table 6.1.3.5.3.1-2).
+  std::shared_ptr<nas_context> nc = {};
+  if (!supi_2_nas_context(supi, nc)) {
+    Logger::amf_n1().warn(
+        "No NAS context for SUPI %s; assuming CM-CONNECTED", supi.c_str());
+    return CM_CONNECTED;
+  }
+  return nc->nas_status;
 }
 
 //------------------------------------------------------------------------------
@@ -7989,7 +8006,8 @@ void amf_n1::handle_t3513_expiry(
   Logger::amf_n1().debug(
       "T3513 (Paging) expiry for UE %s — retransmit not yet implemented",
       amf_ue_ngap_id_str.c_str());
-  // TODO: implement T3513 paging retransmit handling
+  // TODO: retransmit the page while the UE stays CM-IDLE, then notify the SMF
+  // that the UE is unreachable (TS 24.501 §5.6.3.4).
 }
 
 // ---------------------------------------------------------------------------

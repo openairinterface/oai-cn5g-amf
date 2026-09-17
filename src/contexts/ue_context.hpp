@@ -75,6 +75,12 @@ class ue_context {
 
   std::optional<std::string> nrf_uri;
 
+  // TODO: populate from the UDM subscribedUeAmbr / PCF AM policy ueAmbr;
+  // has_ue_ambr distinguishes "unset" from "0 bps".
+  uint64_t ue_ambr_dl = 0;  // bps
+  uint64_t ue_ambr_ul = 0;  // bps
+  bool has_ue_ambr    = false;
+
   // PCF related info
   oai::common::sbi::nf_addr_t pcf_addr;
   std::optional<oai::_3gpp::model::PolicyAssociation> policy_association;
