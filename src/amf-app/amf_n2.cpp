@@ -2189,7 +2189,6 @@ void amf_n2::handle_itti_message(
 
   PduSessionResourceHandoverList handoverList = {};
   std::vector<PduSessionResourceItem> handoverItemList;
-  PduSessionResourceItem handoverItem = {};
 
   // TODO: wait for response from SMF and transfer T-RAN N3 information/ or
   // T-UPF to the source gNB
@@ -2214,6 +2213,7 @@ void amf_n2::handle_itti_message(
         pdu_session_id.set(pdu_session_id_value);
         OCTET_STRING_fromBuf(
             &handoverCommandTransfer, n2_sm.c_str(), n2_sm.length());
+        PduSessionResourceItem handoverItem = {};
         handoverItem.set(pdu_session_id, handoverCommandTransfer);
         if (handoverCommandTransfer.buf) {
           free(handoverCommandTransfer.buf);
