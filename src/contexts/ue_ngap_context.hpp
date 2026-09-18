@@ -89,7 +89,7 @@ class ue_ngap_context {
   ng_ue_state_t ng_ue_state;
   uint8_t ncc;  // Next Hop Chaining Counter
 
-  OCTET_STRING_t initial_ue_msg;  // for AMF re-allocation
+  OCTET_STRING_t initial_ue_msg = {};  // for AMF re-allocation
 
   // Release Command Cause and source gNB ID in case of HO
   Ngap_CauseRadioNetwork_t release_cause;
