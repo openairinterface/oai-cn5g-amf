@@ -3,10 +3,12 @@
  */
 
 #include "amf_sbi.hpp"
+#include "DlNasTransport.hpp"
 
 #include <nlohmann/json.hpp>
 
 #include <algorithm>
+#include <regex>
 #include <cctype>
 
 #include "3gpp_24.501.hpp"
@@ -603,12 +605,32 @@ void amf_sbi::handle_itti_message(itti_nsmf_pdusession_create_sm_context& smf) {
 
   Logger::amf_sbi().debug("Requested DNN: %s", dnn.c_str());
   psc->dnn = dnn;
+  const bool roaming = nc->home_mcc != nc->serving_mcc || nc->home_mnc != nc->serving_mnc;
+  if (roaming && !lbo_allowed(nc->supi, psc->snssai, psc->plmn, dnn)) {
+    Logger::amf_sbi().warn("LBO not authorized by home subscription for DNN %s", dnn.c_str());
+    oai::nas::DlNasTransport dl;
+    dl.SetPayloadContainerType(kN1SmInformation);
+    dl.SetPayloadContainer(reinterpret_cast<uint8_t*>(bdata(smf.sm_msg)), blength(smf.sm_msg));
+    dl.SetPduSessionId(smf.pdu_sess_id);
+    dl.Set5gmmCause(static_cast<uint8_t>(_5gmmCauseEnum::kPayloadWasNotForwarded));
+    std::vector<uint8_t> encoded(dl.GetLength());
+    const auto size = dl.Encode(encoded.data(), encoded.size());
+    if (size > 0) {
+      auto msg = std::make_shared<itti_downlink_nas_transfer>(TASK_AMF_SBI, TASK_AMF_N1);
+      msg->amf_ue_ngap_id = nc->amf_ue_ngap_id;
+      msg->ran_ue_ngap_id = nc->ran_ue_ngap_id;
+      msg->dl_nas = blk2bstr(encoded.data(), size);
+      msg->is_n2sm_set = false;
+      itti_inst->send_msg(msg);
+    }
+    return;
+  }
 
   std::string smf_uri_root    = {};
   std::string smf_api_version = oai::common::sbi::kDefaultSbiApiVersion;
   if (!psc->smf_info.info_available) {
-    if (!amf_cfg->support_features.enable_simple_scenario and
-        amf_cfg->support_features.enable_nf_registration) {
+    if (roaming || (!amf_cfg->support_features.enable_simple_scenario &&
+        amf_cfg->support_features.enable_nf_registration)) {
       // Find NRF's URI
       std::string nrf_uri = {};
       if (!amf_sbi::get_nrf_uri(psc->snssai, psc->plmn, psc->dnn, nrf_uri)) {
@@ -724,8 +746,6 @@ void amf_sbi::handle_pdu_session_initial_request(
 
   nlohmann::json session_estb_request   = {};
   session_estb_request["supi"]          = supi;
-  session_estb_request["pei"]           = "imeisv-8670000000000001";
-  session_estb_request["gpsi"]          = "msisdn-10000000000";
   session_estb_request["dnn"]           = dnn;
   session_estb_request["sNssai"]["sst"] = psc->snssai.sst;
   session_estb_request["sNssai"]["sd"]  = psc->snssai.sd;
@@ -945,34 +965,39 @@ void amf_sbi::handle_itti_message(itti_sbi_notify_subscribed_event& itti_msg) {
 //------------------------------------------------------------------------------
 void amf_sbi::handle_itti_message(
     itti_sbi_slice_selection_subscription_data& itti_msg) {
-  Logger::amf_sbi().debug(
-      "Send Slice Selection Subscription Data Retrieval to UDM ");
-
-  std::string uri =
-      amf_sbi_helper::get_udm_slice_selection_subscription_data_retrieval_uri(
-          amf_cfg->udm_addr, itti_msg.supi);
-  nlohmann::json plmn_id = {};
-  plmn_id["mcc"]         = itti_msg.plmn.mcc;
-  plmn_id["mnc"]         = itti_msg.plmn.mnc;
-
-  std::string parameters = {};
-  parameters             = "?plmn-id=" + url_encode(plmn_id.dump());
-  uri += parameters;
-
+  auto endpoint      = amf_cfg->udm_addr;
+  const bool roaming = itti_msg.home_mcc != itti_msg.plmn.mcc ||
+                       itti_msg.home_mnc != itti_msg.plmn.mnc;
+  std::vector<std::string> aliases;
   nlohmann::json response_data = {};
-  uint32_t response_code       = 0;
-
-  send_http_request(
-      uri, oai::common::sbi::method_e::GET, "", response_data, response_code,
-      amf_cfg->support_features.http_version);
-
-  // Notify to the result
-  if (itti_msg.promise_id > 0) {
-    amf_app_inst->trigger_process_response(itti_msg.promise_id, response_data);
-    return;
+  uint32_t response_code       = 503;
+  const bool selected =
+      !roaming || discover_home_nf(
+                      "UDM", "nudm-sdm", itti_msg.home_mcc, itti_msg.home_mnc,
+                      itti_msg.plmn.mcc, itti_msg.plmn.mnc, endpoint, aliases);
+  if (selected) {
+    // TS 29.503: the destination is the subscriber's H-UDM, while plmn-id
+    // identifies the serving network whose subscription data is requested.
+    auto uri =
+        amf_sbi_helper::get_udm_slice_selection_subscription_data_retrieval_uri(
+            endpoint, itti_msg.supi);
+    nlohmann::json serving = {
+        {"mcc", itti_msg.plmn.mcc}, {"mnc", itti_msg.plmn.mnc}};
+    uri += "?plmn-id=" + url_encode(serving.dump());
+    send_http_request(
+        uri, oai::common::sbi::method_e::GET, "", response_data, response_code,
+        amf_cfg->support_features.http_version);
+    Logger::amf_sbi().info(
+        "UDM NSSAI retrieval returned HTTP %u", response_code);
+  } else {
+    Logger::amf_sbi().error(
+        "No usable home UDM route; refusing visited UDM fallback");
   }
-
-  return;
+  if (itti_msg.promise_id > 0) {
+    amf_app_inst->trigger_process_response(
+        itti_msg.promise_id, {{kSbiResponseHttpResponseCode, response_code},
+                              {kSbiResponseJsonData, response_data}});
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -1271,6 +1296,209 @@ void amf_sbi::handle_itti_message(
 }
 
 //------------------------------------------------------------------------------
+bool amf_sbi::route_udm_request(oai::http::request& request) {
+  const auto local = amf_cfg->udm_addr.uri_root;
+  if (request.uri.rfind(local + "/nudm-", 0) == 0) {
+    const auto version_end = request.uri.find('/', local.size() + 1);
+    const auto supi_start = request.uri.find('/', version_end + 1);
+    const auto supi_end = request.uri.find('/', supi_start + 1);
+    if (supi_start == std::string::npos || supi_end == std::string::npos)
+      return false;
+    const auto supi = request.uri.substr(supi_start + 1, supi_end - supi_start - 1);
+    std::shared_ptr<nas_context> nc;
+    if (!amf_n1_inst->supi_2_nas_context(supi, nc)) return false;
+    if (nc->home_mcc != nc->serving_mcc || nc->home_mnc != nc->serving_mnc) {
+      auto endpoint = amf_cfg->udm_addr;
+      std::vector<std::string> aliases;
+      const auto service = request.uri.find("/nudm-uecm/") != std::string::npos
+                               ? "nudm-uecm" : "nudm-sdm";
+      if (!discover_home_nf("UDM", service, nc->home_mcc, nc->home_mnc,
+                            nc->serving_mcc, nc->serving_mnc, endpoint, aliases))
+        return false;
+      request.uri = endpoint.uri_root + request.uri.substr(local.size());
+    }
+  }
+  for (const auto& root : m_roaming_nf_roots) {
+    if (request.uri.rfind(root + "/", 0) == 0) {
+      request.uri = amf_cfg->local_sepp_api_root() + request.uri.substr(root.size());
+      request.headers["3gpp-Sbi-Target-apiRoot"] = root;
+      Logger::amf_sbi().info("Route roaming NF request through local SEPP %s", request.uri.c_str());
+      break;
+    }
+  }
+  return true;
+}
+
+bool amf_sbi::lbo_allowed(const std::string& supi, const snssai_t& slice,
+                          const plmn_t& serving, const std::string& dnn) {
+  auto uri = amf_sbi_helper::get_udm_smf_selection_subscription_data_retrieval_uri(
+      amf_cfg->udm_addr, supi);
+  uri += "?plmn-id=" + nlohmann::json({{"mcc", serving.mcc}, {"mnc", serving.mnc}}).dump();
+  oai::http::response response;
+  if (!send_http_request(uri, oai::common::sbi::method_e::GET, "", response) ||
+      response.status_code != 200) return false;
+  try {
+    const auto data = nlohmann::json::parse(response.body);
+    const auto& infos = data.at("subscribedSnssaiInfos");
+    std::string key = std::to_string(slice.sst);
+    if (!slice.sd.empty()) key += "-" + to_lower_copy(slice.sd);
+    for (auto it = infos.begin(); it != infos.end(); ++it) {
+      if (to_lower_copy(it.key()) != key) continue;
+      for (const auto& info : it.value().at("dnnInfos")) {
+        if (info.value("dnn", "") == dnn && info.value("lboRoamingAllowed", false)) {
+          Logger::amf_sbi().info("Home subscription permits LBO for DNN %s, slice %s", dnn.c_str(), key.c_str());
+          return true;
+        }
+      }
+    }
+  } catch (const std::exception& e) {
+    Logger::amf_sbi().warn("Invalid SMF selection subscription: %s", e.what());
+  }
+  return false;
+}
+
+bool amf_sbi::discover_home_nf(
+    const std::string& nf_type, const std::string& service_name,
+    const std::string& home_mcc, const std::string& home_mnc,
+    const std::string& serving_mcc, const std::string& serving_mnc,
+    nf_addr_t& endpoint, std::vector<std::string>& selected_aliases) {
+  bool selected = false;
+  std::string selected_root;
+  auto remember_nf = [&](const std::string& root, const nlohmann::json& nf) {
+    selected_root    = root;
+    selected_aliases = {root};
+    // Some NFs advertise an FQDN but return resource links using an IP from
+    // the same NF profile. Resolve those aliases back to the selected FQDN
+    // so confirmation still crosses the SEPP boundary.
+    const auto host_start = root.find("://") + 3;
+    const auto host_end   = root.find_first_of(":/", host_start);
+    if (nf.contains("ipv4Addresses") && nf["ipv4Addresses"].is_array()) {
+      for (const auto& address : nf["ipv4Addresses"]) {
+        if (!address.is_string()) continue;
+        const auto ip = address.get<std::string>();
+        struct in_addr parsed;
+        if (inet_pton(AF_INET, ip.c_str(), &parsed) != 1) continue;
+        selected_aliases.push_back(
+            root.substr(0, host_start) + ip +
+            (host_end == std::string::npos ? "" : root.substr(host_end)));
+      }
+    }
+    m_roaming_nf_roots.insert(root);
+  };
+  {
+    // TS 23.501 6.3.4/6.3.8 and TS 29.510: discover the home NF through our
+    // NRF. Never guess the MNC width from the SUPI or fall back to a local NF.
+    selected = false;
+    if (amf_cfg->is_home_plmn_allowed(
+            home_mcc, home_mnc, serving_mcc, serving_mnc) &&
+        !amf_cfg->local_sepp_api_root().empty()) {
+      std::string discovery;
+      amf_sbi_helper::get_nrf_disc_search_nf_instances_uri(
+          amf_cfg->nrf_addr, discovery);
+      const auto target =
+          nlohmann::json::array({{{"mcc", home_mcc}, {"mnc", home_mnc}}});
+      const auto requester =
+          nlohmann::json::array({{{"mcc", serving_mcc}, {"mnc", serving_mnc}}});
+      discovery += "?target-nf-type=" + url_encode(nf_type) +
+                   "&requester-nf-type=AMF"
+                   "&service-names=" +
+                   url_encode(service_name) +
+                   "&target-plmn-list=" + url_encode(target.dump()) +
+                   "&requester-plmn-list=" + url_encode(requester.dump());
+      nlohmann::json result;
+      uint32_t status = 0;
+      if (send_http_request(
+              discovery, oai::common::sbi::method_e::GET, "", result, status,
+              amf_cfg->support_features.http_version) &&
+          status == 200 && result.contains("nfInstances") &&
+          result["nfInstances"].is_array()) {
+        try {
+          for (const auto& nf : result["nfInstances"]) {
+            if (nf.value("nfType", "") != nf_type ||
+                nf.value("nfStatus", "") != "REGISTERED")
+              continue;
+            if (nf.contains("plmnList") &&
+                std::find(
+                    nf["plmnList"].begin(), nf["plmnList"].end(), target[0]) ==
+                    nf["plmnList"].end())
+              continue;
+            // NF-instance-level discovery is valid when service endpoints are
+            // not advertised. Use the configured NF transport defaults with
+            // the discovered FQDN; never the configured local NF host.
+            if (!nf.contains("nfServices") || nf["nfServices"].empty()) {
+              const auto host = nf.value("fqdn", "");
+              const auto port =
+                  amf_cfg->get_nf(to_lower_copy(nf_type))->get_sbi().get_port();
+              if (!std::regex_match(host, std::regex("[A-Za-z0-9.-]+")) ||
+                  port == 0 || port > 65535)
+                continue;
+              const auto scheme_end = endpoint.uri_root.find("://");
+              if (scheme_end == std::string::npos) continue;
+              const auto scheme = endpoint.uri_root.substr(0, scheme_end);
+              if (scheme != "http" && scheme != "https") continue;
+              selected_root =
+                  scheme + "://" + host + ":" + std::to_string(port);
+              endpoint.uri_root = selected_root;
+              remember_nf(selected_root, nf);
+              selected = true;
+              Logger::amf_sbi().info(
+                  "Selected home %s %s via local NRF and SEPP (configured "
+                  "transport)",
+                  nf_type.c_str(), selected_root.c_str());
+              break;
+            }
+            for (const auto& service : nf["nfServices"]) {
+              if (service.value("serviceName", "") != service_name ||
+                  service.value("nfServiceStatus", "") != "REGISTERED")
+                continue;
+              bool supported_version = false;
+              for (const auto& version : service.at("versions"))
+                supported_version |= version.value("apiVersionInUri", "") ==
+                                     endpoint.api_version;
+              if (!supported_version) continue;
+              const std::string scheme = service.value("scheme", "");
+              if (scheme != "http" && scheme != "https") continue;
+              std::string root = service.value("apiPrefix", "");
+              if (root.empty()) {
+                std::string host = service.value("fqdn", nf.value("fqdn", ""));
+                unsigned port    = scheme == "https" ? 443 : 80;
+                if (service.contains("ipEndPoints") &&
+                    !service["ipEndPoints"].empty()) {
+                  const auto& endpoint = service["ipEndPoints"][0];
+                  port                 = endpoint.value("port", port);
+                  if (host.empty()) host = endpoint.value("ipv4Address", "");
+                }
+                if (!std::regex_match(host, std::regex("[A-Za-z0-9.-]+")) ||
+                    port == 0 || port > 65535)
+                  continue;
+                root = scheme + "://" + host + ":" + std::to_string(port);
+              }
+              while (!root.empty() && root.back() == '/') root.pop_back();
+              if (!std::regex_match(
+                      root, std::regex(
+                                "https?://[A-Za-z0-9.-]+(:[0-9]+)?(/"
+                                "[A-Za-z0-9._~/-]+)?")))
+                continue;
+              remember_nf(root, nf);
+              endpoint.uri_root = root;
+              selected          = true;
+              Logger::amf_sbi().info(
+                  "Selected home %s %s via local NRF and SEPP", nf_type.c_str(),
+                  root.c_str());
+              break;
+            }
+            if (selected) break;
+          }
+        } catch (const std::exception& e) {
+          Logger::amf_sbi().warn(
+              "Invalid home NF discovery response: %s", e.what());
+        }
+      }
+    }
+  }
+  return selected;
+}
+
 void amf_sbi::handle_itti_message(
     itti_sbi_ue_authentication_request& itti_msg) {
   Logger::amf_sbi().debug("Send UE Authentication Request to AUSF ");
@@ -1284,9 +1512,59 @@ void amf_sbi::handle_itti_message(
   nlohmann::json response_json = {};
   uint32_t response_code       = 0;
 
-  send_http_request(
-      uri, oai::common::sbi::method_e::POST, body, response_json, response_code,
-      amf_cfg->support_features.http_version);
+  const bool roaming = itti_msg.home_mcc != itti_msg.serving_mcc ||
+                       itti_msg.home_mnc != itti_msg.serving_mnc;
+  bool selected = !roaming;
+  std::string selected_root;
+  std::vector<std::string> selected_aliases;
+  if (roaming) {
+    auto endpoint = amf_cfg->ausf_addr;
+    selected      = discover_home_nf(
+        "AUSF", "nausf-auth", itti_msg.home_mcc, itti_msg.home_mnc,
+        itti_msg.serving_mcc, itti_msg.serving_mnc, endpoint, selected_aliases);
+    if (selected) {
+      selected_root = endpoint.uri_root;
+      uri           = amf_sbi_helper::get_ausf_ue_authentications_uri(endpoint);
+    }
+  }
+  if (selected) {
+    send_http_request(
+        uri, oai::common::sbi::method_e::POST, body, response_json,
+        response_code, amf_cfg->support_features.http_version);
+    if (roaming && response_json.contains("_links")) {
+      // Authentication confirmation must remain on the discovered AUSF route.
+      bool valid_links = response_json["_links"].is_object();
+      for (auto& link : response_json["_links"]) {
+        if (!link.is_object() || !link.contains("href") ||
+            !link["href"].is_string()) {
+          valid_links = false;
+          break;
+        }
+        const auto href = link["href"].get<std::string>();
+        bool matched    = false;
+        for (const auto& alias : selected_aliases) {
+          if (href.rfind(alias + "/", 0) == 0) {
+            link["href"] = selected_root + href.substr(alias.size());
+            matched      = true;
+            break;
+          }
+        }
+        if (!matched) {
+          valid_links = false;
+          break;
+        }
+      }
+      if (!valid_links) {
+        response_code = 502;
+        response_json = {};
+      }
+    }
+  } else {
+    response_code = 503;
+    response_json = {{"status", 503}, {"cause", "NF_DISCOVERY_FAILURE"}};
+    Logger::amf_sbi().error(
+        "No usable home AUSF route; refusing local AUSF fallback");
+  }
 
   nlohmann::json response_data                = {};
   response_data[kSbiResponseHttpResponseCode] = response_code;
@@ -1771,7 +2049,10 @@ bool amf_sbi::discover_smf(
   }
 
   // TODO: remove hardcoded values
-  uri += "?target-nf-type=SMF&requester-nf-type=AMF";
+  uri += "?target-nf-type=SMF&requester-nf-type=AMF&service-names=nsmf-pdusession";
+  const auto plmns = nlohmann::json::array({{{"mcc", plmn.mcc}, {"mnc", plmn.mnc}}});
+  uri += "&target-plmn-list=" + plmns.dump() + "&requester-plmn-list=" + plmns.dump();
+  uri += "&dnn=" + url_encode(dnn);
 
   nlohmann::json response_data = {};
   uint32_t response_code       = 0;
@@ -1788,6 +2069,22 @@ bool amf_sbi::discover_smf(
     if (response_data.find("nfInstances") != response_data.end()) {
       for (auto& it : response_data["nfInstances"].items()) {
         nlohmann::json instance_json = it.value();
+        result = false;
+        if (instance_json.value("nfType", "") != "SMF" ||
+            instance_json.value("nfStatus", "") != "REGISTERED") continue;
+        if (instance_json.contains("plmnList") &&
+            std::find(instance_json["plmnList"].begin(), instance_json["plmnList"].end(), plmns[0]) == instance_json["plmnList"].end()) continue;
+        bool dnn_slice_match = false;
+        const auto smf_info_for_selection = instance_json.value("smfInfo", nlohmann::json::object());
+        const auto slice_infos = smf_info_for_selection.value("sNssaiSmfInfoList", nlohmann::json::array());
+        for (const auto& info : slice_infos) {
+          oai::_3gpp::model::Snssai advertised;
+          from_json(info.at("sNssai"), advertised);
+          if (advertised.getSst() != snssai.sst || advertised.getSdInt() != snssai.get_sd_int()) continue;
+          for (const auto& entry : info.at("dnnSmfInfoList"))
+            dnn_slice_match |= entry.value("dnn", "") == dnn;
+        }
+        if (!dnn_slice_match) continue;
         // TODO: convert instance_json to SMF profile
         // TODO: add SMF to the list of available SMF
         // check with sNSSAI
@@ -2216,6 +2513,7 @@ bool amf_sbi::send_http_request(
   oai::http::request http_request =
       http_client_inst->prepare_json_request(remote_uri, msg_body);
 
+  if (!route_udm_request(http_request)) return false;
   // Send the request and get the response
   auto http_response =
       http_client_inst->send_http_request(method, http_request);
@@ -2266,6 +2564,7 @@ bool amf_sbi::send_http_request(
   oai::http::request http_request =
       http_client_inst->prepare_json_request(remote_uri, msg_body);
 
+  if (!route_udm_request(http_request)) return false;
   // Send the request and get the response
   http_response = http_client_inst->send_http_request(method, http_request);
 

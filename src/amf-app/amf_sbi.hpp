@@ -5,8 +5,11 @@
 #ifndef _AMF_SBI_H_
 #define _AMF_SBI_H_
 
+#include <set>
+
 #include "3gpp_29.500.h"
 #include "http_definitions.hpp"
+#include "sbi_helper.hpp"
 #include "itti_msg_sbi.hpp"
 #include "pdu_session_context.hpp"
 #include "ue_context.hpp"
@@ -397,6 +400,16 @@ class amf_sbi {
       const std::string& msg_body, oai::http::response& http_response);
 
  private:
+  bool route_udm_request(oai::http::request& request);
+  bool lbo_allowed(const std::string& supi, const snssai_t& slice,
+                   const plmn_t& serving, const std::string& dnn);
+  // Only endpoints selected through home-PLMN discovery use this route.
+  std::set<std::string> m_roaming_nf_roots;
+  bool discover_home_nf(
+      const std::string& nf_type, const std::string& service_name,
+      const std::string& home_mcc, const std::string& home_mnc,
+      const std::string& serving_mcc, const std::string& serving_mnc,
+      oai::common::sbi::nf_addr_t& endpoint, std::vector<std::string>& aliases);
   /*
    * Validate a request URI before using it. The default policy requires an
    * http/https scheme and a well-formed absolute URI with a non-empty host, and

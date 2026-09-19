@@ -886,8 +886,7 @@ void amf_n1::uplink_nas_msg_handle(
                 ran_ue_ngap_id, amf_ue_ngap_id, plain_msg, security_header_type,
                 cause)) {
           // Send Registration Reject with the appropriate cause
-          // send_registration_reject_msg(ran_ue_ngap_id, amf_ue_ngap_id,
-          // cause);
+          send_registration_reject_msg(ran_ue_ngap_id, amf_ue_ngap_id, cause);
           if (nc) nas_procedure_manager_.complete_common_procedure(*nc);
         }
       } break;
@@ -1072,7 +1071,35 @@ bool amf_n1::identity_response_handle(
   std::string imsi_str = {};
   // TODO: avoid accessing member function directly
   oai::nas::SUCI_imsi_t imsi = {};
-  identity_response->Get5gsMobileIdentity().GetSuciWithSupiImsi(imsi);
+  if (!identity_response->Get5gsMobileIdentity().GetSuciWithSupiImsi(imsi)) {
+    cause = k5gmmCauseSemanticallyIncorrect;
+    return false;
+  }
+
+  // Apply the same admission policy when initial registration used a GUTI and
+  // the home identity is learned only through the identification procedure.
+  auto identity_uc =
+      amf_app_inst->get_ue_context(ran_ue_ngap_id, amf_ue_ngap_id);
+  if (!identity_uc) {
+    cause = k5gmmCauseIllegalUe;
+    return false;
+  }
+  if (!amf_cfg->is_home_plmn_allowed(
+          imsi.mcc, imsi.mnc, identity_uc->tai.mcc, identity_uc->tai.mnc)) {
+    Logger::amf_n1().warn(
+        "Home PLMN %s/%s from Identity Response is not permitted by roaming "
+        "policy for serving PLMN %s/%s",
+        imsi.mcc.c_str(), imsi.mnc.c_str(), identity_uc->tai.mcc.c_str(),
+        identity_uc->tai.mnc.c_str());
+    cause = k5gmmCausePlmnNotAllowed;
+    send_registration_reject_msg(ran_ue_ngap_id, amf_ue_ngap_id, cause);
+    return false;
+  }
+
+  nc->home_mcc    = imsi.mcc;
+  nc->home_mnc    = imsi.mnc;
+  nc->serving_mcc = identity_uc->tai.mcc;
+  nc->serving_mnc = identity_uc->tai.mnc;
 
   if (imsi.protection_scheme_id != kNullScheme) {
     Logger::amf_n1().debug(
@@ -1973,26 +2000,31 @@ bool amf_n1::registration_request_handle(
       oai::nas::SUCI_imsi_t imsi = {};
       if (!registration_request->GetSuciSupiFormatImsi(imsi)) {
         Logger::amf_n1().warn("No SUCI and IMSI for SUPI Format");
+        cause = k5gmmCauseSemanticallyIncorrect;
+        return false;
       } else {
-        // Verify PLMN
-        std::shared_ptr<gnb_context> gc = {};
-        if (!amf_n2_inst->assoc_id_2_gnb_context(unc->gnb_assoc_id, gc)) {
-          Logger::amf_n1().error(
-              "No existed gNB context with assoc_id (%d)", unc->gnb_assoc_id);
-          cause = k5gmmCauseIllegalUe;  // TODO: verify the cause
-          return false;
-        }
-
-        if (imsi.mcc != gc->plmn.mcc || imsi.mnc != gc->plmn.mnc) {
-          Logger::amf_n1().error(
-              "PLMN (MCC %s, MNC %s ) in SUCI does not match with gNB PLMN "
-              "(MCC %s, MNC %s)",
-              imsi.mcc, imsi.mnc, gc->plmn.mcc, gc->plmn.mnc);
-          // Send Registration Reject with appropriate cause
-          send_registration_reject_msg(
-              ran_ue_ngap_id, amf_ue_ngap_id, k5gmmCausePlmnNotAllowed);
+        // TS 23.502 4.2.2.2.2: the SUCI identifies the home network;
+        // the NGAP TAI identifies the UE's selected serving PLMN. A gNB's
+        // global identity need not identify that selected PLMN (shared RAN).
+        // Local roaming admission never replaces AUSF/UDM authorization.
+        if (!amf_cfg->is_home_plmn_allowed(
+                imsi.mcc, imsi.mnc, unc->tai.mcc, unc->tai.mnc)) {
+          Logger::amf_n1().warn(
+              "Home PLMN %s/%s is not permitted by roaming policy for serving "
+              "PLMN %s/%s",
+              imsi.mcc.c_str(), imsi.mnc.c_str(), unc->tai.mcc.c_str(),
+              unc->tai.mnc.c_str());
+          // The caller sends the single Registration Reject (TS 24.501 cause
+          // 11).
           cause = k5gmmCausePlmnNotAllowed;
           return false;
+        }
+        if (imsi.mcc != unc->tai.mcc || imsi.mnc != unc->tai.mnc) {
+          Logger::amf_n1().info(
+              "Roaming admission allowed: home PLMN %s/%s, serving PLMN %s/%s; "
+              "continuing authentication",
+              imsi.mcc.c_str(), imsi.mnc.c_str(), unc->tai.mcc.c_str(),
+              unc->tai.mnc.c_str());
         }
 
         if (!nc) {
@@ -2012,6 +2044,11 @@ bool amf_n1::registration_request_handle(
           itti_inst->timer_remove(nc->mobile_reachable_timer);
           itti_inst->timer_remove(nc->implicit_deregistration_timer);
         }
+
+        nc->home_mcc    = imsi.mcc;
+        nc->home_mnc    = imsi.mnc;
+        nc->serving_mcc = unc->tai.mcc;
+        nc->serving_mnc = unc->tai.mnc;
 
         if (imsi.protection_scheme_id != kNullScheme) {
           Logger::amf_n1().debug(
@@ -2612,7 +2649,15 @@ void amf_n1::send_registration_reject_msg(
   oai::utils::output_wrapper::print_buffer(
       "amf_n1", "Registration-Reject message buffer", buffer, encoded_size);
 
-  bstring b = blk2bstr(buffer, encoded_size);
+  // A rejection after Security Mode Complete uses the established NAS context.
+  bstring b = nullptr;
+  if (nc && nc->security_ctx.has_value() && nc->is_current_security_available) {
+    encode_nas_message_protected(
+        nc->security_ctx.value(), false, kIntegrityProtectedAndCiphered,
+        NAS_MESSAGE_DOWNLINK, buffer, encoded_size, b);
+  } else {
+    b = blk2bstr(buffer, encoded_size);
+  }
   itti_send_dl_nas_buffer_to_task_n2(b, ran_ue_ngap_id, amf_ue_ngap_id);
 
   oai::utils::utils::bdestroy_wrapper(&b);
@@ -2860,6 +2905,10 @@ bool amf_n1::get_authentication_vectors_from_ausf(
       std::make_shared<itti_sbi_ue_authentication_request>(
           TASK_AMF_N1, TASK_AMF_SBI, promise_id);
 
+  itti_msg->home_mcc    = nc->home_mcc;
+  itti_msg->home_mnc    = nc->home_mnc;
+  itti_msg->serving_mcc = nc->serving_mcc;
+  itti_msg->serving_mnc = nc->serving_mnc;
   itti_msg->auth_info  = authentication_info;
   itti_msg->promise_id = promise_id;
 
@@ -6461,6 +6510,11 @@ bool amf_n1::reroute_registration_request(
   if (!get_slice_selection_subscription_data(nc, nssai)) {
     Logger::amf_n1().debug(
         "Could not get the Slice Selection Subscription Data from UDM");
+    if (nc->home_mcc != nc->serving_mcc || nc->home_mnc != nc->serving_mnc) {
+      reroute_result = false;
+      Logger::amf_n1().warn(
+          "Roaming registration requires home UDM subscription data");
+    }
     return false;
   }
 
@@ -6666,7 +6720,7 @@ bool amf_n1::check_subscribed_nssai(
           uint32_t sd = n.getSdInt();
           if (sd == s.sd) {
             common_snssais.push_back(n);
-            Logger::amf_n1().debug("Common S-NSSAI (SST %d, SD %s)", s.sst, sd);
+            Logger::amf_n1().debug("Common S-NSSAI (SST %d, SD %06X)", s.sst, sd);
             break;
           }
         }
@@ -6678,7 +6732,7 @@ bool amf_n1::check_subscribed_nssai(
           uint32_t sd = n.getSdInt();
           if (sd == s.sd) {
             common_snssais.push_back(n);
-            Logger::amf_n1().debug("Common S-NSSAI (SST %d, SD %s)", s.sst, sd);
+            Logger::amf_n1().debug("Common S-NSSAI (SST %d, SD %06X)", s.sst, sd);
             break;
           }
         }
@@ -6737,7 +6791,6 @@ bool amf_n1::check_subscribed_nssai(
 //------------------------------------------------------------------------------
 bool amf_n1::get_slice_selection_subscription_data(
     const std::shared_ptr<nas_context>& nc, oai::_3gpp::model::Nssai& nssai) {
-  // TODO: UDM selection (from NRF or configuration file)
   if (!amf_cfg->support_features.enable_simple_scenario) {
     Logger::amf_n1().debug(
         "Get the Slice Selection Subscription Data from UDM");
@@ -6760,8 +6813,10 @@ bool amf_n1::get_slice_selection_subscription_data(
     Logger::amf_n1().debug("Promise ID generated %d", promise_id);
 
     itti_msg->supi       = nc->supi;
-    itti_msg->plmn.mcc   = uc->cgi.mcc;
-    itti_msg->plmn.mnc   = uc->cgi.mnc;
+    itti_msg->home_mcc   = nc->home_mcc;
+    itti_msg->home_mnc   = nc->home_mnc;
+    itti_msg->plmn.mcc   = uc->tai.mcc;
+    itti_msg->plmn.mnc   = uc->tai.mnc;
     itti_msg->promise_id = promise_id;
 
     int ret = itti_inst->send_msg(itti_msg);
@@ -6777,7 +6832,16 @@ bool amf_n1::get_slice_selection_subscription_data(
     // Remove the promise
     amf_app_inst->remove_promise(promise_id);
     if (result.has_value()) {
-      nlohmann::json nssai_json = result.value();
+      const auto& response = result.value();
+      if (response.value(kSbiResponseHttpResponseCode, 0) != 200 ||
+          !response.contains(kSbiResponseJsonData))
+        return false;
+      nlohmann::json nssai_json = response.at(kSbiResponseJsonData);
+      if (!nssai_json.is_object() ||
+          !nssai_json.contains("defaultSingleNssais") ||
+          !nssai_json["defaultSingleNssais"].is_array() ||
+          nssai_json["defaultSingleNssais"].empty())
+        return false;
       Logger::amf_n1().debug("Got NSSAI from UDM: %s", nssai_json.dump());
       try {
         from_json(nssai_json, nssai);
@@ -6785,6 +6849,7 @@ bool amf_n1::get_slice_selection_subscription_data(
         return false;
       }
 
+      nc->subscribed_snssai.clear();
       // Store this info in UE NAS Context
       std::vector<Snssai> default_snssais = nssai.getDefaultSingleNssais();
       // bool default_subscribed_snssai = true;
