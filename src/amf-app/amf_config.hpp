@@ -456,10 +456,24 @@ class amf : public nf {
 };
 
 class amf_config : public config {
+ private:
+  std::string m_roaming_config_path;
+  std::string m_local_sepp_api_root;
+  bool m_roaming_enabled = false;
+  std::vector<std::pair<std::string, std::string>> m_roaming_partners;
+
  public:
   explicit amf_config(
       const std::string& config_path, bool log_stdout, bool log_rot_file);
   virtual ~amf_config();
+
+  bool init() override;
+  const std::string& local_sepp_api_root() const {
+    return m_local_sepp_api_root;
+  }
+  [[nodiscard]] bool is_home_plmn_allowed(
+      const std::string& home_mcc, const std::string& home_mnc,
+      const std::string& serving_mcc, const std::string& serving_mnc) const;
 
   /*
    * Convert the AMF configuration parameters into internal variables

@@ -129,6 +129,8 @@ class nas_context {
 
   std::string imsi;  // TODO: use SUPI instead
   std::string supi;
+  // Retain the SUCI PLMN including the original MNC width.
+  std::string home_mcc, home_mnc, serving_mcc, serving_mnc;
   std::optional<oai::nas::IMEI_IMEISV_t> imeisv;
   std::optional<std::string> guti;
 
