@@ -9,15 +9,10 @@
 #include "NgReset.hpp"
 #include "NgResetAck.hpp"
 #include "NgSetupRequest.hpp"
-#include "PathSwitchRequest.hpp"
-#include "PathSwitchRequestAck.hpp"
 #include "PduSessionResourceModifyResponse.hpp"
 #include "PduSessionResourceReleaseResponse.hpp"
 #include "PduSessionResourceSetupResponse.hpp"
 #include "PduSessionResourceSetupUnsuccessfulTransfer.hpp"
-#include "UeContextModificationFailure.hpp"
-#include "UeContextModificationRequest.hpp"
-#include "UeContextModificationResponse.hpp"
 #include "UplinkNonUeAssociatedNrppaTransport.hpp"
 #include "UplinkUeAssociatedNrppaTransport.hpp"
 #include "amf_app.hpp"
@@ -983,46 +978,31 @@ int paging(
 int ngap_amf_handle_path_switch_request(
     const sctp_assoc_id_t assoc_id, const sctp_stream_id_t stream,
     struct Ngap_NGAP_PDU* message_p) {
-  Logger::ngap().debug("Sending ITTI Path Switch Request to TASK_AMF_N2");
-
-  auto req = std::make_shared<PathSwitchRequestMsg>();
-  if (!req->decode(message_p)) {
-    Logger::ngap().error("Decoding PathSwitchRequest error");
-    return RETURNerror;
-  }
-  auto itti_msg =
-      std::make_shared<itti_path_switch_request>(TASK_NGAP, TASK_AMF_N2);
-  itti_msg->assoc_id        = assoc_id;
-  itti_msg->stream          = stream;
-  itti_msg->path_switch_req = req;
-  return (itti_inst->send_msg(itti_msg) == 0) ? RETURNok : RETURNerror;
+  Logger::ngap().warn(
+      "Path Swith Request Handler has not been implemented yet, ignoring the "
+      "message ...");
+  ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, message_p);
+  return RETURNok;
 }
 
 //------------------------------------------------------------------------------
 int ngap_handle_path_switch_request_ack(
     const sctp_assoc_id_t assoc_id, const sctp_stream_id_t stream,
     struct Ngap_NGAP_PDU* message_p) {
-  Logger::ngap().debug("Handling Path Switch Request Ack (AMF->AN)");
-
-  auto req = std::make_shared<PathSwitchRequestAckMsg>();
-  if (!req->decode(message_p)) {
-    Logger::ngap().error("Decoding PathSwitchRequestAck error");
-    return RETURNerror;
-  }
-  auto itti_msg =
-      std::make_shared<itti_path_switch_request_ack>(TASK_NGAP, TASK_AMF_N2);
-  itti_msg->assoc_id            = assoc_id;
-  itti_msg->stream              = stream;
-  itti_msg->path_switch_req_ack = req;
-  return (itti_inst->send_msg(itti_msg) == 0) ? RETURNok : RETURNerror;
+  Logger::ngap().warn(
+      "Path Swith Request Ack Handler has not been implemented yet, ignoring "
+      "the message ...");
+  ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, message_p);
+  return RETURNok;
 }
 
 //------------------------------------------------------------------------------
 int ngap_handle_path_switch_request_failure(
     const sctp_assoc_id_t assoc_id, const sctp_stream_id_t stream,
     struct Ngap_NGAP_PDU* message_p) {
-  Logger::ngap().debug("Handling Path Switch Request Failure (AMF->AN)");
-  // TODO:
+  Logger::ngap().warn(
+      "Path Swith Request Failure Handler has not been implemented yet, "
+      "ignoring the message ...");
   ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, message_p);
   return RETURNok;
 }
@@ -1031,9 +1011,9 @@ int ngap_handle_path_switch_request_failure(
 int pdu_session_resource_modify_indication(
     const sctp_assoc_id_t assoc_id, const sctp_stream_id_t stream,
     struct Ngap_NGAP_PDU* message_p) {
-  Logger::ngap().debug(
-      "Sending ITTI PDU Session Resource Modify Indication to TASK_AMF_N2");
-  // TODO:
+  Logger::ngap().warn(
+      "PDU Session Resource Modify Indication Handler has not been implemented "
+      "yet, ignoring the message ...");
   ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, message_p);
   return RETURNok;
 }
@@ -1185,61 +1165,33 @@ int trace_start(
 int ue_context_modification_request(
     const sctp_assoc_id_t assoc_id, const sctp_stream_id_t stream,
     struct Ngap_NGAP_PDU* message_p) {
-  Logger::ngap().debug("Handling UE Context Modification Request (AMF->AN)");
-
-  Logger::ngap().debug(
-      "Sending ITTI UE Context Modification Request to TASK_AMF_N2");
-  auto req = std::make_shared<UeContextModificationRequestMsg>();
-  if (!req->decode(message_p)) {
-    Logger::ngap().error("Decoding UEContextModificationRequest error");
-    return RETURNerror;
-  }
-  auto itti_msg = std::make_shared<itti_ue_context_modification_request>(
-      TASK_NGAP, TASK_AMF_N2);
-  itti_msg->assoc_id       = assoc_id;
-  itti_msg->stream         = stream;
-  itti_msg->ue_ctx_mod_req = req;
-  return (itti_inst->send_msg(itti_msg) == 0) ? RETURNok : RETURNerror;
+  Logger::ngap().warn(
+      "UE Context Modification Request Handler has not been implemented yet, "
+      "ignoring the message ...");
+  ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, message_p);
+  return RETURNok;
 }
 
 //------------------------------------------------------------------------------
 int ue_context_modification_response(
     const sctp_assoc_id_t assoc_id, const sctp_stream_id_t stream,
     struct Ngap_NGAP_PDU* message_p) {
-  Logger::ngap().debug(
-      "Sending ITTI UE Context Modification Response to TASK_AMF_N2");
-
-  auto resp = std::make_shared<UeContextModificationResponseMsg>();
-  if (!resp->decode(message_p)) {
-    Logger::ngap().error("Decoding UEContextModificationResponse error");
-    return RETURNerror;
-  }
-  auto itti_msg = std::make_shared<itti_ue_context_modification_response>(
-      TASK_NGAP, TASK_AMF_N2);
-  itti_msg->assoc_id        = assoc_id;
-  itti_msg->stream          = stream;
-  itti_msg->ue_ctx_mod_resp = resp;
-  return (itti_inst->send_msg(itti_msg) == 0) ? RETURNok : RETURNerror;
+  Logger::ngap().warn(
+      "UE Context Modification Response Handler has not been implemented yet, "
+      "ignoring the message ...");
+  ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, message_p);
+  return RETURNok;
 }
 
 //------------------------------------------------------------------------------
 int ue_context_modification_failure(
     const sctp_assoc_id_t assoc_id, const sctp_stream_id_t stream,
     struct Ngap_NGAP_PDU* message_p) {
-  Logger::ngap().debug(
-      "Sending ITTI UE Context Modification Failure to TASK_AMF_N2");
-
-  auto fail = std::make_shared<UeContextModificationFailureMsg>();
-  if (!fail->decode(message_p)) {
-    Logger::ngap().error("Decoding UEContextModificationFailure error");
-    return RETURNerror;
-  }
-  auto itti_msg = std::make_shared<itti_ue_context_modification_failure>(
-      TASK_NGAP, TASK_AMF_N2);
-  itti_msg->assoc_id        = assoc_id;
-  itti_msg->stream          = stream;
-  itti_msg->ue_ctx_mod_fail = fail;
-  return (itti_inst->send_msg(itti_msg) == 0) ? RETURNok : RETURNerror;
+  Logger::ngap().warn(
+      "UE Context Modification Failure Handler has not been implemented yet, "
+      "ignoring the message ...");
+  ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, message_p);
+  return RETURNok;
 }
 
 //------------------------------------------------------------------------------
