@@ -1398,10 +1398,10 @@ void amf_config::display() {
   Logger::config().info("- PID dir .................: %s", pid_dir.c_str());
   Logger::config().info("- AMF NAME.................: %s", amf_name.c_str());
   Logger::config().info(
-      "- Roaming Enabled..........: %s", m_roaming_enabled ? "Yes" : "No");
+      "- Roaming admission........: %s", m_roaming_enabled ? "Yes" : "No");
   for (const auto& partner : m_roaming_partners) {
     Logger::config().info(
-        "    Roaming Partner........: %s/%s", partner.first.c_str(),
+        "    Home PLMN partner......: %s/%s", partner.first.c_str(),
         partner.second.c_str());
   }
   Logger::config().info(
