@@ -33,6 +33,9 @@ class pdu_session_context {
   bool is_n1sm_available;
   std::string dnn;
   smf_context_info_t smf_info;
+  // Home-routed roaming: Nsmf_PDUSession API URI of the H-SMF, given to the
+  // V-SMF in the Create SM Context Request (TS 29.502 hSmfUri)
+  std::string h_smf_uri;
   snssai_t snssai;
   plmn_t plmn;
   bool is_ho_accepted;

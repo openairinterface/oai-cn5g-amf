@@ -607,9 +607,36 @@ void amf_sbi::handle_itti_message(itti_nsmf_pdusession_create_sm_context& smf) {
   psc->dnn = dnn;
   const bool roaming =
       nc->home_mcc != nc->serving_mcc || nc->home_mnc != nc->serving_mnc;
-  if (roaming && !lbo_allowed(nc->supi, psc->snssai, psc->plmn, dnn)) {
+  psc->h_smf_uri.clear();
+  // TS 23.501 6.3.2 / TS 23.502 4.3.2.2.2: without LBO permission in the home
+  // subscription, the PDU session is home-routed. A V-SMF in this PLMN
+  // controls the V-UPF and the H-SMF, discovered through the NRFs and SEPPs,
+  // anchors the session in the home PLMN.
+  const bool lbo_denied =
+      roaming && !lbo_allowed(nc->supi, psc->snssai, psc->plmn, dnn);
+  bool home_routed = false;
+  if (lbo_denied) {
+    auto endpoint = amf_cfg->smf_addr;
+    std::vector<std::string> aliases;
+    if (discover_home_nf(
+            "SMF", "nsmf-pdusession", nc->home_mcc, nc->home_mnc,
+            nc->serving_mcc, nc->serving_mnc, endpoint, aliases)) {
+      home_routed    = true;
+      psc->h_smf_uri = endpoint.uri_root + "/nsmf-pdusession/" +
+                       (endpoint.api_version.empty() ?
+                            oai::common::sbi::kDefaultSbiApiVersion :
+                            endpoint.api_version);
+      Logger::amf_sbi().info(
+          "LBO not authorized by home subscription for DNN %s: home-routed "
+          "PDU session, H-SMF %s",
+          dnn.c_str(), psc->h_smf_uri.c_str());
+    }
+  }
+  if (lbo_denied && !home_routed) {
     Logger::amf_sbi().warn(
-        "LBO not authorized by home subscription for DNN %s", dnn.c_str());
+        "LBO not authorized by home subscription for DNN %s and no H-SMF "
+        "available",
+        dnn.c_str());
     oai::nas::DlNasTransport dl;
     dl.SetPayloadContainerType(kN1SmInformation);
     dl.SetPayloadContainer(
@@ -763,6 +790,11 @@ void amf_sbi::handle_pdu_session_initial_request(
   session_estb_request["ratType"]               = "NR";
   session_estb_request["selMode"]               = "VERIFIED";
   session_estb_request["epsInterworkingInd"]    = "NONE";
+
+  if (!psc->h_smf_uri.empty()) {
+    // Home-routed PDU session: the V-SMF contacts the H-SMF over N16
+    session_estb_request["hSmfUri"] = psc->h_smf_uri;
+  }
 
   session_estb_request["smContextStatusUri"] =
       amf_sbi_helper::get_sm_context_status_notification_uri(
