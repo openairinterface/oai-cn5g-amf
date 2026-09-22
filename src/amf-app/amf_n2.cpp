@@ -1783,7 +1783,7 @@ void amf_n2::handle_itti_message(
   if (!itti_msg->ue_radio_cap_info_ind) return;
   uint64_t amf_ue_ngap_id = itti_msg->ue_radio_cap_info_ind->getAmfUeNgapId();
   uint32_t ran_ue_ngap_id = itti_msg->ue_radio_cap_info_ind->getRanUeNgapId();
-  OCTET_STRING_t ue_radio_cap;
+  OCTET_STRING_t ue_radio_cap = {};
   itti_msg->ue_radio_cap_info_ind->getUeRadioCapability(ue_radio_cap);
 
   // Store UE Radio Capability in UE NGAP Context

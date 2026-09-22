@@ -187,7 +187,7 @@ void authentication::generate_5g_he_av_in_udm(
 void authentication::annex_a_4_33501(
     uint8_t ck[16], uint8_t ik[16], uint8_t* input, uint8_t rand[16],
     std::string& serving_network, uint8_t* output) {
-  OCTET_STRING_t netName;
+  OCTET_STRING_t netName = {};
   OCTET_STRING_fromBuf(
       &netName, serving_network.c_str(), serving_network.length());
   uint8_t S[100];
