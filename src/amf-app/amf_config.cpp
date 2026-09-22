@@ -4,6 +4,10 @@
 
 #include "amf_config.hpp"
 
+#include <algorithm>
+#include <regex>
+#include <stdexcept>
+
 #include "3gpp_29.502.h"
 #include "amf_app.hpp"
 #include "amf_conversions.hpp"
@@ -958,7 +962,8 @@ const std::string amf::get_default_dnn() const {
 amf_config::amf_config(
     const std::string& config_path, bool log_stdout, bool log_rot_file)
     : oai::config::config(
-          config_path, oai::config::AMF_CONFIG_NAME, log_stdout, log_rot_file) {
+          config_path, oai::config::AMF_CONFIG_NAME, log_stdout, log_rot_file),
+      m_roaming_config_path(config_path) {
   m_used_sbi_values = {
       oai::config::AMF_CONFIG_NAME, oai::config::AUSF_CONFIG_NAME,
       oai::config::SMF_CONFIG_NAME, oai::config::UDM_CONFIG_NAME,
@@ -1061,6 +1066,93 @@ amf_config::amf_config(
 
 //------------------------------------------------------------------------------
 amf_config::~amf_config() {}
+
+//------------------------------------------------------------------------------
+bool amf_config::init() {
+  // This AMF-specific top-level policy is not parsed by the shared NF config.
+  // Parse into temporary values so an invalid allow-list cannot be partly used.
+  m_roaming_enabled = false;
+  m_roaming_partners.clear();
+  try {
+    const auto root   = YAML::LoadFile(m_roaming_config_path);
+    const auto policy = root["enable_roaming"];
+    bool enabled      = false;
+    std::vector<std::pair<std::string, std::string>> partners;
+    if (policy) {
+      if (!policy.IsMap()) {
+        throw std::invalid_argument("enable_roaming must be a mapping");
+      }
+      if (policy["general"]) {
+        enabled = policy["general"].as<bool>();
+      }
+      const auto list = policy["roaming_partners"];
+      if (list) {
+        if (!list.IsSequence()) {
+          throw std::invalid_argument(
+              "enable_roaming.roaming_partners must be a sequence");
+        }
+        for (const auto& entry : list) {
+          if (!entry.IsMap() || !entry["mcc"].IsScalar() ||
+              !entry["mnc"].IsScalar()) {
+            throw std::invalid_argument(
+                "Each roaming partner must contain scalar mcc and mnc");
+          }
+          // Preserve leading zeros and the distinction between 2-/3-digit MNCs.
+          const auto mcc = entry["mcc"].as<std::string>();
+          const auto mnc = entry["mnc"].as<std::string>();
+          if (!std::regex_match(mcc, std::regex(MCC_REGEX)) ||
+              !std::regex_match(mnc, std::regex(MNC_REGEX))) {
+            throw std::invalid_argument(
+                "Roaming partner MCC must have 3 decimal digits and MNC 2 or "
+                "3");
+          }
+          auto partner = std::make_pair(mcc, mnc);
+          if (std::find(partners.begin(), partners.end(), partner) ==
+              partners.end()) {
+            partners.push_back(std::move(partner));
+          }
+        }
+      }
+    }
+    std::string sepp_root;
+    const auto nfs  = root["nfs"];
+    const auto sepp = nfs ? nfs["sepp"] : YAML::Node(YAML::NodeType::Undefined);
+    if (sepp) {
+      const auto host   = sepp["host"].as<std::string>();
+      const auto port   = sepp["sbi"]["port"].as<unsigned>();
+      const auto scheme = sepp["sbi"]["scheme"].as<std::string>("http");
+      if (!std::regex_match(host, std::regex("[A-Za-z0-9.-]+")) || port == 0 ||
+          port > 65535 || (scheme != "http" && scheme != "https"))
+        throw std::invalid_argument("Invalid local SEPP SBI endpoint");
+      sepp_root = scheme + "://" + host + ":" + std::to_string(port);
+    }
+    if (!config::init()) return false;
+    m_local_sepp_api_root = std::move(sepp_root);
+    m_roaming_enabled     = enabled;
+    m_roaming_partners    = std::move(partners);
+    return true;
+  } catch (const std::exception& e) {
+    Logger::config().error("Invalid roaming configuration: %s", e.what());
+    return false;
+  }
+}
+
+//------------------------------------------------------------------------------
+bool amf_config::is_home_plmn_allowed(
+    const std::string& home_mcc, const std::string& home_mnc,
+    const std::string& serving_mcc, const std::string& serving_mnc) const {
+  // A roaming partner does not become a PLMN served by this AMF.
+  if (std::none_of(plmn_list.begin(), plmn_list.end(), [&](const auto& plmn) {
+        return plmn.mcc == serving_mcc && plmn.mnc == serving_mnc;
+      })) {
+    return false;
+  }
+  if (home_mcc == serving_mcc && home_mnc == serving_mnc) return true;
+  return m_roaming_enabled &&
+         std::find(
+             m_roaming_partners.begin(), m_roaming_partners.end(),
+             std::make_pair(home_mcc, home_mnc)) != m_roaming_partners.end();
+}
 
 void amf_config::pre_process() {
   // Process configuration information to display only the appropriate
@@ -1302,6 +1394,13 @@ void amf_config::display() {
   Logger::config().info("- Instance ................: %d", instance);
   Logger::config().info("- PID dir .................: %s", pid_dir.c_str());
   Logger::config().info("- AMF NAME.................: %s", amf_name.c_str());
+  Logger::config().info(
+      "- Roaming Enabled..........: %s", m_roaming_enabled ? "Yes" : "No");
+  for (const auto& partner : m_roaming_partners) {
+    Logger::config().info(
+        "    Roaming Partner........: %s/%s", partner.first.c_str(),
+        partner.second.c_str());
+  }
   Logger::config().info(
       "- GUAMI (MCC, MNC, Region ID, AMF Set ID, AMF pointer): ");
   Logger::config().info(
