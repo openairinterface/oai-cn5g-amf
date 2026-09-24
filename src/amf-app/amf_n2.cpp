@@ -1783,14 +1783,21 @@ void amf_n2::handle_itti_message(
   if (!itti_msg->ue_radio_cap_info_ind) return;
   uint64_t amf_ue_ngap_id = itti_msg->ue_radio_cap_info_ind->getAmfUeNgapId();
   uint32_t ran_ue_ngap_id = itti_msg->ue_radio_cap_info_ind->getRanUeNgapId();
-  OCTET_STRING_t ue_radio_cap;
+  OCTET_STRING_t ue_radio_cap = {};
   itti_msg->ue_radio_cap_info_ind->getUeRadioCapability(ue_radio_cap);
 
   // Store UE Radio Capability in UE NGAP Context
   std::shared_ptr<ue_ngap_context> unc = {};
-  if (!ran_ue_id_2_ue_ngap_context(ran_ue_ngap_id, gc->gnb_id, unc)) return;
+  if (!ran_ue_id_2_ue_ngap_context(ran_ue_ngap_id, gc->gnb_id, unc)) {
+    oai::utils::utils::free_wrapper((void**) &ue_radio_cap.buf);
+    return;
+  }
 
-  unc->ue_radio_cap_ind = blk2bstr(ue_radio_cap.buf, ue_radio_cap.size);
+  // Release the previously stored UE Radio Capability (if any)
+  oai::utils::utils::bdestroy_wrapper(&unc->ue_radio_cap_ind);
+  if (ue_radio_cap.buf and (ue_radio_cap.size > 0))
+    unc->ue_radio_cap_ind = blk2bstr(ue_radio_cap.buf, ue_radio_cap.size);
+  oai::utils::utils::free_wrapper((void**) &ue_radio_cap.buf);
 }
 
 //------------------------------------------------------------------------------
@@ -2189,7 +2196,6 @@ void amf_n2::handle_itti_message(
 
   PduSessionResourceHandoverList handoverList = {};
   std::vector<PduSessionResourceItem> handoverItemList;
-  PduSessionResourceItem handoverItem = {};
 
   // TODO: wait for response from SMF and transfer T-RAN N3 information/ or
   // T-UPF to the source gNB
@@ -2214,6 +2220,7 @@ void amf_n2::handle_itti_message(
         pdu_session_id.set(pdu_session_id_value);
         OCTET_STRING_fromBuf(
             &handoverCommandTransfer, n2_sm.c_str(), n2_sm.length());
+        PduSessionResourceItem handoverItem = {};
         handoverItem.set(pdu_session_id, handoverCommandTransfer);
         if (handoverCommandTransfer.buf) {
           free(handoverCommandTransfer.buf);

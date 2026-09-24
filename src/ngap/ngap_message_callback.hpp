@@ -978,8 +978,9 @@ int paging(
 int ngap_amf_handle_path_switch_request(
     const sctp_assoc_id_t assoc_id, const sctp_stream_id_t stream,
     struct Ngap_NGAP_PDU* message_p) {
-  Logger::ngap().debug("Sending ITTI Path Switch Request to TASK_AMF_N2");
-  // TODO:
+  Logger::ngap().warn(
+      "Path Swith Request Handler has not been implemented yet, ignoring the "
+      "message ...");
   ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, message_p);
   return RETURNok;
 }
@@ -988,8 +989,9 @@ int ngap_amf_handle_path_switch_request(
 int ngap_handle_path_switch_request_ack(
     const sctp_assoc_id_t assoc_id, const sctp_stream_id_t stream,
     struct Ngap_NGAP_PDU* message_p) {
-  Logger::ngap().debug("Handling Path Switch Request Ack (AMF->AN)");
-  // TODO:
+  Logger::ngap().warn(
+      "Path Swith Request Ack Handler has not been implemented yet, ignoring "
+      "the message ...");
   ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, message_p);
   return RETURNok;
 }
@@ -998,8 +1000,9 @@ int ngap_handle_path_switch_request_ack(
 int ngap_handle_path_switch_request_failure(
     const sctp_assoc_id_t assoc_id, const sctp_stream_id_t stream,
     struct Ngap_NGAP_PDU* message_p) {
-  Logger::ngap().debug("Handling Path Switch Request Failure (AMF->AN)");
-  // TODO:
+  Logger::ngap().warn(
+      "Path Swith Request Failure Handler has not been implemented yet, "
+      "ignoring the message ...");
   ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, message_p);
   return RETURNok;
 }
@@ -1008,9 +1011,9 @@ int ngap_handle_path_switch_request_failure(
 int pdu_session_resource_modify_indication(
     const sctp_assoc_id_t assoc_id, const sctp_stream_id_t stream,
     struct Ngap_NGAP_PDU* message_p) {
-  Logger::ngap().debug(
-      "Sending ITTI PDU Session Resource Modify Indication to TASK_AMF_N2");
-  // TODO:
+  Logger::ngap().warn(
+      "PDU Session Resource Modify Indication Handler has not been implemented "
+      "yet, ignoring the message ...");
   ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, message_p);
   return RETURNok;
 }
@@ -1162,8 +1165,9 @@ int trace_start(
 int ue_context_modification_request(
     const sctp_assoc_id_t assoc_id, const sctp_stream_id_t stream,
     struct Ngap_NGAP_PDU* message_p) {
-  Logger::ngap().debug("Handling UE Context Modification Request (AMF->AN)");
-  // TODO:
+  Logger::ngap().warn(
+      "UE Context Modification Request Handler has not been implemented yet, "
+      "ignoring the message ...");
   ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, message_p);
   return RETURNok;
 }
@@ -1172,9 +1176,9 @@ int ue_context_modification_request(
 int ue_context_modification_response(
     const sctp_assoc_id_t assoc_id, const sctp_stream_id_t stream,
     struct Ngap_NGAP_PDU* message_p) {
-  Logger::ngap().debug(
-      "Sending ITTI UE Context Modification Response to TASK_AMF_N2");
-  // TODO:
+  Logger::ngap().warn(
+      "UE Context Modification Response Handler has not been implemented yet, "
+      "ignoring the message ...");
   ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, message_p);
   return RETURNok;
 }
@@ -1183,9 +1187,9 @@ int ue_context_modification_response(
 int ue_context_modification_failure(
     const sctp_assoc_id_t assoc_id, const sctp_stream_id_t stream,
     struct Ngap_NGAP_PDU* message_p) {
-  Logger::ngap().debug(
-      "Sending ITTI UE Context Modification Failure to TASK_AMF_N2");
-  // TODO:
+  Logger::ngap().warn(
+      "UE Context Modification Failure Handler has not been implemented yet, "
+      "ignoring the message ...");
   ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, message_p);
   return RETURNok;
 }
