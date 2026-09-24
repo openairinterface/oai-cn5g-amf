@@ -6,11 +6,15 @@
 #define _AMF_APP_ITTI_H_
 
 #include <string>
+#include <vector>
 
 #include "NgapIesStruct.hpp"
 #include "itti_msg.hpp"
 #include "GlobalRanNodeId.hpp"
+#include "paging_context.hpp"
+#include "sctp_server.hpp"
 using namespace oai::ngap;
+using namespace sctp;
 #include "bstrlib.h"
 
 class itti_msg_amf_app : public itti_msg {
@@ -47,6 +51,10 @@ class itti_nas_signalling_establishment_request : public itti_msg_amf_app {
     nas_buf              = nullptr;
     is_5g_s_tmsi_present = false;
     _5g_s_tmsi           = {};
+    gnb_assoc_id         = 0;
+    s_setid              = {};
+    s_pointer            = {};
+    s_tmsi               = {};
   }
   itti_nas_signalling_establishment_request(
       const itti_nas_signalling_establishment_request&) = delete;
@@ -58,6 +66,10 @@ class itti_nas_signalling_establishment_request : public itti_msg_amf_app {
   bstring nas_buf;
   bool is_5g_s_tmsi_present;
   std::string _5g_s_tmsi;
+  sctp_assoc_id_t gnb_assoc_id;
+  std::string s_setid;
+  std::string s_pointer;
+  std::string s_tmsi;
 };
 
 class itti_n1n2_message_transfer_request : public itti_msg_amf_app {
@@ -77,10 +89,11 @@ class itti_n1n2_message_transfer_request : public itti_msg_amf_app {
     is_nrppa_pdu_set = false;
     is_ppi_set       = false;
 
-    n2sm_info_type     = {};
-    pdu_session_id     = 0;
-    ppi                = 0;
-    lcs_correlation_id = std::nullopt;
+    n2sm_info_type             = {};
+    pdu_session_id             = 0;
+    ppi                        = 0;
+    lcs_correlation_id         = std::nullopt;
+    n1n2_failure_txf_notif_uri = {};
   }
   itti_n1n2_message_transfer_request(
       const itti_n1n2_message_transfer_request&) = delete;
@@ -97,10 +110,30 @@ class itti_n1n2_message_transfer_request : public itti_msg_amf_app {
   bool is_nrppa_pdu_set;
   uint8_t pdu_session_id;
   std::string n2sm_info_type;
+  std::string n1n2_failure_txf_notif_uri;
   bool is_ppi_set;
   uint8_t ppi;
   // other parameters
   std::optional<std::string> lcs_correlation_id;
+};
+
+class itti_paging_payload_delivery : public itti_msg_amf_app {
+ public:
+  itti_paging_payload_delivery(
+      const task_id_t origin, const task_id_t destination)
+      : itti_msg_amf_app(PAGING_PAYLOAD_DELIVERY, origin, destination) {
+    supi = {};
+    // `payloads` is default-constructed empty. Do NOT write `payloads = {};`:
+    // that selects vector::operator=(initializer_list), which copies, and
+    // buffered_n1n2_t is deliberately non-copyable.
+  }
+  itti_paging_payload_delivery(const itti_paging_payload_delivery&) = delete;
+  itti_paging_payload_delivery& operator=(const itti_paging_payload_delivery&) =
+      delete;
+
+  // The UE is re-resolved by SUPI
+  std::string supi;
+  std::vector<buffered_n1n2_t> payloads;
 };
 
 class itti_non_ue_n2_message_transfer_request : public itti_msg_amf_app {

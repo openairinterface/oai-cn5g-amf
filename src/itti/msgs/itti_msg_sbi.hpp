@@ -361,6 +361,8 @@ class itti_sbi_msg : public itti_msg {
         return "UPLINK_UE_ASSOCIATED_NRPPA_TRANSPORT";
       case PAGING:
         return "PAGING";
+      case PAGING_PAYLOAD_DELIVERY:
+        return "PAGING_PAYLOAD_DELIVERY";
       case TIME_OUT:
         return "TIME_OUT";
       case TERMINATE:
