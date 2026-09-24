@@ -1298,6 +1298,12 @@ void amf_http2_server::n1_n2_message_transfer_handler(
       n1_n2_message_transfer_cause_e2str[N1_N2_TRANSFER_INITIATED];
   code = oai::common::sbi::http_status_code::OK;
 
+  // Store N1N2TransferFailureNotification when a paged UE does not answer.
+  if (n1N2MessageTransferReqData.n1n2FailureTxfNotifURIIsSet()) {
+    itti_msg->n1n2_failure_txf_notif_uri =
+        n1N2MessageTransferReqData.getN1n2FailureTxfNotifURI();
+  }
+
   // For Paging
   if (n1N2MessageTransferReqData.ppiIsSet()) {
     itti_msg->is_ppi_set = true;

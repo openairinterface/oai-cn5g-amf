@@ -69,12 +69,18 @@ class amf_n1 {
    * @param [bstring] plain_msg: NAS message in plain text
    * @param [std::string] snn: Serving Network
    * @param [uint8_t] ulCount: UL Sequence number
+   * @param [bool] integrity_verified: true only when this message was received
+   * security-protected AND verify_and_decipher_uplink_nas() returned true for
+   * it. It is false for a plaintext message and for a protected message whose
+   * MAC check failed but whose inner type is on the TS 24.501 section 4.4.4.3
+   * cleartext allow-list and was therefore re-admitted. security_header_type
+   * is NOT a substitute: it stays non-plain on that re-admission path.
    * @return void
    */
   void nas_signalling_establishment_request_handle(
       uint8_t security_header_type, std::shared_ptr<nas_context> nc,
       uint32_t ran_ue_ngap_id, uint64_t amf_ue_ngap_id, bstring plain_msg,
-      std::string snn, uint32_t ulCount);
+      std::string snn, uint32_t ulCount, bool integrity_verified);
 
   /*
    * Handle UL NAS message (Authentication Response, Security Mode Complete,
@@ -1043,6 +1049,64 @@ class amf_n1 {
   std::shared_ptr<ue_context> rekey_nas_owner_on_guti_rereg(
       const std::string& guti, uint64_t old_amf_id, uint64_t new_amf_id,
       uint32_t old_ran, uint32_t new_ran);
+
+  /*
+   * Close a paging transaction that this UE has just answered, and hand the
+   * payloads buffered across it to TASK_AMF_APP for delivery.
+   *
+   * A paging response arrives as an InitialUEMessage, so it reaches
+   * nas_signalling_establishment_request_handle() and NOT
+   * uplink_nas_msg_handle(); this is called from the three arms of that
+   * switch, after the arm has succeeded. No-op - not even a log - when no
+   * paging transaction was in flight, which is the normal case.
+   *
+   * @param [const std::shared_ptr<ue_context>&] uc: the UE context that holds
+   * the paging state. It MUST have been resolved before the arm ran: a
+   * UE-originating de-registration unbinds the 5G-GUTI on its way out
+   * (amf_n1.cpp, remove_guti_2_nas_context -> amf_app::unbind_guti), so a
+   * lookup by GUTI made here would already fail.
+   * @param [bool] deliver: true for SERVICE REQUEST and REGISTRATION REQUEST
+   * (TS 24.501 section 5.6.2.2.1 a) 1)-3): the UE answered the page), false
+   * for a UE-originating DEREGISTRATION REQUEST (the UE is leaving; the
+   * transaction is terminated and the buffer dropped)
+   *
+   * PRECONDITION, both values of `deliver`: the caller MUST have established
+   * that the message which triggered the arm was integrity-protected and
+   * passed verify_and_decipher_uplink_nas(). Only the SERVICE REQUEST arm gets
+   * that for free; the REGISTRATION and DEREGISTRATION arms are reachable from
+   * an unauthenticated InitialUEMessage and must test `integrity_verified`
+   * before calling this. Calling it without that check hands anyone who can
+   * observe a 5G-S-TMSI (broadcast in clear in RRC Paging) the ability to
+   * consume or destroy another UE's buffered mobile-terminated payload.
+   * @return void
+   */
+  void complete_paging_if_any(
+      const std::shared_ptr<ue_context>& uc, bool deliver);
+
+  /*
+   * Abandon any paging transaction on this UE context: terminate it, free
+   * every buffered downlink N1/N2 payload and remove the supervision-window
+   * timer. A no-op for a UE that was never paged.
+   *
+   * This is NOT a paging response and it NEVER delivers, so it needs no
+   * `integrity_verified` test - unlike complete_paging_if_any(), which does.
+   *
+   * INVARIANT IT EXISTS TO ENFORCE: nothing may unbind a ue_context's 5G-GUTI,
+   * its SUPI or its nas_ctx while a paging transaction is open without first
+   * calling this. The window timer resolves the context by 5G-GUTI ONLY, the
+   * lazy TTL sweep needs a further push (which resolves by SUPI ONLY), and no
+   * live code path in this tree destroys a ue_context once its nas_ctx is
+   * null - so after any of those three unbinds the transaction and its buffer
+   * are unreclaimable for the lifetime of the process. Today all three unbinds
+   * happen together in exactly one function,
+   * ue_initiate_de_registration_handle(), which is where this is called.
+   *
+   * @param [const std::shared_ptr<ue_context>&] uc: the UE context; may be null
+   * @param [const char*] reason: logged against every dropped payload
+   * @return void
+   */
+  void abandon_paging_transaction(
+      const std::shared_ptr<ue_context>& uc, const char* reason);
 
   // for Event Handling
   bs2::connection ee_ue_location_report_connection;

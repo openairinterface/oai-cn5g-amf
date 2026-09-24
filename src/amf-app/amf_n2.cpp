@@ -321,25 +321,36 @@ amf_n2::~amf_n2() {}
 void amf_n2::handle_itti_message(std::shared_ptr<itti_paging>& itti_msg) {
   Logger::amf_n2().debug("Handle Paging message...");
 
-  // Get UE NGAP Context
-  std::shared_ptr<ue_ngap_context> unc = {};
-  if (!ran_ue_id_2_ue_ngap_context(
-          itti_msg->ran_ue_ngap_id, itti_msg->amf_ue_ngap_id, unc))
-    return;
-
-  if (unc->amf_ue_ngap_id != itti_msg->amf_ue_ngap_id) {
-    // Abort on an inconsistent AMF UE NGAP ID
+  // A UE worth paging is CM-IDLE, and CM-IDLE destroys ue_ngap_context at all
+  // eight teardown sites (release_ngap_context_only() and
+  // remove_amf_ue_ngap_id_2_ue_ngap_context(), see :3094 and :3227). Every
+  // lookup keyed on the NGAP UE IDs therefore fails here by construction, and
+  // so does anything read off ue_ngap_context. Resolve the UE by its 5G-GUTI,
+  // which ue_context_store indexes and which survives idle, and read the
+  // paging state off ue_context.
+  if (itti_msg->guti.empty()) {
     Logger::amf_n2().error(
-        "The requested UE (amf_ue_ngap_id: " AMF_UE_NGAP_ID_FMT
-        ") is not valid, existed UE "
-        "which's amf_ue_ngap_id (" AMF_UE_NGAP_ID_FMT "); aborting Paging",
-        itti_msg->amf_ue_ngap_id, unc->amf_ue_ngap_id);
+        "Paging requested without a 5G-GUTI (amf_ue_ngap_id " AMF_UE_NGAP_ID_FMT
+        "); aborting Paging",
+        itti_msg->amf_ue_ngap_id);
+    return;
+  }
+
+  std::shared_ptr<ue_context> uc =
+      amf_app_inst->find_ue_by_guti(itti_msg->guti);
+  if (uc == nullptr) {
+    Logger::amf_n2().error(
+        "No UE context with GUTI %s; aborting Paging", itti_msg->guti.c_str());
     return;
   }
 
   // TODO: check UE reachability status
 
-  // get NAS context
+  // Get NAS context
+  // TODO(plan.md P2.T6): cross-task read of nas_context. nas_context carries no
+  // mutex of its own; this is the one such read that HEAD already performed
+  // from TASK_AMF_N2 and it is kept as-is. All state this handler adds lives on
+  // ue_context behind m_paging_ instead.
   std::shared_ptr<nas_context> nc = {};
   if (!amf_n1_inst->amf_ue_id_2_nas_context(itti_msg->amf_ue_ngap_id, nc) ||
       (nc == nullptr)) {
@@ -354,31 +365,129 @@ void amf_n2::handle_itti_message(std::shared_ptr<itti_paging>& itti_msg) {
     return;
   }
 
-  PagingMsg paging_msg = {};
+  // Everything the PAGING PDU needs, copied out under ONE shared lock, after
+  // which the encode and the SCTP send below run with NO lock held
+  // (plan-minimal.md section 7.2, rule R-b). Reading the identity, the TAI and
+  // the association through three separate locked getters would be three
+  // unrelated critical sections, so a concurrent reseed could build one PDU
+  // out of two different views of the UE; get_paging_snapshot() makes it one
+  // atomic read.
+  //
+  // Hard refusal when anything is unseeded - never a warn-and-continue:
+  //   * an empty 5G-S-TMSI part makes FiveGSTmsi::encode() run std::stol(""),
+  //     which throws out of TASK_AMF_N2 with no handler anywhere on the stack;
+  //   * an unseeded TAI is not an empty list but ONE all-zero TAI, and
+  //     TaiListForPaging::encode() has no validity check, so it would put a
+  //     well-formed PAGING for MCC 000 / MNC 00 / TAC 0 - a TAI no gNB serves
+  //     - on the wire. That is a silent non-page an empty-list guard cannot
+  //     catch.
+  std::string s_setid      = {};
+  std::string s_pointer    = {};
+  std::string s_tmsi       = {};
+  Tai_t tai                = {};
+  sctp_assoc_id_t assoc_id = 0;
+  // `missing` is filled inside the same critical section as the refusal, so
+  // naming the unseeded inputs individually costs nothing in atomicity - it is
+  // the same single read, not a second one that could disagree with it.
+  std::string missing = {};
+  if (!uc->get_paging_snapshot(
+          s_setid, s_pointer, s_tmsi, tai, assoc_id, missing)) {
+    Logger::amf_n2().error(
+        "Incomplete paging state for GUTI %s: %s must be seeded before a "
+        "PAGING can be built; aborting Paging",
+        itti_msg->guti.c_str(), missing.c_str());
+    return;
+  }
+
+  // TS 23.502 section 4.2.3.3 (p.75) explicitly sanctions paging "the (R)AN
+  // nodes that served the UE last", so targeting the single last-serving gNB
+  // is conformant. The stored association can be stale, though: the SCTP
+  // shutdown teardown also runs remove_gnb_context(), so revalidate it against
+  // the gNB context store before sending.
+  std::shared_ptr<gnb_context> gc = {};
+  if (!assoc_id_2_gnb_context(assoc_id, gc) || (gc == nullptr)) {
+    Logger::amf_n2().warn(
+        "The last-serving gNB (assoc id %d) of GUTI %s is gone; aborting "
+        "Paging",
+        assoc_id, itti_msg->guti.c_str());
+    return;
+  }
+
+  // Verify that the TAI is one the gNB broadcasts. Warn and send anyway, which
+  // matches the lenient posture of the InitialUEMessage check at :921-931.
+  bool tai_found = false;
+  for (auto const& it : gc->supported_ta_list) {
+    for (auto const& plmn_item : it.getBroadcastPlmnList()) {
+      oai::ngap::PlmnId plmn_id = plmn_item.getPlmn();
+      oai::ngap::TAC tac        = it.getTac();
+      if (plmn_id.getMcc() == tai.mcc && plmn_id.getMnc() == tai.mnc &&
+          tac.get() == tai.tac) {
+        tai_found = true;
+        break;
+      }
+    }
+    if (tai_found) break;
+  }
+  if (!tai_found) {
+    Logger::amf_n2().warn(
+        "TAI (MCC %s, MNC %s, TAC %d) is not included in the supported TA List "
+        "of the last-serving gNB (assoc id %d); sending PAGING anyway",
+        tai.mcc.c_str(), tai.mnc.c_str(), tai.tac, assoc_id);
+  }
+
   Logger::amf_n2().debug(
-      " UE NGAP Context, s_setid (%d), s_pointer (%d), s_tmsi (%d)",
-      unc->s_setid, unc->s_pointer, unc->s_tmsi);
-  paging_msg.setUePagingIdentity(unc->s_setid, unc->s_pointer, unc->s_tmsi);
+      "UE Paging Identity: s_setid (%s), s_pointer (%s), s_tmsi (%s)",
+      s_setid.c_str(), s_pointer.c_str(), s_tmsi.c_str());
 
-  std ::vector<struct Tai_s> list;
-  Tai_t tai = {};
-  tai.mcc   = unc->tai.mcc;
-  tai.mnc   = unc->tai.mnc;
-  tai.tac   = unc->tai.tac;
+  PagingMsg paging_msg = {};
 
+  // IE ORDER IS NORMATIVE. TS 38.413 §9.4.1 (p.331): "IEs shall be ordered (in
+  // an IE container) in the order they appear in object set definitions", and a
+  // message that is not so constructed "shall be considered as Abstract Syntax
+  // Error". The PAGING object set, TS 38.413 §9.4.4 (p.381), orders the IEs
+  //   1 UEPagingIdentity (115, mandatory)
+  //   2 PagingDRX        (50, optional)
+  //   3 TAIListForPaging (103, mandatory)
+  //   4 PagingPriority   (52, optional)
+  // Both setters below append with ASN_SEQUENCE_ADD and nothing reorders
+  // afterwards, so the emitted order is exactly the call order. Calling
+  // setUePagingIdentity() then setTaiListForPaging() emits [115, 103], i.e.
+  // object-set positions 1 then 3 - ascending and conformant.
+  //
+  // DO NOT insert setPagingDrx() or setPagingPriority() between these two
+  // calls: their IEs sit at positions 2 and 4, so appending them after
+  // TAIListForPaging would emit a descending order and appending them here
+  // would need an ordered-insert rework of PagingMsg first. Setting no
+  // optional IE at all is what keeps this change free of src/common-src.
+  paging_msg.setUePagingIdentity(s_setid, s_pointer, s_tmsi);
+
+  std::vector<struct Tai_s> list;
   list.push_back(tai);
   paging_msg.setTaiListForPaging(list);
 
-  uint8_t buffer[BUFFER_SIZE_512];
-  int encoded_size = paging_msg.Encode(buffer, BUFFER_SIZE_512);
-  if ((encoded_size < 0) || (encoded_size > BUFFER_SIZE_512)) {
-    Logger::amf_n2().error("Encoding failed or buffer too small");
+  // encode2NewBuffer() returns aper_encode_to_new_buffer()'s result directly,
+  // unlike Encode(), which turns a failure (er.encoded == -1) into
+  // ((-1 + 7) >> 3) == 0 and would put a zero-length PDU on the wire.
+  // buf MUST start at nullptr: aper_encode_to_new_buffer() does not assign it
+  // on its -1 path.
+  uint8_t* buf     = nullptr;
+  int encoded_size = 0;
+  paging_msg.encode2NewBuffer(buf, encoded_size);
+  if ((encoded_size <= 0) || (buf == nullptr)) {
+    Logger::amf_n2().error("Encode PAGING failed (%d)", encoded_size);
+    free(buf);  // free(nullptr) is a no-op
     return;
   }
-  bstring b = blk2bstr(buffer, encoded_size);
 
-  amf_n2_inst->sctp_s_38412.sctp_send_msg(
-      unc->gnb_assoc_id, unc->sctp_stream_send, &b);
+  bstring b = blk2bstr(buf, encoded_size);
+  free(buf);
+
+  // PAGING carries no NGAP UE IDs (TS 38.413 §9.2.4.1, p.156), so it is a
+  // non-UE-associated message: send it on SCTP stream 0, the in-tree
+  // convention for non-UE-associated sends (:2762, :2915).
+  // unc->sctp_stream_send is not an option in any case - the ue_ngap_context is
+  // long gone.
+  sctp_s_38412.sctp_send_msg(assoc_id, 0, &b);
 
   oai::utils::utils::bdestroy_wrapper(&b);
 }
@@ -863,6 +972,13 @@ void amf_n2::handle_itti_message(
     Logger::amf_n2().debug("5g_s_tmsi present: %s", _5g_s_tmsi);
     init_ue_msg->init_ue_message->get5GSTmsi(
         unc->s_setid, unc->s_pointer, unc->s_tmsi);
+    // Also carry the decoded parts to TASK_AMF_APP so that they can be
+    // mirrored onto ue_context, which (unlike unc) survives CM-IDLE. No
+    // ue_context exists at this point: it is created one hop later, in
+    // amf_app::handle_itti_message(itti_nas_signalling_establishment_request&).
+    itti_msg->s_setid   = unc->s_setid;
+    itti_msg->s_pointer = unc->s_pointer;
+    itti_msg->s_tmsi    = unc->s_tmsi;
   }
 
   // NAS PDU (Mandatory)
@@ -892,6 +1008,7 @@ void amf_n2::handle_itti_message(
   }
 
   itti_msg->gnb_id         = gc->gnb_id;
+  itti_msg->gnb_assoc_id   = init_ue_msg->assoc_id;
   itti_msg->ran_ue_ngap_id = ran_ue_ngap_id;
   itti_msg->amf_ue_ngap_id = INVALID_AMF_UE_NGAP_ID;
 
@@ -2964,7 +3081,20 @@ void amf_n2::release_ngap_context_only(
         amf_ue_ngap_id);
   }
 
-  // CM-IDLE: keep the context and uc->nas_ctx alive so the UE can be re-paged.
+  // CM-IDLE transition. What survives: the ue_context itself, its nas_ctx, and
+  // everything ue_context owns - including the paging identity, the last-known
+  // TAI and the last gNB SCTP association (see ue_context.hpp). The UE can be
+  // re-paged only because those live on ue_context; they used to live on
+  // ue_ngap_context, where this function destroyed them.
+  // What is DESTROYED here: the ue_ngap_context. Once the shared_ptr below is
+  // cleared, the last owner is usually gone, so anything stored on
+  // ue_ngap_context (s_setid/s_pointer/s_tmsi, tai, gnb_assoc_id,
+  // sctp_stream_send, ...) is unavailable from this point on. Paging state must
+  // therefore never live on ue_ngap_context.
+  // This is one of five call sites of release_ngap_context_only(): NG Setup
+  // without UE retention, the three NG Reset variants, and SCTP shutdown. The
+  // SCTP-shutdown caller additionally runs remove_gnb_context(), so a stored
+  // gNB association id can be stale and must be revalidated before use.
   // Clear ONLY the NGAP sub-context
   std::shared_ptr<ue_context> uc =
       amf_app_inst->find_ue_by_amf_ue_ngap_id(amf_ue_ngap_id);
@@ -3009,7 +3139,8 @@ void amf_n2::remove_ue_context_with_ran_ue_ngap_id(
   }
 
   // Full release: drop the context and purge every index (by_amf_id_, by_supi_
-  // via uc->supi, by_guti_ via uc->guti, by_ran_gnb_ via <uc->ran,uc->gnb>).
+  // via uc->supi, by_guti_ via uc->get_guti(), by_ran_gnb_ via
+  // <uc->ran,uc->gnb>).
   // This also frees the nested nas_ctx/ngap_ctx.
   amf_app_inst->remove_ue_context(ran_ue_ngap_id, amf_ue_ngap_id);
   {
@@ -3090,6 +3221,12 @@ void amf_n2::set_amf_ue_ngap_id_2_ue_ngap_context(
 }
 
 //------------------------------------------------------------------------------
+// This is the NORMAL CM-IDLE teardown: it is reached from the everyday
+// UE Context Release Complete path (the RRC-inactivity release), as well as
+// from the two error arms of that same handler. Like
+// release_ngap_context_only() above, it destroys the ue_ngap_context while the
+// ue_context survives. Anything paging needs must live on ue_context, never on
+// ue_ngap_context, or it is lost exactly when paging becomes relevant.
 void amf_n2::remove_amf_ue_ngap_id_2_ue_ngap_context(
     const uint64_t& amf_ue_ngap_id) {
   if (amf_ue_ngap_id == INVALID_AMF_UE_NGAP_ID) return;

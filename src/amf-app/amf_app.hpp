@@ -50,6 +50,14 @@ namespace amf_application {
 #define TASK_AMF_T3555_TIMER_EXPIRE (10)
 #define TASK_AMF_T3513_TIMER_EXPIRE (11)
 #define TASK_AMF_T3565_TIMER_EXPIRE (12)
+// One-shot paging-response supervision window (TS 23.502 section 4.2.3.3 step
+// 5: "The AMF supervises the paging procedure with a timer"). This is NOT
+// T3513 and its expiry never re-pages: it only terminates the transaction and
+// reclaims the buffered downlink payloads. TASK_AMF_T3513_TIMER_EXPIRE (11) is
+// deliberately NOT reused - that number belongs to the retransmission timer of
+// a later phase. arg2_user carries the 5G-GUTI, because the amf_ue_ngap_id
+// changes when a paging response rekeys the UE context.
+#define TASK_AMF_PAGING_WINDOW_EXPIRE (13)
 
 class amf_app {
  private:
@@ -125,6 +133,16 @@ class amf_app {
    * @return void
    */
   void handle_itti_message(itti_n1n2_message_transfer_request& itti_msg);
+
+  /*
+   * Handle ITTI message (the downlink N1/N2 payloads buffered across a paging
+   * transaction, handed over by TASK_AMF_N1 once the UE answered the page).
+   * The message owns its payloads and frees them when it is destroyed; this
+   * handler only borrows them.
+   * @param [itti_paging_payload_delivery&]: ITTI message
+   * @return void
+   */
+  void handle_itti_message(itti_paging_payload_delivery& itti_msg);
 
   /*
    * Handle ITTI message (NonUeN2MessageTransferRequest)
@@ -631,6 +649,95 @@ class amf_app {
   bool generate_5g_guti(
       const uint32_t ranid, const long amfid, std::string& mcc,
       std::string& mnc, uint32_t& tmsi);
+
+  /*
+   * Open a paging transaction for a CM-IDLE UE and buffer the downlink N1/N2
+   * payload that triggered it.
+   *
+   * `buffered` is an rvalue REFERENCE, so the record itself stays in the
+   * caller's scope. On every path - including every early return - it is
+   * either moved into the UE context's pending buffer (leaving the caller's
+   * object empty) or left untouched; the caller's scope then frees whatever it
+   * still owns. Its bstrings are therefore freed exactly once on every path.
+   *
+   * @param [const std::shared_ptr<ue_context>&] uc: UE context (may be null)
+   * @param [buffered_n1n2_t&&] buffered: the payload to deliver once the UE
+   * answers; the caller must have set its `expires_at`
+   * @return true if the payload is accounted for by a paging transaction
+   * (started now or already running), false if nothing will page for it
+   */
+  bool start_paging(
+      const std::shared_ptr<ue_context>& uc, buffered_n1n2_t&& buffered);
+
+  /*
+   * Log one error per downlink N1/N2 payload that is being thrown away, and
+   * name the N1N2 transfer failure notification URI that a later phase will
+   * send to. Shared by every drop path - the ones on TASK_AMF_APP and the
+   * paging-response one on TASK_AMF_N1 - so that a dropped payload always
+   * leaves the same trace; the caller passes its own logger.
+   *
+   * NEVER takes ownership: the records stay in the caller's vector and that
+   * vector's destructor is their single free point.
+   *
+   * @param [const oai::logger::printf_logger&] logger: caller's logger
+   * @param [const std::string&] guti: 5G-GUTI the transaction was keyed on
+   * @param [const char*] reason: why the payloads are being dropped
+   * @param [const std::vector<buffered_n1n2_t>&] records: payloads dropped
+   * @return void
+   */
+  static void log_dropped_payloads(
+      const oai::logger::printf_logger& logger, const std::string& guti,
+      const char* reason, const std::vector<buffered_n1n2_t>& records);
+
+  /*
+   * Terminate a paging transaction that never got off the ground and reclaim
+   * everything buffered for it. No-op if the transaction has already been
+   * terminated by another path.
+   * @param [const std::shared_ptr<ue_context>&] uc: UE context (non-null)
+   * @param [const std::string&] guti: 5G-GUTI, for the logs
+   * @param [const char*] reason: why the payloads are being dropped
+   * @return void
+   */
+  void abandon_paging(
+      const std::shared_ptr<ue_context>& uc, const std::string& guti,
+      const char* reason);
+
+  /*
+   * Handle the expiry of the paging-response supervision window: terminate the
+   * transaction and reclaim its buffered payloads. NEVER re-pages.
+   * @param [timer_id_t] timer_id: the expiring timer, matched against the
+   * transaction in flight so that a stale expiry is inert
+   * @param [const std::string&] guti: 5G-GUTI the transaction was keyed on
+   * @return void
+   */
+  void paging_window_timeout(timer_id_t timer_id, const std::string& guti);
+
+  /*
+   * Send one downlink N1 SM / N2 SM payload to a CM-CONNECTED UE. This is the
+   * single delivery implementation: the N1N2MessageTransfer path of a UE that
+   * was already connected and the paging-response path of a UE that has just
+   * answered a page both go through it, so the two cannot drift.
+   *
+   * BORROWS its bstrings. It never takes ownership and never frees them: it
+   * only bstrcpy()s (or, for the N1 SM, re-encodes) onward into the ITTI
+   * message it sends. The caller - the ITTI message on the CM-CONNECTED path,
+   * the buffered_n1n2_t record on the paging path - remains the single owner
+   * and the single free point.
+   *
+   * @param [const std::shared_ptr<ue_context>&] uc: UE context (may be null,
+   * in which case the NGAP UE ids are left at their defaults, as before)
+   * @param [bstring] n1sm: N1 SM container, borrowed
+   * @param [bool] is_n1sm_set: whether n1sm is present
+   * @param [bstring] n2sm: N2 SM container, borrowed
+   * @param [bool] is_n2sm_set: whether n2sm is present
+   * @param [const std::string&] n2sm_info_type: N2 SM info type
+   * @param [uint8_t] pdu_session_id: PDU session id
+   * @return void
+   */
+  void send_dl_n1n2(
+      const std::shared_ptr<ue_context>& uc, bstring n1sm, bool is_n1sm_set,
+      bstring n2sm, bool is_n2sm_set, const std::string& n2sm_info_type,
+      uint8_t pdu_session_id);
 
   /*
    * Generate an Event Exposure Subscription ID
