@@ -550,6 +550,16 @@ void amf_app::handle_itti_message(
     }
   } else if (itti_msg.is_n1sm_set or itti_msg.is_n2sm_set) {
     Logger::amf_app().info("Handle ITTI N1N2 Message Transfer Request");
+
+    // TODO: on CM-IDLE the N1/N2 payload must be buffered and the UE paged
+    // before delivery (TS 23.502 §4.2.3.3); until then the transfer should be
+    // rejected with UE_NOT_REACHABLE rather than relayed into a dead link.
+    if (amf_n1_inst->get_ue_cm_state(itti_msg.supi) == CM_IDLE) {
+      Logger::amf_app().warn(
+          "UE %s is CM-IDLE; relaying N1/N2 anyway, DL NAS will be lost",
+          itti_msg.supi.c_str());
+    }
+
     auto dl_msg =
         std::make_shared<itti_downlink_nas_transfer>(TASK_AMF_APP, TASK_AMF_N1);
 
@@ -1021,13 +1031,16 @@ void amf_app::handle_itti_message(
           itti_msg.ue_id, itti_msg.pdu_session_id,
           itti_msg.smContextStatusNotification)) {
     Logger::amf_app().debug("Update PDU Session Release successfully");
+
+    // TODO: a RELEASED notification should also tear down the N2 context;
+    // RAN-side bearers are currently leaked (TS 23.502 §4.3.4).
     response_data[kSbiResponseHttpResponseCode] =
         oai::common::sbi::http_status_code::NO_CONTENT;
 
   } else {
+    // TODO: return 500 with ProblemDetails instead of 204 (TS 29.500 §5.2.2).
     response_data[kSbiResponseHttpResponseCode] =
         oai::common::sbi::http_status_code::NO_CONTENT;
-    // TODO check if we set problem_details
     Logger::amf_app().debug("Update PDU Session Release failed");
   }
 
@@ -1973,7 +1986,8 @@ void amf_app::get_access_and_mobility_subscription_data(
                   "UE (amf_ue_ngap_id= " AMF_UE_NGAP_ID_FMT ")",
                   mps_active ? "true" : "false", nc->amf_ue_ngap_id);
             }
-            // TODO: store AM Data
+            // TODO: store AM Data, including subscribedUeAmbr ->
+            // uc->ue_ambr_dl / ue_ambr_ul (BitRate strings need parsing to bps)
           } catch (std::exception& e) {
             Logger::amf_app().warn(
                 "Could not parse Access and Mobility Subscription Data from "
