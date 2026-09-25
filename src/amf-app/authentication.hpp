@@ -8,11 +8,11 @@
 #include <mysql/mysql.h>
 #include <pthread.h>
 
-#include <cstring>  // std::strlen, used by decode_fixed_hex
+#include <cstring>
 #include <memory>
 #include <string>
 
-#include "conversions.hpp"  // the raw hex-to-bytes converter -- REQUIRED
+#include "conversions.hpp"
 #include "nas_context.hpp"
 
 namespace amf_application {
@@ -26,34 +26,28 @@ typedef struct {
   uint8_t key[KEY_LENGTH];
   uint8_t sqn[SQN_LENGTH];
   uint8_t opc[KEY_LENGTH];
-  uint8_t amf[AMF_LENGTH];  // authenticationManagementField, from the DB (OQ-2)
+  uint8_t amf[AMF_LENGTH];  // authenticationManagementField
 } mysql_auth_info_t;
-// `rand` removed from mysql_auth_info_t: RAND lives in nc->_5g_he_av[i].rand
-// (D2)
 
-// Decodes exactly 2*N hex characters from `s` into `des`, which is an ARRAY
-// REFERENCE, so the required input length is a compile-time fact derived from
-// the destination and cannot be mis-stated by a caller.
-//
-// Returns false, and calls the raw converter NOT AT ALL, if any of:
-//   * s == nullptr          -- row[n] is a real null pointer for a NULL column
-//   * strlen(s) != 2 * N    -- wrong length, subsumes the odd-length case (H2)
-//   * any character outside [0-9A-Fa-f]                                   (H3)
+// Decodes exactly 2*N hex characters from a const char `src` into an array
+// `des`. Returns false, if any of:
+//   * src == nullptr          -- row[n] is a real null pointer for a NULL
+//   column
+//   * strlen(src) != 2 * N    -- wrong length, subsumes the odd-length case
+//   * any character outside [0-9A-Fa-f]
 // On success it has written exactly N bytes and returns true.
 //
-// `static` is deliberate (plan §3.2): do NOT change it to `inline` and do NOT
-// move the definition to the .cpp.
 template<size_t N>
-static bool decode_fixed_hex(const char* s, uint8_t (&des)[N]) {
-  if (s == nullptr) return false;  // MUST be the first statement
-  if (std::strlen(s) != 2 * N) return false;
+static bool decode_fixed_hex(const char* src, uint8_t (&des)[N]) {
+  if (src == nullptr) return false;
+  if (std::strlen(src) != 2 * N) return false;
   for (size_t i = 0; i < 2 * N; ++i) {
-    const char c      = s[i];
+    const char c      = src[i];
     const bool is_hex = (c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') ||
                         (c >= 'A' && c <= 'F');
     if (!is_hex) return false;
   }
-  oai::utils::conv::hex_str_to_uint8(s, des);  // input now fully validated
+  oai::utils::conv::hex_str_to_uint8(src, des);  // input now fully validated
   return true;
 }
 
@@ -62,15 +56,12 @@ static bool decode_fixed_hex(const char* s, uint8_t (&des)[N]) {
 // "sqn" is absent or not a string; its length != 12; or it is not all hex.
 bool parse_sequence_number(const char* json_text, uint8_t (&sqn)[SQN_LENGTH]);
 
-// Serialises the UDM-shaped document (OQ-4):
+// Serialises the UDM-shaped document:
 //   {"sqnScheme":"NON_TIME_BASED","sqn":"<12 lower hex>",
 //    "lastIndexes":{"ausf":0}}
-// Never fails.
 std::string build_sequence_number_json(const uint8_t (&sqn)[SQN_LENGTH]);
 
-// 48-bit SQN + 32, mirroring udm_app::increment_sqn's SEMANTICS (D4).
-// in and out may alias. Wraps modulo 2^48 (see plan §5.2 for why this departs
-// from UDM's literal string implementation).
+// Increment SQN: 48-bit SQN + 32
 void increment_sqn(const uint8_t (&in)[SQN_LENGTH], uint8_t (&out)[SQN_LENGTH]);
 
 typedef struct {
@@ -117,7 +108,7 @@ class authentication {
   bool get_mysql_auth_info(const std::string& imsi, mysql_auth_info_t& resp);
 
   /*
-   * Write the whole `sequenceNumber` JSON document for this subscriber (MySQL).
+   * Write the `sequenceNumber` JSON document for this subscriber (MySQL).
    * @param [const std::string&] imsi: UE IMSI, used as `ueid`
    * @param [const uint8_t(&)[SQN_LENGTH]] sqn: SQN to store
    * @return true if the UPDATE executed successfully, otherwise false
@@ -147,7 +138,7 @@ class authentication {
    * @param [uint8_t[16]] sqn: SQN
    * @param [std::string&] serving_network: Serving Network
    * @param [_5G_HE_AV_t&] vector: Generated vector
-   * @param [const uint8_t[AMF_LENGTH]] amf: AMF field from the DB (f1 / AUTN)
+   * @param [const uint8_t[AMF_LENGTH]] amf: AMF field from the DB
    * @return void
    */
   void generate_5g_he_av_in_udm(

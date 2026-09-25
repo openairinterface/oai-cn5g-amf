@@ -4,8 +4,8 @@
 
 #include "authentication.hpp"
 
-#include <nlohmann/json.hpp>  // used by the SQN helpers below
-#include <vector>             // used by sql_escape
+#include <nlohmann/json.hpp>
+#include <vector>
 
 #include "amf_config.hpp"
 #include "bstrlib.h"
@@ -73,12 +73,11 @@ bool authentication::authentication_vectors_generator_in_udm(
     Logger::authentication().error("Failed to fetch user data from MySQL");
     return false;
   }
-  // Fires on both the AUTS and the no-AUTS path (single shared read)
+
   Logger::authentication().debug(
       "Received information from MySQL for IMSI %s", nc->imsi.c_str());
 
-  // Base SQN = the value stored in the DB, unless a verified AUTS supplies
-  // SQN_MS.
+  // Use the Base SQN from the DB
   uint8_t base_sqn[SQN_LENGTH] = {};
   memcpy(base_sqn, mysql_resp.sqn, SQN_LENGTH);
 
@@ -86,26 +85,16 @@ bool authentication::authentication_vectors_generator_in_udm(
   if (auts) {
     Logger::authentication().debug("AUTS present, deriving SQN_MS");
     // AUTS = SQN_MS xor AK (6 octets) || MAC-S (8 octets), TS 33.102 6.3.3.
-    // The derivation below reads that many octets unconditionally, so do not
-    // rely on the NAS decoder: reject a short AUTS before touching it.
+    // Reject a short AUTS before touching it.
     if (blength(nc->auts) < SQN_LENGTH + MAC_S_LENGTH) {
       Logger::authentication().error(
           "AUTS too short (%d octets, expected %d)", blength(nc->auts),
           SQN_LENGTH + MAC_S_LENGTH);
-      // P11: consume the AUTS exactly once, as on the normal path.
+      // Clear AUTS for the next round
       oai::utils::utils::bdestroy_wrapper(&nc->auts);
-      return false;  // no DB write
+      return false;
     }
-    // ORDERING INVARIANT (D2): the SQN_MS derivation MUST read
-    // nc->_5g_he_av[0].rand BEFORE the vector loop below overwrites it. This
-    // is the RAND the previous round sent to the UE, and it is what the DB
-    // `rand` column used to hold.
-    // DO NOT MOVE generate_random ABOVE THIS CALL.
-    // NOTE: the derivation is called with its EXISTING four-argument signature.
-    // It computes MAC-S with an all-zero dummy AMF internally
-    // (authentication_algorithms_with_5gaka.cpp:566), which is correct per
-    // TS 33.102 6.3.3 and matches OAI-UDM and OAI-AUSF. mysql_resp.amf is for
-    // f1/generate_autn ONLY and must NOT be passed here.
+    // SQN_MS derivation
     uint8_t* sqn_ms = Authentication_5gaka::sqn_ms_derive(
         mysql_resp.opc, mysql_resp.key, auts, vector[0].rand);
     if (sqn_ms) {
@@ -116,17 +105,15 @@ bool authentication::authentication_vectors_generator_in_udm(
           "AUTS present but SQN_MS could not be verified; using the stored "
           "SQN");
     }
-    // P11: consume the AUTS exactly once, so a later generation on this same
-    // nas_context takes the no-AUTS path instead of re-deriving against a RAND
-    // that has since been regenerated.
+    // Clear AUTS for next round
     oai::utils::utils::bdestroy_wrapper(&nc->auts);
-    auts = nullptr;  // the buffer is gone; nothing below may read it
+    auts = nullptr;
   } else {
     Logger::authentication().debug("No AUTS ...");
   }
 
-  // UDM semantics, increment #1 (udm_app.cpp:365-370): the vector is built
-  // with base + 32, never with the stored value itself.
+  // Increment SQN: the vector is built with base + 32, never with the stored
+  // value itself.
   uint8_t current_sqn[SQN_LENGTH] = {};
   increment_sqn(base_sqn, current_sqn);
 
@@ -140,11 +127,10 @@ bool authentication::authentication_vectors_generator_in_udm(
         nc->serving_network, vector[i], mysql_resp.amf);
   }
 
-  // UDM semantics, increment #2 (udm_app.cpp:409-412): store base + 64 for the
-  // next round. This is the ONLY write to the database in this function.
+  // Increment SQN: store base + 64 for the next round and store in the DB.
   uint8_t next_sqn[SQN_LENGTH] = {};
   increment_sqn(current_sqn, next_sqn);
-  if (!mysql_write_sqn(nc->imsi, next_sqn)) {  // P12
+  if (!mysql_write_sqn(nc->imsi, next_sqn)) {
     Logger::authentication().error(
         "Failed to update sequenceNumber in MySQL for ueid %s",
         nc->imsi.c_str());
@@ -314,16 +300,9 @@ bool amf_application::parse_sequence_number(
 //------------------------------------------------------------------------------
 std::string amf_application::build_sequence_number_json(
     const uint8_t (&sqn)[SQN_LENGTH]) {
-  // conv::uint8_to_hex_string emits exactly 2 lower-case chars per byte
-  // (conversions.cpp:169-179), so this is exactly 12 characters. It takes the
-  // length from the caller, so it is safe; unlike the raw hex-to-bytes
-  // converter it cannot overrun.
   nlohmann::json doc;
-  doc["sqnScheme"] = "NON_TIME_BASED";
-  doc["sqn"]       = oai::utils::conv::uint8_to_hex_string(sqn, SQN_LENGTH);
-  // {"ausf":0} is copied verbatim from OAI-UDM (udm_app.cpp:431-433) so that
-  // the row stays interchangeable with a real UDM/UDR deployment. There is no
-  // AUSF in mini mode; the value is not meaningful here.
+  doc["sqnScheme"]   = "NON_TIME_BASED";
+  doc["sqn"]         = oai::utils::conv::uint8_to_hex_string(sqn, SQN_LENGTH);
   doc["lastIndexes"] = nlohmann::json{{"ausf", 0}};
   return doc.dump();
 }
@@ -341,7 +320,7 @@ void amf_application::increment_sqn(
 //------------------------------------------------------------------------------
 bool authentication::get_mysql_auth_info(
     const std::string& imsi, mysql_auth_info_t& resp) {
-  resp = {};  // never hand a caller a previous round's bytes
+  resp = {};
 
   if (!db_desc.db_conn) {
     Logger::authentication().error("Cannot connect to MySQL DB");
@@ -415,7 +394,7 @@ bool authentication::get_mysql_auth_info(
     Logger::authentication().error("encOpcKey is not 32 hex characters");
     ok = false;
   }
-  if (ok && !parse_sequence_number(row[I_SQN], sqn)) {  // logs its own reason
+  if (ok && !parse_sequence_number(row[I_SQN], sqn)) {
     ok = false;
   }
   if (ok && !decode_fixed_hex(row[I_AMF], amf)) {  // N=2 -> 4 chars
@@ -428,7 +407,7 @@ bool authentication::get_mysql_auth_info(
   if (!ok) {
     Logger::authentication().error(
         "Rejecting AuthenticationSubscription row for ueid %s", imsi.c_str());
-    return false;  // resp stays all-zero
+    return false;
   }
   memcpy(resp.key, key, KEY_LENGTH);
   memcpy(resp.opc, opc, KEY_LENGTH);
@@ -463,7 +442,6 @@ bool authentication::connect_to_mysql() {
 
 //------------------------------------------------------------------------------
 bool authentication::sql_escape(const std::string& in, std::string& out) {
-  // Caller MUST hold db_desc.db_cs_mutex: this reads the connection charset.
   if (!db_desc.db_conn) return false;
   // mysql_real_escape_string contract: the output buffer is 2 * len + 1.
   std::vector<char> buf(2 * in.size() + 1);
@@ -486,11 +464,8 @@ bool authentication::mysql_write_sqn(
     return false;
   }
 
-  // Pure, connection-free: safe outside the lock.
   const std::string doc = build_sequence_number_json(sqn);
 
-  // Everything from here to the final unlock touches db_desc.db_conn, so it is
-  // all inside the critical section -- INCLUDING the escaping.
   pthread_mutex_lock(&db_desc.db_cs_mutex);
 
   std::string doc_escaped;
@@ -510,9 +485,7 @@ bool authentication::mysql_write_sqn(
         "Query execution failed: %s", mysql_error(db_desc.db_conn));
     return false;
   }
-  // The multi-statement drain loop is kept from the code it replaces:
-  // connect_to_mysql() sets MYSQL_OPTION_MULTI_STATEMENTS_ON, so results must
-  // be drained before the next query.
+
   bool ok = true;
   do {
     res = mysql_store_result(db_desc.db_conn);
