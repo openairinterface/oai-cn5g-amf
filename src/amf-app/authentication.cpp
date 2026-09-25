@@ -4,6 +4,9 @@
 
 #include "authentication.hpp"
 
+#include <nlohmann/json.hpp>  // used by the SQN helpers below
+#include <vector>             // used by sql_escape
+
 #include "amf_config.hpp"
 #include "bstrlib.h"
 #include "nas_algorithms.hpp"
@@ -55,60 +58,96 @@ bool authentication::authentication_vectors_generator_in_ausf(
 //------------------------------------------------------------------------------
 bool authentication::authentication_vectors_generator_in_udm(
     std::shared_ptr<nas_context>& nc) {
-  // TODO: remove naked ptr
   Logger::authentication().debug(
       "Generate Authentication Vectors in UDM (locally in AMF)");
-  uint8_t* sqn        = nullptr;
-  uint8_t* auts       = (uint8_t*) bdata(nc->auts);
   _5G_HE_AV_t* vector = nc->_5g_he_av;
-  // Access to MySQL to fetch UE-related information
+
   if (!connect_to_mysql()) {
     Logger::authentication().error("Cannot connect to MySQL DB");
     return false;
   }
   Logger::authentication().debug("Connected to MySQL successfully");
+
   mysql_auth_info_t mysql_resp = {};
-  if (get_mysql_auth_info(nc->imsi, mysql_resp)) {
-    if (auts) {
-      sqn = Authentication_5gaka::sqn_ms_derive(
-          mysql_resp.opc, mysql_resp.key, auts, mysql_resp.rand);
-      if (sqn) {
-        generate_random(vector[0].rand, RAND_LENGTH);
-        mysql_push_rand_sqn(nc->imsi, vector[0].rand, sqn);
-        mysql_increment_sqn(nc->imsi);
-        oai::utils::utils::free_wrapper((void**) &sqn);
-      }
-      if (!get_mysql_auth_info(nc->imsi, mysql_resp)) {
-        Logger::authentication().error("Cannot get data from MySQL");
-        return false;
-      }
-      sqn = mysql_resp.sqn;
-      for (int i = 0; i < MAX_5GS_AUTH_VECTORS; i++) {
-        generate_random(vector[i].rand, RAND_LENGTH);
-        oai::utils::output_wrapper::print_buffer(
-            "authentication", "Generated random rand (5G HE AV)",
-            vector[i].rand, 16);
-        generate_5g_he_av_in_udm(
-            mysql_resp.opc, nc->imsi, mysql_resp.key, sqn, nc->serving_network,
-            vector[i]);  // serving network name
-      }
-      mysql_push_rand_sqn(nc->imsi, vector[MAX_5GS_AUTH_VECTORS - 1].rand, sqn);
-    } else {
-      Logger::authentication().debug("No AUTS ...");
-      Logger::authentication().debug(
-          "Receive information from MySQL with IMSI %s", nc->imsi.c_str());
-      for (int i = 0; i < MAX_5GS_AUTH_VECTORS; i++) {
-        generate_random(vector[i].rand, RAND_LENGTH);
-        sqn = mysql_resp.sqn;
-        generate_5g_he_av_in_udm(
-            mysql_resp.opc, nc->imsi, mysql_resp.key, sqn, nc->serving_network,
-            vector[i]);  // serving network name
-      }
-      mysql_push_rand_sqn(nc->imsi, vector[MAX_5GS_AUTH_VECTORS - 1].rand, sqn);
-    }
-    mysql_increment_sqn(nc->imsi);
-  } else {
+  if (!get_mysql_auth_info(nc->imsi, mysql_resp)) {
     Logger::authentication().error("Failed to fetch user data from MySQL");
+    return false;
+  }
+  // Fires on both the AUTS and the no-AUTS path (single shared read)
+  Logger::authentication().debug(
+      "Received information from MySQL for IMSI %s", nc->imsi.c_str());
+
+  // Base SQN = the value stored in the DB, unless a verified AUTS supplies
+  // SQN_MS.
+  uint8_t base_sqn[SQN_LENGTH] = {};
+  memcpy(base_sqn, mysql_resp.sqn, SQN_LENGTH);
+
+  uint8_t* auts = (uint8_t*) bdata(nc->auts);
+  if (auts) {
+    Logger::authentication().debug("AUTS present, deriving SQN_MS");
+    // AUTS = SQN_MS xor AK (6 octets) || MAC-S (8 octets), TS 33.102 6.3.3.
+    // The derivation below reads that many octets unconditionally, so do not
+    // rely on the NAS decoder: reject a short AUTS before touching it.
+    if (blength(nc->auts) < SQN_LENGTH + MAC_S_LENGTH) {
+      Logger::authentication().error(
+          "AUTS too short (%d octets, expected %d)", blength(nc->auts),
+          SQN_LENGTH + MAC_S_LENGTH);
+      // P11: consume the AUTS exactly once, as on the normal path.
+      oai::utils::utils::bdestroy_wrapper(&nc->auts);
+      return false;  // no DB write
+    }
+    // ORDERING INVARIANT (D2): the SQN_MS derivation MUST read
+    // nc->_5g_he_av[0].rand BEFORE the vector loop below overwrites it. This
+    // is the RAND the previous round sent to the UE, and it is what the DB
+    // `rand` column used to hold.
+    // DO NOT MOVE generate_random ABOVE THIS CALL.
+    // NOTE: the derivation is called with its EXISTING four-argument signature.
+    // It computes MAC-S with an all-zero dummy AMF internally
+    // (authentication_algorithms_with_5gaka.cpp:566), which is correct per
+    // TS 33.102 6.3.3 and matches OAI-UDM and OAI-AUSF. mysql_resp.amf is for
+    // f1/generate_autn ONLY and must NOT be passed here.
+    uint8_t* sqn_ms = Authentication_5gaka::sqn_ms_derive(
+        mysql_resp.opc, mysql_resp.key, auts, vector[0].rand);
+    if (sqn_ms) {
+      memcpy(base_sqn, sqn_ms, SQN_LENGTH);
+      oai::utils::utils::free_wrapper((void**) &sqn_ms);
+    } else {
+      Logger::authentication().warn(
+          "AUTS present but SQN_MS could not be verified; using the stored "
+          "SQN");
+    }
+    // P11: consume the AUTS exactly once, so a later generation on this same
+    // nas_context takes the no-AUTS path instead of re-deriving against a RAND
+    // that has since been regenerated.
+    oai::utils::utils::bdestroy_wrapper(&nc->auts);
+    auts = nullptr;  // the buffer is gone; nothing below may read it
+  } else {
+    Logger::authentication().debug("No AUTS ...");
+  }
+
+  // UDM semantics, increment #1 (udm_app.cpp:365-370): the vector is built
+  // with base + 32, never with the stored value itself.
+  uint8_t current_sqn[SQN_LENGTH] = {};
+  increment_sqn(base_sqn, current_sqn);
+
+  for (int i = 0; i < MAX_5GS_AUTH_VECTORS; i++) {
+    generate_random(vector[i].rand, RAND_LENGTH);
+    oai::utils::output_wrapper::print_buffer(
+        "authentication", "Generated random rand (5G HE AV)", vector[i].rand,
+        16);
+    generate_5g_he_av_in_udm(
+        mysql_resp.opc, nc->imsi, mysql_resp.key, current_sqn,
+        nc->serving_network, vector[i], mysql_resp.amf);
+  }
+
+  // UDM semantics, increment #2 (udm_app.cpp:409-412): store base + 64 for the
+  // next round. This is the ONLY write to the database in this function.
+  uint8_t next_sqn[SQN_LENGTH] = {};
+  increment_sqn(current_sqn, next_sqn);
+  if (!mysql_write_sqn(nc->imsi, next_sqn)) {  // P12
+    Logger::authentication().error(
+        "Failed to update sequenceNumber in MySQL for ueid %s",
+        nc->imsi.c_str());
     return false;
   }
   return true;
@@ -148,9 +187,9 @@ void authentication::generate_random(uint8_t* random_p, ssize_t length) {
 //------------------------------------------------------------------------------
 void authentication::generate_5g_he_av_in_udm(
     const uint8_t opc[16], const std::string& imsi, uint8_t key[16],
-    uint8_t sqn[6], std::string& serving_network, _5G_HE_AV_t& vector) {
+    uint8_t sqn[6], std::string& serving_network, _5G_HE_AV_t& vector,
+    const uint8_t amf[AMF_LENGTH]) {
   Logger::authentication().debug("Generate 5g_he_av as in UDM");
-  uint8_t amf[] = {0x80, 0x00};
   uint8_t mac_a[8];
   uint8_t ck[16];
   uint8_t ik[16];
@@ -244,50 +283,157 @@ void authentication::apply_sha256(
 }
 
 //------------------------------------------------------------------------------
+bool amf_application::parse_sequence_number(
+    const char* json_text, uint8_t (&sqn)[SQN_LENGTH]) {
+  if (json_text == nullptr) {
+    Logger::authentication().error("sequenceNumber column is NULL");
+    return false;
+  }
+  nlohmann::json doc;
+  try {
+    doc = nlohmann::json::parse(json_text);
+  } catch (const std::exception& e) {
+    Logger::authentication().error(
+        "sequenceNumber is not valid JSON: %s", e.what());
+    return false;
+  }
+  if (!doc.is_object() || !doc.contains("sqn") || !doc["sqn"].is_string()) {
+    Logger::authentication().error(
+        "sequenceNumber has no string member \"sqn\"");
+    return false;
+  }
+  const std::string sqn_s = doc["sqn"].get<std::string>();
+  if (!decode_fixed_hex(sqn_s.c_str(), sqn)) {  // N=6 -> exactly 12 hex chars
+    Logger::authentication().error(
+        "sequenceNumber.sqn is not 12 hex characters");
+    return false;
+  }
+  return true;
+}
+
+//------------------------------------------------------------------------------
+std::string amf_application::build_sequence_number_json(
+    const uint8_t (&sqn)[SQN_LENGTH]) {
+  // conv::uint8_to_hex_string emits exactly 2 lower-case chars per byte
+  // (conversions.cpp:169-179), so this is exactly 12 characters. It takes the
+  // length from the caller, so it is safe; unlike the raw hex-to-bytes
+  // converter it cannot overrun.
+  nlohmann::json doc;
+  doc["sqnScheme"] = "NON_TIME_BASED";
+  doc["sqn"]       = oai::utils::conv::uint8_to_hex_string(sqn, SQN_LENGTH);
+  // {"ausf":0} is copied verbatim from OAI-UDM (udm_app.cpp:431-433) so that
+  // the row stays interchangeable with a real UDM/UDR deployment. There is no
+  // AUSF in mini mode; the value is not meaningful here.
+  doc["lastIndexes"] = nlohmann::json{{"ausf", 0}};
+  return doc.dump();
+}
+
+//------------------------------------------------------------------------------
+void amf_application::increment_sqn(
+    const uint8_t (&in)[SQN_LENGTH], uint8_t (&out)[SQN_LENGTH]) {
+  uint64_t v = 0;
+  for (size_t i = 0; i < SQN_LENGTH; ++i) v = (v << 8) | in[i];
+  v = (v + 32) & 0xFFFFFFFFFFFFULL;  // 48-bit SQN, TS 33.102
+  for (size_t i = 0; i < SQN_LENGTH; ++i)
+    out[SQN_LENGTH - 1 - i] = static_cast<uint8_t>((v >> (8 * i)) & 0xFF);
+}
+
+//------------------------------------------------------------------------------
 bool authentication::get_mysql_auth_info(
     const std::string& imsi, mysql_auth_info_t& resp) {
-  MYSQL_RES* res;
-  MYSQL_ROW row;
-  std::string query;
+  resp = {};  // never hand a caller a previous round's bytes
 
   if (!db_desc.db_conn) {
     Logger::authentication().error("Cannot connect to MySQL DB");
     return false;
   }
-  query =
-      "SELECT `key`,`sqn`,`rand`,`OPc` FROM `users` WHERE `users`.`imsi`='" +
-      imsi + "' ";
+
+  // Escaping dereferences the connection, so it is done inside the lock.
   pthread_mutex_lock(&db_desc.db_cs_mutex);
+  std::string ueid;
+  if (!sql_escape(imsi, ueid)) {
+    pthread_mutex_unlock(&db_desc.db_cs_mutex);
+    Logger::authentication().error("Failed to escape ueid");
+    return false;
+  }
+
+  constexpr size_t I_METHOD = 0;
+  constexpr size_t I_KEY    = 1;
+  constexpr size_t I_OPC    = 2;
+  constexpr size_t I_SQN    = 3;
+  constexpr size_t I_AMF    = 4;
+  const std::string query =
+      "SELECT `authenticationMethod`,`encPermanentKey`,`encOpcKey`,"
+      "`sequenceNumber`,`authenticationManagementField` "
+      "FROM `AuthenticationSubscription` WHERE `ueid`='" +
+      ueid + "'";
+
   if (mysql_query(db_desc.db_conn, query.c_str())) {
     pthread_mutex_unlock(&db_desc.db_cs_mutex);
     Logger::authentication().error(
-        "Query execution failed: %s\n", mysql_error(db_desc.db_conn));
+        "Query execution failed: %s", mysql_error(db_desc.db_conn));
     return false;
   }
-  res = mysql_store_result(db_desc.db_conn);
+  MYSQL_RES* res = mysql_store_result(db_desc.db_conn);
   pthread_mutex_unlock(&db_desc.db_cs_mutex);
   if (!res) {
     Logger::authentication().error("Data fetched from MySQL is not present");
     return false;
   }
-  if (row = mysql_fetch_row(res)) {
-    if (row[0] == NULL || row[1] == NULL || row[2] == NULL || row[3] == NULL) {
-      Logger::authentication().error("row data failed");
-      return false;
-    }
-    memcpy(resp.key, row[0], KEY_LENGTH);
-    uint64_t sqn = 0;
-    sqn          = atoll(row[1]);
-    resp.sqn[0]  = (sqn & (255UL << 40)) >> 40;
-    resp.sqn[1]  = (sqn & (255UL << 32)) >> 32;
-    resp.sqn[2]  = (sqn & (255UL << 24)) >> 24;
-    resp.sqn[3]  = (sqn & (255UL << 16)) >> 16;
-    resp.sqn[4]  = (sqn & (255UL << 8)) >> 8;
-    resp.sqn[5]  = (sqn & 0xff);
-    memcpy(resp.rand, row[2], RAND_LENGTH);
-    memcpy(resp.opc, row[3], KEY_LENGTH);
+
+  MYSQL_ROW row = mysql_fetch_row(res);
+  if (row == nullptr) {
+    Logger::authentication().error(
+        "No AuthenticationSubscription row for ueid %s", imsi.c_str());
+    mysql_free_result(res);
+    return false;
   }
+
+  // Validate and decode into locals; resp is written only on full success.
+  uint8_t key[KEY_LENGTH] = {};
+  uint8_t opc[KEY_LENGTH] = {};
+  uint8_t sqn[SQN_LENGTH] = {};
+  uint8_t amf[AMF_LENGTH] = {};
+  bool ok                 = true;
+
+  if (row[I_METHOD] == nullptr) {
+    Logger::authentication().error("authenticationMethod is NULL");
+    ok = false;
+  } else {
+    const std::string method(row[I_METHOD]);
+    if (method != "5G_AKA" && method != "AuthenticationVector") {
+      Logger::authentication().error(
+          "Unsupported authenticationMethod '%s'", method.c_str());
+      ok = false;
+    }
+  }
+  if (ok && !decode_fixed_hex(row[I_KEY], key)) {  // N=16 -> 32 chars
+    Logger::authentication().error("encPermanentKey is not 32 hex characters");
+    ok = false;
+  }
+  if (ok && !decode_fixed_hex(row[I_OPC], opc)) {  // N=16 -> 32 chars
+    Logger::authentication().error("encOpcKey is not 32 hex characters");
+    ok = false;
+  }
+  if (ok && !parse_sequence_number(row[I_SQN], sqn)) {  // logs its own reason
+    ok = false;
+  }
+  if (ok && !decode_fixed_hex(row[I_AMF], amf)) {  // N=2 -> 4 chars
+    Logger::authentication().error(
+        "authenticationManagementField is not 4 hex characters");
+    ok = false;
+  }
+
   mysql_free_result(res);
+  if (!ok) {
+    Logger::authentication().error(
+        "Rejecting AuthenticationSubscription row for ueid %s", imsi.c_str());
+    return false;  // resp stays all-zero
+  }
+  memcpy(resp.key, key, KEY_LENGTH);
+  memcpy(resp.opc, opc, KEY_LENGTH);
+  memcpy(resp.sqn, sqn, SQN_LENGTH);
+  memcpy(resp.amf, amf, AMF_LENGTH);
   return true;
 }
 
@@ -316,40 +462,58 @@ bool authentication::connect_to_mysql() {
 }
 
 //------------------------------------------------------------------------------
-void authentication::mysql_push_rand_sqn(
-    const std::string& imsi, uint8_t* rand_p, uint8_t* sqn) {
-  int status = 0;
-  MYSQL_RES* res;
-  char query[1000];
-  int query_length     = 0;
-  uint64_t sqn_decimal = 0;
+bool authentication::sql_escape(const std::string& in, std::string& out) {
+  // Caller MUST hold db_desc.db_cs_mutex: this reads the connection charset.
+  if (!db_desc.db_conn) return false;
+  // mysql_real_escape_string contract: the output buffer is 2 * len + 1.
+  std::vector<char> buf(2 * in.size() + 1);
+  const unsigned long n = mysql_real_escape_string(
+      db_desc.db_conn, buf.data(), in.c_str(),
+      static_cast<unsigned long>(in.size()));
+  if (n == static_cast<unsigned long>(-1)) return false;
+  out.assign(buf.data(), n);
+  return true;
+}
+
+//------------------------------------------------------------------------------
+bool authentication::mysql_write_sqn(
+    const std::string& imsi, const uint8_t (&sqn)[SQN_LENGTH]) {
+  int status     = 0;
+  MYSQL_RES* res = nullptr;
+
   if (!db_desc.db_conn) {
     Logger::authentication().error("Cannot connect to MySQL DB");
-    return;
-  }
-  if (!sqn || !rand_p) {
-    Logger::authentication().error("Need sqn and rand");
-    return;
-  }
-  sqn_decimal = ((uint64_t) sqn[0] << 40) | ((uint64_t) sqn[1] << 32) |
-                ((uint64_t) sqn[2] << 24) | (sqn[3] << 16) | (sqn[4] << 8) |
-                sqn[5];
-  query_length = sprintf(query, "UPDATE `users` SET `rand`=UNHEX('");
-  for (int i = 0; i < RAND_LENGTH; i++) {
-    query_length += sprintf(&query[query_length], "%02x", rand_p[i]);
+    return false;
   }
 
-  query_length +=
-      sprintf(&query[query_length], "'),`sqn`=%" PRIu64, sqn_decimal);
-  query_length +=
-      sprintf(&query[query_length], " WHERE `users`.`imsi`='%s'", imsi.c_str());
+  // Pure, connection-free: safe outside the lock.
+  const std::string doc = build_sequence_number_json(sqn);
+
+  // Everything from here to the final unlock touches db_desc.db_conn, so it is
+  // all inside the critical section -- INCLUDING the escaping.
   pthread_mutex_lock(&db_desc.db_cs_mutex);
-  if (mysql_query(db_desc.db_conn, query)) {
+
+  std::string doc_escaped;
+  std::string ueid;
+  if (!sql_escape(doc, doc_escaped) || !sql_escape(imsi, ueid)) {
+    pthread_mutex_unlock(&db_desc.db_cs_mutex);
+    Logger::authentication().error("Failed to escape the UPDATE parameters");
+    return false;
+  }
+  const std::string query =
+      "UPDATE `AuthenticationSubscription` SET `sequenceNumber`='" +
+      doc_escaped + "' WHERE `ueid`='" + ueid + "'";
+
+  if (mysql_query(db_desc.db_conn, query.c_str())) {
     pthread_mutex_unlock(&db_desc.db_cs_mutex);
     Logger::authentication().error(
         "Query execution failed: %s", mysql_error(db_desc.db_conn));
-    return;
+    return false;
   }
+  // The multi-statement drain loop is kept from the code it replaces:
+  // connect_to_mysql() sets MYSQL_OPTION_MULTI_STATEMENTS_ON, so results must
+  // be drained before the next query.
+  bool ok = true;
   do {
     res = mysql_store_result(db_desc.db_conn);
     if (res) {
@@ -360,53 +524,15 @@ void authentication::mysql_push_rand_sqn(
             "[MySQL] %lld rows affected", mysql_affected_rows(db_desc.db_conn));
       } else { /* some error occurred */
         Logger::authentication().error("Could not retrieve result set");
+        ok = false;
         break;
       }
     }
-    if ((status = mysql_next_result(db_desc.db_conn)) > 0)
+    if ((status = mysql_next_result(db_desc.db_conn)) > 0) {
       Logger::authentication().error("Could not execute statement");
-  } while (status == 0);
-  pthread_mutex_unlock(&db_desc.db_cs_mutex);
-  return;
-}
-
-//------------------------------------------------------------------------------
-void authentication::mysql_increment_sqn(const std::string& imsi) {
-  int status;
-  MYSQL_RES* res;
-  char query[1000];
-  if (db_desc.db_conn == NULL) {
-    Logger::authentication().error("Cannot connect to MySQL DB");
-    return;
-  }
-  sprintf(
-      query, "UPDATE `users` SET `sqn` = `sqn` + 32 WHERE `users`.`imsi`='%s'",
-      imsi.c_str());
-
-  pthread_mutex_lock(&db_desc.db_cs_mutex);
-
-  if (mysql_query(db_desc.db_conn, query)) {
-    pthread_mutex_unlock(&db_desc.db_cs_mutex);
-    Logger::authentication().error(
-        "Query execution failed: %s", mysql_error(db_desc.db_conn));
-    return;
-  }
-  do {
-    res = mysql_store_result(db_desc.db_conn);
-    if (res) {
-      mysql_free_result(res);
-    } else {
-      if (mysql_field_count(db_desc.db_conn) == 0) {
-        Logger::authentication().debug(
-            "[MySQL] %lld rows affected", mysql_affected_rows(db_desc.db_conn));
-      } else {
-        Logger::authentication().error("Could not retrieve result set");
-        break;
-      }
+      ok = false;
     }
-    if ((status = mysql_next_result(db_desc.db_conn)) > 0)
-      Logger::authentication().error("Could not execute statement");
   } while (status == 0);
   pthread_mutex_unlock(&db_desc.db_cs_mutex);
-  return;
+  return ok;
 }

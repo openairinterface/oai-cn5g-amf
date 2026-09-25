@@ -3478,6 +3478,8 @@ bool amf_n1::authentication_failure_handle(
         Logger::amf_n1().warn(
             "IE Authentication Failure Parameter (AUTS) not received");
       }
+      // P11: do not leak the previous AUTS on a repeated synch failure.
+      oai::utils::utils::bdestroy_wrapper(&nc->auts);
       nc->auts = auts;
       oai::utils::output_wrapper::print_buffer(
           "amf_n1", "Received AUTS", (uint8_t*) bdata(auts), blength(auts));
