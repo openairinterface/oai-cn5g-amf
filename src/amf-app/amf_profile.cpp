@@ -4,6 +4,8 @@
 
 #include "amf_profile.hpp"
 
+#include <arpa/inet.h>
+
 #include "amf_config.hpp"
 #include "conversions.hpp"
 #include "logger.hpp"

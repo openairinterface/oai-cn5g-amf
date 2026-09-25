@@ -4,6 +4,9 @@
 
 #include "amf_config.hpp"
 
+#include <arpa/inet.h>
+#include <netinet/in.h>
+
 #include "3gpp_29.502.h"
 #include "amf_app.hpp"
 #include "amf_conversions.hpp"
@@ -1621,7 +1624,7 @@ bool amf_config::from_json(nlohmann::json& json_data) {
       }
     }
 
-  } catch (nlohmann::detail::exception& e) {
+  } catch (nlohmann::json::exception& e) {
     Logger::config().error(
         "Exception when reading configuration from json %s", e.what());
     return false;

@@ -6,7 +6,6 @@
 
 #include <arpa/inet.h>
 #include <errno.h>
-#include <gmp.h>
 #include <nettle/hmac.h>
 #include <pthread.h>
 #include <stdio.h>

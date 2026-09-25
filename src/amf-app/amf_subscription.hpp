@@ -2,6 +2,9 @@
  * SPDX-License-Identifier: LicenseRef-CSSL-1.0
  */
 
+#ifndef FILE_AMF_SUBSCRIPTION_HPP_SEEN
+#define FILE_AMF_SUBSCRIPTION_HPP_SEEN
+
 #include "3gpp_29.518.h"
 #include "amf.hpp"
 
@@ -40,3 +43,5 @@ class amf_subscription {
 };
 
 }  // namespace amf_application
+
+#endif

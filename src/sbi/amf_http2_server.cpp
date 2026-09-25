@@ -4,6 +4,8 @@
 
 #include "amf_http2_server.hpp"
 
+#include <arpa/inet.h>
+
 #include <boost/algorithm/string.hpp>
 #include <boost/thread.hpp>
 #include <boost/thread/future.hpp>
@@ -185,7 +187,7 @@ void amf_http2_server::start() {
                       ue_context_id, subscription_id, res);
                 }
               }
-            } catch (nlohmann::detail::exception& e) {
+            } catch (nlohmann::json::exception& e) {
               Logger::amf_server().warn(
                   "Cannot parse the JSON data (error: %s)!", e.what());
               return send_response(
@@ -316,7 +318,7 @@ void amf_http2_server::start() {
               }
               this->update_configuration_handler(configuration_info, res);
             }
-          } catch (nlohmann::detail::exception& e) {
+          } catch (nlohmann::json::exception& e) {
             Logger::amf_sbi().warn(
                 "Can not parse the JSON data (error: %s)!", e.what());
             return send_response(
@@ -390,7 +392,7 @@ void amf_http2_server::start() {
                   parts[oai::utils::JSON_CONTENT_ID_MIME].body.c_str())
                   .get_to(n2InformationTransferReqData);
 
-            } catch (nlohmann::detail::exception& e) {
+            } catch (nlohmann::json::exception& e) {
               Logger::amf_server().warn(
                   "Cannot parse the JSON data (error: %s)!", e.what());
               return send_response(
@@ -445,7 +447,7 @@ void amf_http2_server::start() {
             }
             // Get Routing ID
             bstring routing_id = nullptr;
-            amf_conv::string_2_bstring(
+            amf_conv::string_to_bstring(
                 n2InformationTransferReqData.getN2Information()
                     .getNrppaInfo()
                     .getNfId(),
@@ -877,7 +879,7 @@ void amf_http2_server::start() {
                   ue_context_id, ue_context_info_class, res);
             }
 
-          } catch (nlohmann::detail::exception& e) {
+          } catch (nlohmann::json::exception& e) {
             Logger::amf_sbi().warn(
                 "Can not parse the JSON data (error: %s)!", e.what());
             return send_response(
@@ -939,7 +941,7 @@ void amf_http2_server::start() {
                   ue_context_id, request_loc_info, res);
             }
 
-          } catch (nlohmann::detail::exception& e) {
+          } catch (nlohmann::json::exception& e) {
             Logger::amf_sbi().warn(
                 "Can not parse the JSON data (error: %s)!", e.what());
             return send_response(
@@ -1156,7 +1158,7 @@ void amf_http2_server::n1_n2_message_transfer_handler(
           request_valid = false;
           break;
         }
-        amf_conv::string_2_bstring(
+        amf_conv::string_to_bstring(
             n1N2MessageTransferReqData.getN2InfoContainer()
                 .getNrppaInfo()
                 .getNfId(),
