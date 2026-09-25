@@ -1779,13 +1779,12 @@ void amf_n2::handle_itti_message(
   if (!itti_msg->ue_radio_cap_info_ind) return;
   uint64_t amf_ue_ngap_id = itti_msg->ue_radio_cap_info_ind->getAmfUeNgapId();
   uint32_t ran_ue_ngap_id = itti_msg->ue_radio_cap_info_ind->getRanUeNgapId();
-  OCTET_STRING_t ue_radio_cap = {};
-  itti_msg->ue_radio_cap_info_ind->getUeRadioCapability(ue_radio_cap);
 
   // Store UE Radio Capability in UE NGAP Context
   std::shared_ptr<ue_ngap_context> unc = {};
-
   if (!get_ngap_ctx_by_ran_gnb(ran_ue_ngap_id, gc->gnb_id, unc)) return;
+  OCTET_STRING_t ue_radio_cap = {};
+  itti_msg->ue_radio_cap_info_ind->getUeRadioCapability(ue_radio_cap);
   // Release the previously stored UE Radio Capability (if any)
   oai::utils::utils::bdestroy_wrapper(&unc->ue_radio_cap_ind);
   if (ue_radio_cap.buf and (ue_radio_cap.size > 0))
