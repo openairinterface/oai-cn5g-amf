@@ -1524,8 +1524,11 @@ void amf_app::handle_itti_message(itti_sbi_nudm_sdm_notification& itti_msg) {
       "SDM notification for SUPI %s: %lu changed resource(s)",
       itti_msg.supi.c_str(), notify_items.size());
 
-  bool ue_is_connected = nc && (nc->_5gmm_state == _5GMM_REGISTERED) &&
-                         (nc->nas_status == CM_CONNECTED);
+  cm_state_t cm_state = CM_IDLE;
+  if (nc) amf_n1_inst->get_5gcm_state(nc, cm_state);
+
+  bool ue_is_connected =
+      nc && (nc->_5gmm_state == _5GMM_REGISTERED) && (cm_state == CM_CONNECTED);
 
   for (const auto& item : notify_items) {
     const std::string& resource_id = item.getResourceId();

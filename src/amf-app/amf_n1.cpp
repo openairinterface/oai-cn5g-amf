@@ -763,7 +763,7 @@ void amf_n1::nas_signalling_establishment_request_handle(
     set_amf_ue_ngap_id_2_nas_context(amf_ue_ngap_id, nc);
     nc->ctx_avaliability_ind = false;
     // change UE connection status CM-IDLE -> CM-CONNECTED
-    nc->nas_status      = CM_CONNECTED;
+    set_5gcm_state(nc, CM_CONNECTED);
     nc->amf_ue_ngap_id  = amf_ue_ngap_id;
     nc->ran_ue_ngap_id  = ran_ue_ngap_id;
     nc->serving_network = snn;
@@ -1111,9 +1111,9 @@ bool amf_n1::identity_response_handle(
 
   // Update Nas Context if exists
   nc->ctx_avaliability_ind = true;
-  nc->nas_status           = CM_CONNECTED;
-  nc->amf_ue_ngap_id       = amf_ue_ngap_id;
-  nc->ran_ue_ngap_id       = ran_ue_ngap_id;
+  set_5gcm_state(nc, CM_CONNECTED);
+  nc->amf_ue_ngap_id = amf_ue_ngap_id;
+  nc->ran_ue_ngap_id = ran_ue_ngap_id;
   // Stop Mobile Reachable Timer/Implicit Deregistration Timer
   itti_inst->timer_remove(nc->mobile_reachable_timer);
   itti_inst->timer_remove(nc->implicit_deregistration_timer);
@@ -2008,7 +2008,7 @@ bool amf_n1::registration_request_handle(
           set_amf_ue_ngap_id_2_nas_context(amf_ue_ngap_id, nc);
           nc->ctx_avaliability_ind = false;
           // Change UE connection status CM-IDLE -> CM-CONNECTED
-          nc->nas_status      = CM_CONNECTED;
+          set_5gcm_state(nc, CM_CONNECTED);
           nc->amf_ue_ngap_id  = amf_ue_ngap_id;
           nc->ran_ue_ngap_id  = ran_ue_ngap_id;
           nc->serving_network = snn;
@@ -2124,7 +2124,7 @@ bool amf_n1::registration_request_handle(
         set_amf_ue_ngap_id_2_nas_context(amf_ue_ngap_id, nc);
         nc->ctx_avaliability_ind = false;
         // change UE connection status CM-IDLE -> CM-CONNECTED
-        nc->nas_status                 = CM_CONNECTED;
+        set_5gcm_state(nc, CM_CONNECTED);
         nc->amf_ue_ngap_id             = amf_ue_ngap_id;
         nc->ran_ue_ngap_id             = ran_ue_ngap_id;
         nc->serving_network            = snn;
@@ -2560,7 +2560,9 @@ cm_state_t amf_n1::get_ue_cm_state(const std::string& supi) {
         "No NAS context for SUPI %s; assuming CM-CONNECTED", supi.c_str());
     return CM_CONNECTED;
   }
-  return nc->nas_status;
+  cm_state_t state = CM_CONNECTED;
+  get_5gcm_state(nc, state);
+  return state;
 }
 
 //------------------------------------------------------------------------------
