@@ -510,6 +510,10 @@ int ngap_amf_handle_pdu_session_resource_modify_response(
 
   auto response_msg = std::make_unique<PduSessionResourceModifyResponseMsg>();
 
+  // TODO: decode() (oai-cn5g-common) rejects the whole message on any IE it
+  // does not know — UserLocationInformation, FailedToModifyList and
+  // CriticalityDiagnostics are all optional but commonly sent by real gNBs —
+  // so the response is dropped even for the QoS flows the RAN applied.
   if (!response_msg->decode(message_p)) {
     Logger::ngap().error(
         "Decoding PduSessionResourceModifyResponseMsg message error");
@@ -550,8 +554,10 @@ int ngap_amf_handle_pdu_session_resource_modify_response(
     }
   }
 
-  // TODO:for PDUSessionResourceFailedToModifyListModRes
-  // TODO: process User Location Information if available
+  // TODO: PDUSessionResourceFailedToModifyListModRes is not forwarded to the
+  // SMF, so a rejected QoS flow is indistinguishable from an applied one
+  // (TS 29.502 §5.6.2.2). A fully-rejected response also returns early above.
+  // TODO: UserLocationInformation from the response is not forwarded either.
   return RETURNok;
 }
 

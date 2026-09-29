@@ -29,6 +29,12 @@ ue_context::ue_context() {
   pdu_sessions          = {};
   nrf_uri               = std::nullopt;
   pcf_addr              = {};
+
+  // TODO: populate from the UDM subscribedUeAmbr and set has_ue_ambr (see
+  // amf_app::get_access_and_mobility_subscription_data).
+  ue_ambr_dl  = 0;
+  ue_ambr_ul  = 0;
+  has_ue_ambr = false;
 }
 
 //------------------------------------------------------------------------------

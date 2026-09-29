@@ -660,10 +660,13 @@ void amf_sbi::handle_itti_message(itti_nsmf_pdusession_create_sm_context& smf) {
           nc->supi, psc, smf_uri_root, smf_api_version, smf.sm_msg, dnn, uc);
     } break;
     case kExistingPduSession: {
-      // TODO:
+      // TODO: PDU session re-establishment is not handled, the request is
+      // silently dropped (TS 23.502 §4.3.3.2).
     } break;
     case kPduSessionTypeModificationRequest: {
-      // TODO:
+      // TODO: unreachable — ul_nas_transport_handle only builds a create
+      // request for the initial/existing types; a modification request is sent
+      // to the SMF as UpdateSMContext instead. Wire up or remove.
     } break;
     default: {
       // TODO: should be removed
@@ -730,14 +733,16 @@ void amf_sbi::handle_pdu_session_initial_request(
   session_estb_request["sNssai"]["sst"] = psc->snssai.sst;
   session_estb_request["sNssai"]["sd"]  = psc->snssai.sd;
   session_estb_request["pduSessionId"]  = psc->pdu_session_id;
+  // TODO: derive requestType from the SM NAS message (TS 29.502 §5.6.2.2).
   session_estb_request["requestType"] = "INITIAL_REQUEST";  // TODO: from SM_MSG
   session_estb_request["servingNfId"] = amf_app_inst->get_nf_instance();
   session_estb_request["servingNetwork"]["mcc"] = psc->plmn.mcc;
   session_estb_request["servingNetwork"]["mnc"] = psc->plmn.mnc;
-  session_estb_request["anType"]                = "3GPP_ACCESS";  // TODO
-  session_estb_request["ratType"]               = "NR";
-  session_estb_request["selMode"]               = "VERIFIED";
-  session_estb_request["epsInterworkingInd"]    = "NONE";
+  // TODO: derive anType from the UE access type (TS 23.501 §5.6.1).
+  session_estb_request["anType"]             = "3GPP_ACCESS";  // TODO
+  session_estb_request["ratType"]            = "NR";
+  session_estb_request["selMode"]            = "VERIFIED";
+  session_estb_request["epsInterworkingInd"] = "NONE";
 
   session_estb_request["smContextStatusUri"] =
       amf_sbi_helper::get_sm_context_status_notification_uri(
@@ -822,6 +827,8 @@ void amf_sbi::handle_itti_message(
   Logger::amf_sbi().debug("SMF's URI: %s", remote_uri.c_str());
 
   nlohmann::json pdu_session_release_request;
+  // TODO: cause, 5gMmCauseValue, userLocation and n2SmInfo are all
+  // unpopulated (TS 29.502 §5.6.2.3).
   pdu_session_release_request["cause"] = "REL_DUE_TO_REACTIVATION";  // TODO:
   // pdu_session_release_request["ngApCause"] = "radioNetwork";
   // TODO: 5gMmCauseValue

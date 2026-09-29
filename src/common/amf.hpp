@@ -40,6 +40,9 @@ typedef uint32_t n1n2sub_id_t;
 
 constexpr uint64_t SECONDS_SINCE_FIRST_EPOCH = 2208988800;
 
+// TODO: UE-AMBR should come from the UDM subscribedUeAmbr (AM subscription
+// data), optionally overridden by the PCF AM policy ueAmbr; these constants
+// are only the fallback.
 #define UE_AGGREGATE_MAXIMUM_BIT_RATE_DL 1000000000
 #define UE_AGGREGATE_MAXIMUM_BIT_RATE_UL 1000000000
 
