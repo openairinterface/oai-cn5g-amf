@@ -25,7 +25,6 @@ class Options {
  public:
   static bool parse(int argc, char** argv);
   static bool parseInputOptions(int argc, char** argv);
-  static bool parseJson();
   static bool validateOptions();
 
   static const std::string& getYamlConfig() { return m_yamlcfg; }

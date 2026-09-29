@@ -2,6 +2,8 @@
  * SPDX-License-Identifier: LicenseRef-CSSL-1.0
  */
 
+#include <arpa/inet.h>
+#include <netinet/in.h>
 #include <signal.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -24,8 +26,6 @@
 #include "ngap_app.hpp"
 #include "options.hpp"
 #include "pistache/endpoint.h"
-#include "pistache/http.h"
-#include "pistache/router.h"
 
 using namespace oai::config;
 using namespace amf_application;

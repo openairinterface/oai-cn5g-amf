@@ -24,40 +24,35 @@ class amf_sbi_helper : public sbi_helper {
       "n1-message-notify";
   static inline const std::string AmfCommPathN1N2Messages = "n1-n2-messages";
 
+  static std::string service_base(const std::string& base) {
+    return base + amf_cfg->sbi.api_version.value_or(kDefaultSbiApiVersion);
+  }
+
   static std::string AmfCommunicationServiceBase() {
-    return sbi_helper::AmfCommBase +
-           amf_cfg->sbi.api_version.value_or(kDefaultSbiApiVersion);
+    return service_base(sbi_helper::AmfCommBase);
   }
 
   static std::string AmfEventExposureServiceBase() {
-    return sbi_helper::AmfEvtsBase +
-           amf_cfg->sbi.api_version.value_or(kDefaultSbiApiVersion);
+    return service_base(sbi_helper::AmfEvtsBase);
   }
 
   static std::string AmfStatusNotifyServiceBase() {
-    return sbi_helper::AmfStatusNotifBase +
-           amf_cfg->sbi.api_version.value_or(kDefaultSbiApiVersion);
+    return service_base(sbi_helper::AmfStatusNotifBase);
   }
 
   static std::string AmfConfigurationServiceBase() {
-    return sbi_helper::AmfConfBase +
-           amf_cfg->sbi.api_version.value_or(kDefaultSbiApiVersion);
+    return service_base(sbi_helper::AmfConfBase);
   }
 
   static std::string AmfLocationServiceBase() {
-    return sbi_helper::AmflocBase +
-           amf_cfg->sbi.api_version.value_or(kDefaultSbiApiVersion);
+    return service_base(sbi_helper::AmflocBase);
   }
 
   static std::string AmfCallbackBase() {
-    return sbi_helper::AmfCallbackBase +
-           amf_cfg->sbi.api_version.value_or(kDefaultSbiApiVersion);
+    return service_base(sbi_helper::AmfCallbackBase);
   }
 
-  static std::string AmfMTBase() {
-    return sbi_helper::AmfMTBase +
-           amf_cfg->sbi.api_version.value_or(kDefaultSbiApiVersion);
-  }
+  static std::string AmfMTBase() { return service_base(sbi_helper::AmfMTBase); }
 
   static void set_problem_details(
       nlohmann::json& json_data, const std::string& detail);

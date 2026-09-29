@@ -28,23 +28,12 @@ class amf_conv : public oai::utils::conv {
       uint8_t* buf, int len, std::string& out);
   static char* bstring2charString(bstring b);
   static unsigned char* format_string_as_hex(std::string str);
-  static void bstring_2_string(const bstring& b_str, std::string& str);
-  static void string_2_bstring(const std::string& str, bstring& b_str);
   // TODO: bitstring_2_int32
   static void to_lower(std::string& str);
   static void to_lower(bstring& b_str);
   static std::string get_serving_network_name(
       const std::string& mnc, const std::string& mcc);
   static std::string uint32_to_hex_string_full_format(uint32_t value);
-  template<class T>
-  static std::string int_to_hex_string_format(T value, uint8_t size) {
-    if (size > sizeof(T)) return {};
-    char hex_str[size + 1];
-    sprintf(hex_str, "%X", value);
-    std::string out = std::string(hex_str);
-    if (out.size() % 2 == 1) out = "0" + out;
-    return ("0x" + out);
-  }
   static std::string suci_to_supi(const oai::nas::SUCI_imsi_t& suci);
   static std::string imsi_to_supi(const std::string& imsi);
   static std::string supi_to_imsi(const std::string& supi);
