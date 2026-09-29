@@ -7,79 +7,36 @@
 # Dockerfile for the OpenAirInterface AMF service
 #   Valid for CentOS Stream 10
 #
+# Builds on the common images from oai-cn5g-common-build:
+#   oai-cn-base    build tools and the libraries built from source
+#   oai-cn-runtime debug tools, shared runtime libraries and yq
+#
 #---------------------------------------------------------------------
+
+ARG BASE_IMAGE=oai-cn-base:centos
+ARG RUNTIME_IMAGE=oai-cn-runtime:centos
 
 #---------------------------------------------------------------------
 # BUILDER IMAGE
 #---------------------------------------------------------------------
 
-FROM quay.io/centos/centos:stream10 AS oai-amf-builder
-
-ENV IS_DOCKERFILE=1
-
-# meson and ninja-build come from CRB. EL 10 ships no mysql packages, so
-# build_helper.amf takes the MySQL client API from mariadb-connector-c-devel.
-# boost-devel is installed here because build_helper.amf lists it only for
-# Ubuntu. The other build_amf dependencies are in BaseOS/AppStream.
-RUN dnf config-manager --set-enabled crb && \
-    dnf install epel-release -y && \
-    dnf update -y && \
-    # Log the exact OS release used for the build.
-    cat /etc/os-release && \
-    dnf install -y \
-        psmisc \
-        git \
-        diffutils \
-        libasan \
-        wget \
-        file \
-        boost-devel && \
-    # Libraries built from source are installed under /usr/local, which is not
-    # on the default loader path on EL. This is also needed for the ldd check.
-    echo "/usr/local/lib" > /etc/ld.so.conf.d/local-lib.conf && \
-    echo "/usr/local/lib64" >> /etc/ld.so.conf.d/local-lib.conf
-
-# Git configuration
-RUN git config --global https.postBuffer 123289600 && \
-    git config --global http.sslverify false
+FROM ${BASE_IMAGE} AS oai-amf-builder
 
 # Copy source code
-WORKDIR /openair-amf
 COPY . /openair-amf
 
-# Install and Build AMF
-WORKDIR /openair-amf/build/scripts
-RUN ./build_amf --install-deps --force
-RUN ./build_amf --clean --Verbose --build-type Release --jobs && \
-    ldd /openair-amf/build/amf/build/amf && \
-    mv /openair-amf/build/amf/build/amf /openair-amf/build/amf/build/oai_amf
-
-FROM mikefarah/yq:latest AS yq-source
+# Build AMF, then collect the libraries it needs into runtime-libs
+RUN /openair-amf/build/common-build/docker/build_nf.sh amf
 
 #---------------------------------------------------------------------
 # TARGET IMAGE
 #---------------------------------------------------------------------
-FROM quay.io/centos/centos:stream10-minimal AS oai-amf
-ENV TZ=Europe/Paris
+FROM ${RUNTIME_IMAGE} AS oai-amf
 
-RUN microdnf update -y && \
-    microdnf install -y \
-# Timezone data, and debugging/networking utilities
-      tzdata \
-      procps-ng \
-      psmisc \
-      net-tools \
-      iputils \
-      tcpdump \
-# Runtime dependencies of oai_amf
-      libicu \
-      boost \
-      libevent \
-      nettle \
+# Runtime packages only the AMF needs; the shared ones come from oai-cn-runtime
+RUN microdnf install -y \
       gmp \
-      lksctp-tools \
-      mariadb-connector-c \
-      findutils && \
+      lksctp-tools && \
     microdnf clean all -y && \
     rm -rf /var/cache/yum /var/cache/dnf
 
@@ -89,20 +46,10 @@ COPY --from=oai-amf-builder \
     /openair-amf/build/amf/build/oai_amf \
     /openair-amf/scripts/healthcheck.sh \
     ./
-COPY --from=yq-source /usr/bin/yq /usr/bin
 
-# Only the libraries built from source; the rest come from the packages above.
-# pistache (meson) and nghttp2 (autotools) install into lib, the CMake-built
-# spdlog, fmt, yaml-cpp and cpr into lib64.
-COPY --from=oai-amf-builder \
-    /usr/local/lib/libpistache.so* \
-    /usr/local/lib/libnghttp2_asio.so \
-    /usr/local/lib/libnghttp2_asio.so.1 \
-    /usr/local/lib64/libspdlog.so \
-    /usr/local/lib64/libfmt.so \
-    /usr/local/lib64/libyaml-cpp.so.0.* \
-    /usr/local/lib64/libcpr.so.1* \
-    /usr/lib64/
+# Only the libraries built from source, as collected in the builder; /usr/lib64
+# is on the default loader path, unlike /usr/local on EL
+COPY --from=oai-amf-builder /openair-amf/runtime-libs/ /usr/lib64/
 
 RUN ldconfig && \
     ldd /openair-amf/bin/oai_amf && \

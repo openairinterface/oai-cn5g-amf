@@ -2,3 +2,6 @@
 archives
 src/oai_rules_result*
 *.html
+
+# Third-party sources from a local bare-metal --install-deps
+build/ext
