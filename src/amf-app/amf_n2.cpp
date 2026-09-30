@@ -80,8 +80,7 @@ void amf_n2_task(void*);
 static void resolve_ue_ambr(
     uint32_t ran_ue_ngap_id, uint64_t amf_ue_ngap_id, uint64_t& dl,
     uint64_t& ul) {
-  std::shared_ptr<ue_context> uc =
-      amf_app_inst->get_ue_context(ran_ue_ngap_id, amf_ue_ngap_id);
+  std::shared_ptr<ue_context> uc = amf_app_inst->get_ue_context(amf_ue_ngap_id);
   if (uc && uc->has_ue_ambr) {
     dl = uc->ue_ambr_dl;
     ul = uc->ue_ambr_ul;
