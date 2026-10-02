@@ -195,8 +195,14 @@ void* sctp_server::sctp_receiver_thread(void* arg) {
           int ret = ptr->sctp_read_from_socket(i, ptr->app_->get_ppid());
           if (ret == SCTP_RC_DISCONNECT) {
             FD_CLR(i, &master);
+            if (close(i) != 0) {
+              Logger::sctp().error(
+                  "[socket(%d)] Close error: %s:%d", i, strerror(errno), errno);
+            }
             if (i == fdmax) {
-              while (FD_ISSET(fdmax, &master) == false) fdmax -= 1;
+              while (fdmax > ptr->get_socket() && !FD_ISSET(fdmax, &master)) {
+                fdmax -= 1;
+              }
             }
           }
         }
@@ -343,6 +349,10 @@ int sctp_server::handle_assoc_change(
               (sctp_assoc_id_t) sctp_assoc_changed->sac_assoc_id) != NULL) {
         rc = sctp_handle_com_down(
             (sctp_assoc_id_t) sctp_assoc_changed->sac_assoc_id);
+      } else {
+        // The accepted socket still needs to be removed from select() and
+        // closed when association setup did not complete successfully.
+        rc = SCTP_RC_DISCONNECT;
       }
       break;
     }
@@ -533,11 +543,12 @@ int sctp_server::sctp_get_local_addresses(
 //------------------------------------------------------------------------------
 int sctp_server::sctp_send_msg(
     sctp_assoc_id_t sctp_assoc_id, sctp_stream_id_t stream, bstring* payload) {
-  // Snapshot the fields needed for the send under the lock; do not hold the
-  // lock across the (potentially blocking) sctp_sendmsg() call and do not
-  // keep the raw pointer (the association may be removed concurrently by the
-  // receiver thread)
+  // Duplicate the socket under the association lock. The receiver thread may
+  // remove the association and close its descriptor while sctp_sendmsg() is in
+  // progress; the duplicate keeps the underlying socket alive and cannot be
+  // confused with a subsequently reused descriptor number.
   int sd        = -1;
+  int send_sd   = -1;
   uint32_t ppid = 0;
   {
     std::lock_guard<std::mutex> lock(sctp_ctx_mutex_);
@@ -554,8 +565,15 @@ int sctp_server::sctp_send_msg(
           "The socket is invalid (may be closed, assoc id %d)", sctp_assoc_id);
       return RETURNerror;
     }
-    sd   = assoc_desc->sd;
-    ppid = assoc_desc->ppid;
+    sd      = assoc_desc->sd;
+    ppid    = assoc_desc->ppid;
+    send_sd = dup(sd);
+    if (send_sd == -1) {
+      Logger::sctp().error(
+          "Could not duplicate socket for association Id (%d): %s:%d",
+          sctp_assoc_id, strerror(errno), errno);
+      return RETURNerror;
+    }
   }
 
   Logger::sctp().debug(
@@ -565,13 +583,21 @@ int sctp_server::sctp_send_msg(
 
   // Set timetolive to 500ms
   if (sctp_sendmsg(
-          sd, (const void*) bdata(*payload), (size_t) blength(*payload), NULL,
-          0, htonl(ppid), 0, stream, this->sctp_ttl, 0) < 0) {
+          send_sd, (const void*) bdata(*payload), (size_t) blength(*payload),
+          NULL, 0, htonl(ppid), 0, stream, this->sctp_ttl, 0) < 0) {
+    const int send_errno = errno;
+    close(send_sd);
     Logger::sctp().error(
         "[Socket %d] Send stream %u, PPID %u, len %u failed (%s, %d)", sd,
-        stream, htonl(ppid), blength(*payload), strerror(errno), errno);
+        stream, htonl(ppid), blength(*payload), strerror(send_errno),
+        send_errno);
     //*payload = NULL;
     return RETURNerror;
+  }
+  if (close(send_sd) != 0) {
+    Logger::sctp().error(
+        "[socket(%d)] Close duplicate error: %s:%d", send_sd, strerror(errno),
+        errno);
   }
   Logger::sctp().debug(
       "Successfully sent %d bytes on stream %d", blength(*payload), stream);
