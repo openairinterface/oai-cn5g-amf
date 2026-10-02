@@ -365,8 +365,21 @@ int sctp_server::sctp_read_from_socket(int sd, uint32_t ppid) {
       &from_len, &sinfo, &flags);
 
   if (n < 0) {
-    Logger::sctp().error("sctp_recvmsg error:: %s:%d", strerror(errno), errno);
-    return SCTP_RC_ERROR;
+    const int receive_errno = errno;
+    if (receive_errno == EINTR || receive_errno == EAGAIN ||
+        receive_errno == EWOULDBLOCK || receive_errno == ENOMEM ||
+        receive_errno == ENOBUFS) {
+      return SCTP_RC_NORMAL_READ;
+    }
+    Logger::sctp().error(
+        "[socket(%d)] sctp_recvmsg error: %s:%d", sd, strerror(receive_errno),
+        receive_errno);
+    return sctp_handle_socket_down(sd);
+  }
+
+  if (n == 0) {
+    Logger::sctp().debug("[socket(%d)] SCTP peer closed the connection", sd);
+    return sctp_handle_socket_down(sd);
   }
 
   if (flags & MSG_NOTIFICATION) {
@@ -428,6 +441,25 @@ int sctp_server::sctp_handle_com_down(sctp_assoc_id_t assoc_id) {
   // so that no message can be sent on this association anymore
   remove_association(assoc_id);
   app_->handle_sctp_shutdown(assoc_id);
+  return SCTP_RC_DISCONNECT;
+}
+
+//------------------------------------------------------------------------------
+int sctp_server::sctp_handle_socket_down(int sd) {
+  sctp_assoc_id_t assoc_id = 0;
+  bool association_found   = false;
+  {
+    std::lock_guard<std::mutex> lock(sctp_ctx_mutex_);
+    for (const auto* association : sctp_ctx_) {
+      if (association != nullptr && association->sd == sd) {
+        assoc_id          = association->assoc_id;
+        association_found = true;
+        break;
+      }
+    }
+  }
+
+  if (association_found) return sctp_handle_com_down(assoc_id);
   return SCTP_RC_DISCONNECT;
 }
 

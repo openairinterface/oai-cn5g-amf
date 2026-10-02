@@ -79,6 +79,7 @@ class sctp_server {
   int handle_assoc_change(
       int sd, uint32_t ppid, struct sctp_assoc_change* assoc_change);
   int sctp_handle_com_down(sctp_assoc_id_t assoc_id);
+  int sctp_handle_socket_down(int sd);
   int sctp_handle_reset(
       int sd, uint32_t ppid, struct sctp_assoc_change* sctp_assoc_changed);
   sctp_association_t* add_new_association(
