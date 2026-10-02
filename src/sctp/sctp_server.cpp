@@ -7,6 +7,9 @@
 #include "logger.hpp"
 #include "utils.hpp"
 
+#include <algorithm>
+#include <chrono>
+
 extern "C" {
 #include <arpa/inet.h>
 #include <errno.h>
@@ -18,6 +21,8 @@ extern "C" {
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/resource.h>
+#include <sys/select.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
@@ -28,6 +33,28 @@ extern "C" {
 namespace sctp {
 
 pthread_t tmp_thread;
+
+namespace {
+constexpr auto kAcceptRetryDelay             = std::chrono::seconds(1);
+constexpr rlim_t kMaxReservedFileDescriptors = 128;
+
+bool is_transient_accept_error(int error) {
+  return error == EINTR || error == EAGAIN || error == EWOULDBLOCK ||
+         error == ECONNABORTED || error == EPROTO || error == ENETDOWN ||
+         error == ENOPROTOOPT || error == EHOSTDOWN || error == ENONET ||
+         error == EHOSTUNREACH || error == EOPNOTSUPP || error == ENETUNREACH;
+}
+
+bool is_resource_accept_error(int error) {
+  return error == EMFILE || error == ENFILE || error == ENOBUFS ||
+         error == ENOMEM;
+}
+
+bool is_unrecoverable_accept_error(int error) {
+  return error == EBADF || error == EFAULT || error == EINVAL ||
+         error == ENOTSOCK;
+}
+}  // namespace
 
 //------------------------------------------------------------------------------
 sctp_application::~sctp_application() {}
@@ -163,31 +190,130 @@ void* sctp_server::sctp_receiver_thread(void* arg) {
   int clientsock;
   fd_set master;
   fd_set read_fds;
+  bool accept_paused = false;
+  std::chrono::steady_clock::time_point accept_retry_at;
 
+  tmp_thread = pthread_self();
   if (arg == NULL) pthread_exit(NULL);
   FD_ZERO(&master);
   FD_ZERO(&read_fds);
-  FD_SET(ptr->get_socket(), &master);
-  fdmax      = ptr->get_socket();
-  tmp_thread = pthread_self();
+  const int server_socket = ptr->get_socket();
+  if (server_socket < 0 || server_socket >= FD_SETSIZE) {
+    Logger::sctp().error(
+        "SCTP server socket descriptor (%d) is outside the range supported by "
+        "select() (FD_SETSIZE: %d)",
+        server_socket, FD_SETSIZE);
+    pthread_exit(NULL);
+  }
+
+  struct rlimit nofile_limit;
+  rlim_t descriptor_ceiling = FD_SETSIZE;
+  if (getrlimit(RLIMIT_NOFILE, &nofile_limit) == 0) {
+    descriptor_ceiling =
+        std::min<rlim_t>(descriptor_ceiling, nofile_limit.rlim_cur);
+  } else {
+    Logger::sctp().warn(
+        "Could not read RLIMIT_NOFILE, using FD_SETSIZE as the descriptor "
+        "ceiling: %s:%d",
+        strerror(errno), errno);
+  }
+  const rlim_t reserved_descriptors =
+      std::min<rlim_t>(kMaxReservedFileDescriptors, descriptor_ceiling / 4);
+  const int client_fd_limit =
+      static_cast<int>(descriptor_ceiling - reserved_descriptors);
+  if (server_socket >= client_fd_limit) {
+    Logger::sctp().error(
+        "SCTP server socket descriptor (%d) leaves no safe descriptor range "
+        "for clients (limit: %d)",
+        server_socket, client_fd_limit);
+    pthread_exit(NULL);
+  }
+  Logger::sctp().info(
+      "SCTP client descriptors are limited to values below %d, reserving %lu "
+      "descriptors for other AMF services",
+      client_fd_limit, static_cast<unsigned long>(reserved_descriptors));
+
+  FD_SET(server_socket, &master);
+  fdmax = server_socket;
 
   while (true) {
+    struct timeval accept_timeout;
+    struct timeval* select_timeout = NULL;
+    if (accept_paused) {
+      const auto now = std::chrono::steady_clock::now();
+      if (now >= accept_retry_at) {
+        FD_SET(server_socket, &master);
+        accept_paused = false;
+      } else {
+        const auto remaining =
+            std::chrono::duration_cast<std::chrono::microseconds>(
+                accept_retry_at - now);
+        accept_timeout.tv_sec  = remaining.count() / 1000000;
+        accept_timeout.tv_usec = remaining.count() % 1000000;
+        select_timeout         = &accept_timeout;
+      }
+    }
+
     memcpy(&read_fds, &master, sizeof(master));
-    if (select(fdmax + 1, &read_fds, NULL, NULL, NULL) == -1) {
+    const int ready = select(fdmax + 1, &read_fds, NULL, NULL, select_timeout);
+    if (ready == -1) {
+      const int select_errno = errno;
+      if (select_errno == EINTR) continue;
       Logger::sctp().error(
-          "[socket(%d)] Select() error: %s:%d", ptr->get_socket(),
-          strerror(errno), errno);
+          "[socket(%d)] Select() error: %s:%d", server_socket,
+          strerror(select_errno), select_errno);
       pthread_exit(NULL);
     }
+    if (ready == 0) continue;
+
     for (int i = 0; i <= fdmax; i++) {
       if (FD_ISSET(i, &read_fds)) {
-        if (i == ptr->get_socket()) {
-          if ((clientsock = accept(ptr->get_socket(), NULL, NULL)) < 0) {
-            Logger::sctp().error(
-                "[socket(%d)] Accept() error: %s:%d", ptr->get_socket(),
-                strerror(errno), errno);
-            pthread_exit(NULL);
+        if (i == server_socket) {
+          if ((clientsock = accept(server_socket, NULL, NULL)) < 0) {
+            const int accept_errno = errno;
+            if (is_transient_accept_error(accept_errno)) continue;
+            if (is_resource_accept_error(accept_errno)) {
+              Logger::sctp().warn(
+                  "[socket(%d)] Pausing accepts after resource exhaustion: "
+                  "%s:%d",
+                  server_socket, strerror(accept_errno), accept_errno);
+              FD_CLR(server_socket, &master);
+              accept_paused = true;
+              accept_retry_at =
+                  std::chrono::steady_clock::now() + kAcceptRetryDelay;
+              continue;
+            }
+            if (is_unrecoverable_accept_error(accept_errno)) {
+              Logger::sctp().error(
+                  "[socket(%d)] Unrecoverable accept() error: %s:%d",
+                  server_socket, strerror(accept_errno), accept_errno);
+              pthread_exit(NULL);
+            }
+            Logger::sctp().warn(
+                "[socket(%d)] Pausing accepts after unexpected error: %s:%d",
+                server_socket, strerror(accept_errno), accept_errno);
+            FD_CLR(server_socket, &master);
+            accept_paused = true;
+            accept_retry_at =
+                std::chrono::steady_clock::now() + kAcceptRetryDelay;
+            continue;
           } else {
+            if (clientsock >= client_fd_limit) {
+              Logger::sctp().warn(
+                  "Rejecting SCTP socket descriptor (%d): client descriptor "
+                  "limit is %d",
+                  clientsock, client_fd_limit);
+              if (close(clientsock) != 0) {
+                Logger::sctp().error(
+                    "[socket(%d)] Close error: %s:%d", clientsock,
+                    strerror(errno), errno);
+              }
+              FD_CLR(server_socket, &master);
+              accept_paused = true;
+              accept_retry_at =
+                  std::chrono::steady_clock::now() + kAcceptRetryDelay;
+              continue;
+            }
             FD_SET(clientsock, &master);
             if (clientsock > fdmax) fdmax = clientsock;
           }
@@ -199,8 +325,12 @@ void* sctp_server::sctp_receiver_thread(void* arg) {
               Logger::sctp().error(
                   "[socket(%d)] Close error: %s:%d", i, strerror(errno), errno);
             }
+            if (accept_paused) {
+              FD_SET(server_socket, &master);
+              accept_paused = false;
+            }
             if (i == fdmax) {
-              while (fdmax > ptr->get_socket() && !FD_ISSET(fdmax, &master)) {
+              while (fdmax > server_socket && !FD_ISSET(fdmax, &master)) {
                 fdmax -= 1;
               }
             }
