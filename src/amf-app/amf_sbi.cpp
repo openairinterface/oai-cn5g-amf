@@ -17,6 +17,7 @@
 #include "amf_app.hpp"
 #include "amf_config.hpp"
 #include "amf_conversions.hpp"
+#include "amf_event.hpp"
 #include "amf_n1.hpp"
 #include "amf_sbi_helper.hpp"
 #include "http_client.hpp"
@@ -428,7 +429,8 @@ void amf_sbi_task(void*) {
 }
 
 //------------------------------------------------------------------------------
-amf_sbi::amf_sbi() {
+amf_sbi::amf_sbi()
+    : oai::sba::nf_service(std::make_shared<amf_event>(), ::http_client_inst) {
   if (itti_inst->create_task(TASK_AMF_SBI, amf_sbi_task, nullptr)) {
     Logger::amf_sbi().error("Cannot create task TASK_AMF_SBI");
     throw std::runtime_error("Cannot create task TASK_AMF_SBI");

@@ -10,13 +10,15 @@ namespace bs2 = boost::signals2;
 
 #include "amf.hpp"
 #include "amf_event_sig.hpp"
+#include "nf_event.hpp"
 
 namespace amf_application {
-class amf_event {
+class amf_event : public oai::sba::nf_event {
  public:
   amf_event()                      = default;
   amf_event(amf_event const&)      = delete;
   void operator=(amf_event const&) = delete;
+  ~amf_event() override            = default;
 
   static amf_event& get_instance() {
     static amf_event instance;

@@ -8,15 +8,16 @@
 #include "3gpp_29.500.h"
 #include "http_definitions.hpp"
 #include "itti_msg_sbi.hpp"
+#include "nf_service.hpp"
 #include "pdu_session_context.hpp"
 #include "ue_context.hpp"
 
 namespace amf_application {
 
-class amf_sbi {
+class amf_sbi : public oai::sba::nf_service {
  public:
   amf_sbi();
-  virtual ~amf_sbi();
+  ~amf_sbi() override;
 
   /*
    * Handle ITTI message (Nsmf_PDUSessionCreateSMContext) to create a new PDU
