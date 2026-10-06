@@ -20,7 +20,6 @@
 #include "amf_event.hpp"
 #include "amf_n1.hpp"
 #include "amf_sbi_helper.hpp"
-#include "http_client.hpp"
 #include "itti.hpp"
 #include "itti_dispatch.hpp"
 #include "itti_msg_amf_app.hpp"
@@ -42,7 +41,7 @@ extern std::unique_ptr<oai::config::amf_config> amf_cfg;
 extern amf_sbi* amf_sbi_inst;
 extern amf_n1* amf_n1_inst;
 extern amf_app* amf_app_inst;
-extern std::shared_ptr<oai::http::http_client> http_client_inst;
+extern std::shared_ptr<oai::sba::http_client> http_client_inst;
 
 namespace {
 constexpr bool kSsrfStrictHostPolicy = false;
@@ -1340,9 +1339,9 @@ void amf_sbi::handle_itti_message(itti_sbi_register_with_udm& itti_msg) {
   std::string uri  = amf_sbi_helper::get_udm_amf_3gpp_access_registration_uri(
       amf_cfg->udm_addr, itti_msg.supi);
 
-  nlohmann::json response_json      = {};
-  uint32_t response_code            = 0;
-  oai::http::response http_response = {};
+  nlohmann::json response_json     = {};
+  uint32_t response_code           = 0;
+  oai::sba::response http_response = {};
   send_http_request(uri, oai::common::sbi::method_e::PUT, body, http_response);
 
   nlohmann::json response_data                = {};
@@ -1389,7 +1388,7 @@ void amf_sbi::handle_itti_message(itti_sbi_retrieve_am_data& itti_msg) {
   parameters             = "?plmn-id=" + url_encode(plmn_id.dump());
   uri += parameters;
 
-  oai::http::response http_response = {};
+  oai::sba::response http_response = {};
   send_http_request(uri, oai::common::sbi::method_e::GET, "", http_response);
 
   nlohmann::json response_data                = {};
@@ -1435,7 +1434,7 @@ void amf_sbi::handle_itti_message(
   parameters             = "?plmn-id=" + url_encode(plmn_id.dump());
   uri += parameters;
 
-  oai::http::response http_response = {};
+  oai::sba::response http_response = {};
   send_http_request(uri, oai::common::sbi::method_e::GET, "", http_response);
 
   nlohmann::json response_data                = {};
@@ -1477,7 +1476,7 @@ void amf_sbi::handle_itti_message(itti_sbi_pcf_discovery& itti_msg) {
   // TODO: support parameters PLMN ID, SNSSAI,
   nrf_uri += "?target-nf-type=PCF&requester-nf-type=AMF";
 
-  oai::http::response http_response = {};
+  oai::sba::response http_response = {};
   send_http_request(
       nrf_uri, oai::common::sbi::method_e::GET, "", http_response);
 
@@ -1515,7 +1514,7 @@ void amf_sbi::handle_itti_message(itti_sbi_am_policy_association& itti_msg) {
   nlohmann::json response_json = {};
   uint32_t response_code       = 0;
 
-  oai::http::response http_response = {};
+  oai::sba::response http_response = {};
   send_http_request(uri, oai::common::sbi::method_e::POST, body, http_response);
 
   nlohmann::json response_data                = {};
@@ -1562,9 +1561,9 @@ void amf_sbi::handle_itti_message(
     return;
   }
 
-  nlohmann::json response_json      = {};
-  uint32_t response_code            = 0;
-  oai::http::response http_response = {};
+  nlohmann::json response_json     = {};
+  uint32_t response_code           = 0;
+  oai::sba::response http_response = {};
 
   send_http_request(
       uc->policy_association_location, oai::common::sbi::method_e::POST, "",
@@ -1616,7 +1615,7 @@ void amf_sbi::handle_itti_message(
   nlohmann::json response_json = {};
   uint32_t response_code       = 0;
 
-  oai::http::response http_response = {};
+  oai::sba::response http_response = {};
 
   send_http_request(uri, oai::common::sbi::method_e::POST, body, http_response);
 
@@ -1656,9 +1655,9 @@ void amf_sbi::handle_itti_message(
     return;
   }
 
-  nlohmann::json response_json      = {};
-  uint32_t response_code            = 0;
-  oai::http::response http_response = {};
+  nlohmann::json response_json     = {};
+  uint32_t response_code           = 0;
+  oai::sba::response http_response = {};
 
   send_http_request(
       uc->policy_association_location, oai::common::sbi::method_e::GET, "",
@@ -1703,9 +1702,9 @@ void amf_sbi::handle_itti_message(
       amf_sbi_helper::get_udm_ue_context_in_smf_data_retrieval_uri(
           amf_cfg->udm_addr, itti_msg.supi);
 
-  nlohmann::json response_json      = {};
-  uint32_t response_code            = 0;
-  oai::http::response http_response = {};
+  nlohmann::json response_json     = {};
+  uint32_t response_code           = 0;
+  oai::sba::response http_response = {};
 
   send_http_request(uri, oai::common::sbi::method_e::GET, "", http_response);
 
@@ -1909,7 +1908,7 @@ bool amf_sbi::send_http_request(
   // prepare the body content
   create_multipart_content(json_data, n1sm_msg, n2sm_msg, is_multipart, body);
 
-  oai::http::request http_request =
+  oai::sba::request http_request =
       http_client_inst->prepare_multipart_request(remote_uri, body);
   // Send the request and get the response
   auto http_response = http_client_inst->send_http_request(
@@ -2141,7 +2140,7 @@ bool amf_sbi::send_http_request(
   Logger::amf_sbi().info("Send HTTP message to %s", remote_uri.c_str());
   Logger::amf_sbi().debug("Send HTTP message to NF with body %s", body.c_str());
 
-  oai::http::request http_request =
+  oai::sba::request http_request =
       http_client_inst->prepare_multipart_request(remote_uri, body);
   // Send the request and get the response
   auto http_response = http_client_inst->send_http_request(
@@ -2222,7 +2221,7 @@ bool amf_sbi::send_http_request(
   Logger::amf_sbi().info("Send HTTP message to %s", remote_uri.c_str());
   Logger::amf_sbi().info("HTTP message Body: %s", msg_body.c_str());
 
-  oai::http::request http_request =
+  oai::sba::request http_request =
       http_client_inst->prepare_json_request(remote_uri, msg_body);
 
   // Send the request and get the response
@@ -2268,11 +2267,11 @@ bool amf_sbi::send_http_request(
 //-----------------------------------------------------------------------------------------------------
 bool amf_sbi::send_http_request(
     const std::string& remote_uri, const oai::common::sbi::method_e method,
-    const std::string& msg_body, oai::http::response& http_response) {
+    const std::string& msg_body, oai::sba::response& http_response) {
   Logger::amf_sbi().info("Send HTTP message to %s", remote_uri.c_str());
   Logger::amf_sbi().info("HTTP message Body: %s", msg_body.c_str());
 
-  oai::http::request http_request =
+  oai::sba::request http_request =
       http_client_inst->prepare_json_request(remote_uri, msg_body);
 
   // Send the request and get the response
@@ -2397,7 +2396,7 @@ void amf_sbi::handle_itti_message(itti_sbi_sdm_subscribe& itti_msg) {
   to_json(json_body, itti_msg.sdm_sub);
   std::string body = json_body.dump();
 
-  oai::http::response http_response = {};
+  oai::sba::response http_response = {};
   send_http_request(uri, oai::common::sbi::method_e::POST, body, http_response);
 
   if (http_response.status_code ==
@@ -2440,7 +2439,7 @@ void amf_sbi::handle_itti_message(itti_sbi_sdm_unsubscribe& itti_msg) {
 
   // The subscription_id is the full Location URI returned by UDM.
   // DELETE {subscription_id} (TS 29.503 §5.2.3.3.4)
-  oai::http::response http_response = {};
+  oai::sba::response http_response = {};
   send_http_request(
       itti_msg.subscription_id, oai::common::sbi::method_e::DELETE, {},
       http_response);

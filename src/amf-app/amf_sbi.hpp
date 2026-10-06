@@ -395,7 +395,7 @@ class amf_sbi : public oai::sba::nf_service {
    */
   bool send_http_request(
       const std::string& remote_uri, const oai::common::sbi::method_e method,
-      const std::string& msg_body, oai::http::response& http_response);
+      const std::string& msg_body, oai::sba::response& http_response);
 
  private:
   /*

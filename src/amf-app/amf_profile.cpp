@@ -209,8 +209,9 @@ void amf_profile::from_json(const nlohmann::json& data) {
     }
     if (data.find("ipv4Addresses") != data.end()) {
       for (const auto& item : data["ipv4Addresses"]) {
-        struct in_addr address    = {};
-        const auto address_string = oai::utils::trim(item.get<std::string>());
+        struct in_addr address = {};
+        auto address_string    = item.get<std::string>();
+        oai::utils::trim(address_string);
         if (inet_pton(AF_INET, address_string.c_str(), &address) != 1) {
           Logger::amf_app().warn(
               "Address conversion: Bad value %s", address_string.c_str());
