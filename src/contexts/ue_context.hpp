@@ -122,6 +122,23 @@ class ue_context {
       std::vector<buffered_n1n2_t>& live_out,
       std::vector<buffered_n1n2_t>& expired_out);
 
+  // Used when the UE answers a page with a Service Request.
+  //
+  // Looks in the buffered downlink payloads for the N2 SM information that
+  // the SMF sent to set up `pdu_session_id` (a PDU Session Resource Setup
+  // Request Transfer). If it is there, it is removed from the buffer and
+  // returned in `setup_out`: the Service Request then sets up the PDU session
+  // with it, and the paging response does not deliver it a second time.
+  //
+  // A payload that also carries an N1 SM message is left in the buffer, since
+  // that message still has to reach the UE the usual way.
+  //
+  // Returns false, and changes nothing, if the UE is not being paged or if no
+  // such payload is buffered. As with take_pending_payloads(), the caller owns
+  // `setup_out` and its destructor frees the payload.
+  bool take_pending_pdu_session_resource_setup(
+      uint8_t pdu_session_id, buffered_n1n2_t& setup_out);
+
   // --- Paging transaction lifecycle ----------------------------------------
 
   // Compare-and-set: opens a paging transaction if and only if the UE is
