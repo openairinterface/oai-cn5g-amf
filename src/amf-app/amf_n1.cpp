@@ -833,8 +833,15 @@ void amf_n1::nas_signalling_establishment_request_handle(
     case kRegistrationRequest: {
       Logger::amf_n1().debug(
           "Received Registration Request message, handling...");
+      // A UE that already has a NAS security context puts the IEs that must
+      // not be sent in clear into the NAS message container IE of this initial
+      // Registration Request, and ciphers that container (TS 24.501 section
+      // 4.4.6). The AMF can decipher it only if it has just verified the
+      // integrity of this message with that same security context.
+      const bool is_nas_message_container_ciphered = integrity_verified;
       if (!registration_request_handle(
-              nc, ran_ue_ngap_id, amf_ue_ngap_id, snn, plain_msg, cause)) {
+              nc, ran_ue_ngap_id, amf_ue_ngap_id, snn, plain_msg,
+              is_nas_message_container_ciphered, cause)) {
         // Send Registration Reject with appropriate cause
         send_registration_reject_msg(ran_ue_ngap_id, amf_ue_ngap_id, cause);
         nas_procedure_manager_.complete_specific_procedure(*nc);
@@ -1020,13 +1027,16 @@ void amf_n1::complete_paging_if_any(
         Logger::amf_n1(), guti_key,
         "the UE answered the page by de-registering", live);
   } else if (live.empty()) {
-    // The late answer: the supervision window expired first and already
-    // reclaimed the buffer, or a de-registration drained it. There is nothing
-    // to deliver - which is a normal outcome, not an error - and nothing to
-    // free.
+    // Nothing is left to deliver, and nothing to free. This is a normal
+    // outcome, not an error. It happens when:
+    //  - the UE answered late: the supervision window had already expired and
+    //    reclaimed the buffer, or a de-registration had drained it;
+    //  - the Service Request that answered the page has already used the
+    //    buffered N2 SM information to set up its PDU sessions.
     Logger::amf_n1().info(
         "Nothing left to deliver to SUPI %s: the buffer of paging transaction "
-        "%u (GUTI %s) had already been reclaimed when the UE answered",
+        "%u (GUTI %s) was already reclaimed, or used by the Service Request "
+        "that answered the page",
         uc->supi.c_str(), epoch, guti_key.c_str());
   } else {
     // Hand the payloads to TASK_AMF_APP, which owns the one delivery path
@@ -1232,8 +1242,13 @@ void amf_n1::uplink_nas_msg_handle(
             amf_conv::get_serving_network_name(plmn.mnc, plmn.mcc);
         Logger::amf_n1().debug("Serving network name %s", snn.c_str());
         if (get_nas_ctx_by_amf_ue_id(amf_ue_ngap_id, nc)) {
+          // This Registration Request is not an initial NAS message: the UE
+          // ciphered the whole message, so its NAS message container is not
+          // ciphered a second time
+          const bool is_nas_message_container_ciphered = false;
           if (!registration_request_handle(
-                  nc, ran_ue_ngap_id, amf_ue_ngap_id, snn, plain_msg, cause)) {
+                  nc, ran_ue_ngap_id, amf_ue_ngap_id, snn, plain_msg,
+                  is_nas_message_container_ciphered, cause)) {
             // Send Registration Reject with appropriate cause
             send_registration_reject_msg(ran_ue_ngap_id, amf_ue_ngap_id, cause);
             nas_procedure_manager_.complete_specific_procedure(*nc);
@@ -2050,6 +2065,32 @@ bool amf_n1::service_request_handle(
             "No PDU Session Context with PDU Session ID %d", pdu_session_id);
       }
 
+      // Is this Service Request the answer to a page for this PDU session?
+      // If so, the SMF has already sent the N2 SM information to set the PDU
+      // session up, with the N1N2 message transfer that triggered the page,
+      // and the AMF kept it in the paging buffer. Send it now, in this Initial
+      // Context Setup Request. Asking the SMF to activate the user plane again
+      // and then also delivering the buffered copy would set up the same PDU
+      // session twice.
+      buffered_n1n2_t buffered_setup = {};
+      const bool is_answer_to_page =
+          uc->take_pending_pdu_session_resource_setup(
+              pdu_session_id, buffered_setup);
+      if (is_answer_to_page) {
+        Logger::amf_n1().info(
+            "PDU Session ID %d is set up with the N2 SM information buffered "
+            "for the page",
+            pdu_session_id);
+        pdu_session_info_t item = {};
+        item.n2sm               = bstrcpy(buffered_setup.n2sm);
+        item.is_n2sm_available  = true;
+        itti_msg->pdu_sessions.insert(
+            std::pair<uint8_t, pdu_session_info_t>(pdu_session_id, item));
+        // Done with this PDU session. buffered_setup frees its own payload
+        // when it goes out of scope.
+        continue;
+      }
+
       if (psc and
           (psc->up_cnx_state == up_cnx_state_e::UPCNX_STATE_DEACTIVATED)) {
         amf_app_inst->trigger_pdu_session_up_activation(pdu_session_id, uc);
@@ -2213,7 +2254,7 @@ bool amf_n1::send_service_reject(
 bool amf_n1::registration_request_handle(
     std::shared_ptr<nas_context>& nc, const uint32_t ran_ue_ngap_id,
     const uint64_t amf_ue_ngap_id, const std::string& snn, bstring reg,
-    uint8_t& cause) {
+    bool is_nas_message_container_ciphered, uint8_t& cause) {
   // Decode Registration Request message
   auto registration_request = std::make_unique<RegistrationRequest>();
   int decoded_size =
@@ -2587,6 +2628,31 @@ bool amf_n1::registration_request_handle(
   bstring nas_msg = nullptr;
   bool is_messagecontainer =
       registration_request->GetNasMessageContainer(nas_msg);
+
+  // The NAS message container holds a copy of the whole Registration Request,
+  // including the IEs that are not sent in clear. When it is ciphered,
+  // decipher it first; nas_msg then holds the plain Registration Request.
+  if (is_messagecontainer and is_nas_message_container_ciphered) {
+    bstring deciphered_msg = nullptr;
+    bool is_deciphered     = false;
+    if (nc->security_ctx.has_value()) {
+      is_deciphered = decipher_nas_message_container(
+          nc->security_ctx.value(), nas_msg, deciphered_msg);
+    }
+    // The ciphered copy is not needed any more
+    oai::utils::utils::bdestroy_wrapper(&nas_msg);
+
+    if (is_deciphered) {
+      nas_msg = deciphered_msg;
+    } else {
+      // Without it, the registration goes on with the IEs sent in clear only
+      Logger::amf_n1().warn(
+          "Cannot decipher the NAS Message Container of the Registration "
+          "Request, ignoring it");
+      oai::utils::utils::bdestroy_wrapper(&deciphered_msg);
+      is_messagecontainer = false;
+    }
+  }
 
   if (is_messagecontainer) {
     auto registration_request_msg_container =

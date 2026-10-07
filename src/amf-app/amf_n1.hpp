@@ -772,6 +772,9 @@ class amf_n1 {
    * @param [const uint64_t] amf_ue_ngap_id: AMF UE NGAP ID
    * @param [const std::string&] snn: Serving Network
    * @param [bstring] reg: NAS Registration Request message
+   * @param [bool] is_nas_message_container_ciphered: true if the NAS message
+   * container IE, when present, is ciphered with the UE's current NAS security
+   * context (initial NAS message, TS 24.501 section 4.4.6)
    * @param [uint8_t&] cause: 5GMM cause when Registration Request
    * procedure not accepted by the network
    * @return true if accepted by the network, otherwise return false
@@ -779,7 +782,7 @@ class amf_n1 {
   bool registration_request_handle(
       std::shared_ptr<nas_context>& nc, const uint32_t ran_ue_ngap_id,
       const uint64_t amf_ue_ngap_id, const std::string& snn, bstring reg,
-      uint8_t& cause);
+      bool is_nas_message_container_ciphered, uint8_t& cause);
 
   /*
    * Handle Authentication Response message
