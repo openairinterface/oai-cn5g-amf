@@ -1507,14 +1507,21 @@ bool amf_n1::service_request_handle(
     // Get Uplink Data Status/PDU Session Status from NAS Message Container if
     // available
 
+    bstring container = nullptr;
     bstring plain_msg = nullptr;
-    if (service_request->GetNasMessageContainer(plain_msg)) {
-      if (blength(plain_msg) < kNasMessageMinLength) {
-        Logger::amf_n1().debug("NAS message is too short!");
+    if (service_request->GetNasMessageContainer(container)) {
+      if (!decipher_nas_message_container(
+              nc->security_ctx.value(), container, plain_msg) or
+          (blength(plain_msg) < kNasMessageMinLength)) {
+        Logger::amf_n1().debug(
+            "Cannot decipher the NAS Message Container, or the NAS message is "
+            "too short!");
+        oai::utils::utils::bdestroy_wrapper(&container);
         oai::utils::utils::bdestroy_wrapper(&plain_msg);
         cause = k5gmmCauseSemanticallyIncorrect;
         return false;
       }
+      oai::utils::utils::bdestroy_wrapper(&container);
 
       uint8_t message_type =
           get_nas_message_type((uint8_t*) bdata(plain_msg), blength(plain_msg));
@@ -1561,6 +1568,7 @@ bool amf_n1::service_request_handle(
           Logger::nas_mm().error(
               "NAS Message Container, unknown NAS message 0x%x", message_type);
       }
+      oai::utils::utils::bdestroy_wrapper(&plain_msg);
     }
   }
 
@@ -1877,14 +1885,21 @@ bool amf_n1::service_request_handle(
       !pdu_session_status_opt.has_value()) {
     // Get Uplink Data Status/PDU Session Status from NAS Message Container if
     // available
+    bstring container = nullptr;
     bstring plain_msg = nullptr;
-    if (service_request->GetNasMessageContainer(plain_msg)) {
-      if (blength(plain_msg) < kNasMessageMinLength) {
-        Logger::amf_n1().debug("NAS message is too short!");
+    if (service_request->GetNasMessageContainer(container)) {
+      if (!decipher_nas_message_container(
+              nc->security_ctx.value(), container, plain_msg) or
+          (blength(plain_msg) < kNasMessageMinLength)) {
+        Logger::amf_n1().debug(
+            "Cannot decipher the NAS Message Container, or the NAS message is "
+            "too short!");
+        oai::utils::utils::bdestroy_wrapper(&container);
         oai::utils::utils::bdestroy_wrapper(&plain_msg);
         cause = k5gmmCauseSemanticallyIncorrect;
         return false;
       }
+      oai::utils::utils::bdestroy_wrapper(&container);
 
       uint8_t message_type =
           get_nas_message_type((uint8_t*) bdata(plain_msg), blength(plain_msg));
@@ -1934,6 +1949,7 @@ bool amf_n1::service_request_handle(
           Logger::nas_mm().error(
               "NAS Message Container, unknown NAS message 0x%x", message_type);
       }
+      oai::utils::utils::bdestroy_wrapper(&plain_msg);
     }
   }
 
@@ -4838,6 +4854,22 @@ bool amf_n1::nas_message_cipher_protected(
       return false;
     }
   }
+  return true;
+}
+
+//------------------------------------------------------------------------------
+bool amf_n1::decipher_nas_message_container(
+    nas_secu_ctx& nsc, bstring container, bstring& plain_msg) {
+  if (!nas_message_cipher_protected(
+          nsc, NAS_MESSAGE_UPLINK, container, plain_msg)) {
+    Logger::amf_n1().error("Cannot decipher the NAS Message Container");
+    return false;
+  }
+  // NEA1 output is rounded up to a multiple of 4 octets: drop the padding
+  btrunc(plain_msg, blength(container));
+  oai::utils::output_wrapper::print_buffer(
+      "amf_n1", "Deciphered NAS Message Container", (uint8_t*) bdata(plain_msg),
+      blength(plain_msg));
   return true;
 }
 
