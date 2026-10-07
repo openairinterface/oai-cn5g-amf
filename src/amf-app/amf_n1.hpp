@@ -394,6 +394,17 @@ class amf_n1 {
       bstring& output_nas);
 
   /*
+   * Decipher the value of the NAS message container IE of an initial NAS
+   * message
+   * @param [nas_secu_ctx&] nsc: NAS Security context
+   * @param [bstring] container: Value of the NAS message container IE
+   * @param [bstring&] plain_msg: Deciphered NAS message
+   * @return true if the value is successfully deciphered, otherwise false
+   */
+  bool decipher_nas_message_container(
+      nas_secu_ctx& nsc, bstring container, bstring& plain_msg);
+
+  /*
    * Get the list of PDU session to be activated from PDU session status
    * @param [uint16_t] status: PDU Session Status/Uplink Data Status
    * @param [std::vector<uint8_t>&] pdu_session_to_be_activated: list of PDU
