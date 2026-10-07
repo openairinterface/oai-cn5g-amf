@@ -1930,13 +1930,14 @@ bool amf_sbi::send_http_request(
   bstring n2sm_hex                = nullptr;
 
   if (http_response.body.size() > 0) {
-    if (!parser.parse(http_response.body)) {
+    // parse() also returns true for a body that is not multipart, which then
+    // has no parts: that body is the JSON part itself
+    if (!parser.parse(http_response.body) ||
+        !parser.get(oai::utils::JSON_CONTENT_ID_MIME, json_data_response)) {
       json_data_response = http_response.body;
-    } else {
-      parser.get(oai::utils::JSON_CONTENT_ID_MIME, json_data_response);
-      parser.get(oai::utils::N1_SM_CONTENT_ID, n1sm);
-      parser.get(oai::utils::N2_SM_CONTENT_ID, n2sm);
     }
+    parser.get(oai::utils::N1_SM_CONTENT_ID, n1sm);
+    parser.get(oai::utils::N2_SM_CONTENT_ID, n2sm);
   }
 
   Logger::amf_sbi().info("JSON part %s", json_data_response.c_str());
