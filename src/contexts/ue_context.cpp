@@ -225,6 +225,36 @@ void ue_context::take_pending_payloads(
 }
 
 //------------------------------------------------------------------------------
+bool ue_context::take_pending_pdu_session_resource_setup(
+    uint8_t pdu_session_id, buffered_n1n2_t& setup_out) {
+  const std::chrono::steady_clock::time_point now =
+      std::chrono::steady_clock::now();
+
+  std::unique_lock lock(m_paging_);
+
+  // Only while the UE is being paged: once the paging response has started,
+  // complete_paging_if_any() owns what is left in the buffer
+  if (paging_.state != paging_state_e::kInProgress) return false;
+
+  for (auto it = pending_.begin(); it != pending_.end(); ++it) {
+    const bool is_for_this_pdu_session = (it->pdu_session_id == pdu_session_id);
+    const bool is_resource_setup_only =
+        it->is_n2sm_set and !it->is_n1sm_set and
+        (it->n2sm_info_type == "PDU_RES_SETUP_REQ");
+    const bool is_not_expired = (it->expires_at > now);
+
+    if (is_for_this_pdu_session and is_resource_setup_only and is_not_expired) {
+      // Moved, not copied: the caller now owns the payload and frees it after
+      // this lock is released
+      setup_out = std::move(*it);
+      pending_.erase(it);
+      return true;
+    }
+  }
+  return false;
+}
+
+//------------------------------------------------------------------------------
 paging_start_result_e ue_context::try_start_paging(const std::string& guti) {
   std::unique_lock lock(m_paging_);
 
