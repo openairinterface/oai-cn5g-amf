@@ -1235,7 +1235,8 @@ void amf_n2::handle_itti_message(
     Logger::amf_n2().debug("No IMEISV info available");
   }
 
-  msg->setNasPdu(itti_msg->nas);
+  // NAS-PDU is optional: omit it when there is no N1 message
+  if (blength(itti_msg->nas) > 0) msg->setNasPdu(itti_msg->nas);
 
   if (itti_msg->is_sr or !itti_msg->pdu_sessions.empty()) {
     // Set UE Radio Capability if available
@@ -1501,7 +1502,8 @@ void amf_n2::handle_itti_message(
 
   release_cmd_msg->setAmfUeNgapId(itti_msg->amf_ue_ngap_id);
   release_cmd_msg->setRanUeNgapId(itti_msg->ran_ue_ngap_id);
-  release_cmd_msg->setNasPdu(itti_msg->nas);
+  // NAS-PDU is optional: omit it when there is no N1 message
+  if (blength(itti_msg->nas) > 0) release_cmd_msg->setNasPdu(itti_msg->nas);
 
   std::vector<PDUSessionResourceToReleaseItem_t> list;
   PDUSessionResourceToReleaseItem_t item = {};

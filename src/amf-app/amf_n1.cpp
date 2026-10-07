@@ -226,11 +226,15 @@ void amf_n1::handle_itti_message(itti_downlink_nas_transfer& itti_msg) {
     return;
   }
 
+  // An N2-only transfer (e.g. the buffered payload of a page) has no N1
+  // message: send no NAS-PDU rather than a security header around nothing
   bstring protected_nas = nullptr;
-  encode_nas_message_protected(
-      nc->security_ctx.value(), false, kIntegrityProtectedAndCiphered,
-      NAS_MESSAGE_DOWNLINK, (uint8_t*) bdata(itti_msg.dl_nas),
-      blength(itti_msg.dl_nas), protected_nas);
+  if (blength(itti_msg.dl_nas) > 0) {
+    encode_nas_message_protected(
+        nc->security_ctx.value(), false, kIntegrityProtectedAndCiphered,
+        NAS_MESSAGE_DOWNLINK, (uint8_t*) bdata(itti_msg.dl_nas),
+        blength(itti_msg.dl_nas), protected_nas);
+  }
 
   if (itti_msg.is_n2sm_set) {
     // PDU Session Resource Release Command
