@@ -317,6 +317,7 @@ void amf_n1::handle_itti_message(itti_downlink_nas_transfer& itti_msg) {
                            (nc->security_ctx.value().ul_count.overflow << 8);
         Authentication_5gaka::derive_kgnb(
             ulcount, KAccessType3gppAccess, kamf, kgnb);
+        nc->set_kgnb(kgnb);
         oai::utils::output_wrapper::print_buffer(
             "amf_n1", "Kamf", kamf, AUTH_VECTOR_LENGTH_OCTETS);
 
@@ -1727,6 +1728,7 @@ bool amf_n1::service_request_handle(
                        (nc->security_ctx.value().ul_count.overflow << 8);
     Authentication_5gaka::derive_kgnb(
         ulcount, KAccessType3gppAccess, kamf, kgnb);
+    nc->set_kgnb(kgnb);
     oai::utils::output_wrapper::print_buffer(
         "amf_n1", "Kamf", kamf, AUTH_VECTOR_LENGTH_OCTETS);
 
@@ -1830,6 +1832,7 @@ bool amf_n1::service_request_handle(
         "amf_n1", "Kamf", kamf, AUTH_VECTOR_LENGTH_OCTETS);
     Authentication_5gaka::derive_kgnb(
         ulcount, KAccessType3gppAccess, kamf, kgnb);
+    nc->set_kgnb(kgnb);
 
     itti_msg->ran_ue_ngap_id = ran_ue_ngap_id;
     itti_msg->amf_ue_ngap_id = amf_ue_ngap_id;
@@ -4018,12 +4021,8 @@ bool amf_n1::security_mode_complete_handle(
     oai::utils::output_wrapper::print_buffer(
         "amf_n1", "Kamf", kamf, AUTH_VECTOR_LENGTH_OCTETS);
 
-    // For the HO, we do not derive kGNB again
-    // Use the existing one by keeping the CTXT
-    if (nc->is_kgNB_set) std::fill(std::begin(nc->kgNB), std::end(nc->kgNB), 0);
-
-    std::copy(std::begin(kgnb), std::end(kgnb), std::begin(nc->kgNB));
-    nc->is_kgNB_set = true;
+    // Keep the key sent to gNB as the anchor for a subsequent NH chain.
+    nc->set_kgnb(kgnb);
 
     auto itti_msg = std::make_shared<itti_initial_context_setup_request>(
         TASK_AMF_N1, TASK_AMF_N2);
@@ -5210,6 +5209,7 @@ bool amf_n1::run_mobility_registration_update_procedure(
 
     Authentication_5gaka::derive_kgnb(
         ulcount, KAccessType3gppAccess, kamf, kgnb);
+    nc->set_kgnb(kgnb);
     oai::utils::output_wrapper::print_buffer(
         "amf_n1", "Kamf", kamf, AUTH_VECTOR_LENGTH_OCTETS);
 

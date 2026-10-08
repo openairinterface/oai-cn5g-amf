@@ -107,6 +107,12 @@ bool nas_context::get_kamf(
 }
 
 //------------------------------------------------------------------------------
+void nas_context::set_kgnb(const uint8_t (&k)[AUTH_VECTOR_LENGTH_OCTETS]) {
+  std::copy(std::begin(k), std::end(k), std::begin(kgNB));
+  is_kgNB_set = true;
+}
+
+//------------------------------------------------------------------------------
 std::string nas_context::fivegmm_state_to_string(const _5gmm_state_t& state) {
   switch (state) {
     case _5GMM_DEREGISTERED: {
