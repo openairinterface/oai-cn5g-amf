@@ -9,6 +9,7 @@
 
 #include <algorithm>
 #include <chrono>
+#include <deque>
 
 extern "C" {
 #include <arpa/inet.h>
@@ -36,6 +37,7 @@ pthread_t tmp_thread;
 
 namespace {
 constexpr auto kAcceptRetryDelay             = std::chrono::seconds(1);
+constexpr size_t kMaxPendingClientSockets    = 32;
 constexpr rlim_t kMaxReservedFileDescriptors = 128;
 
 bool is_transient_accept_error(int error) {
@@ -192,6 +194,7 @@ void* sctp_server::sctp_receiver_thread(void* arg) {
   fd_set read_fds;
   bool accept_paused = false;
   std::chrono::steady_clock::time_point accept_retry_at;
+  std::deque<int> pending_clients;
 
   tmp_thread = pthread_self();
   if (arg == NULL) pthread_exit(NULL);
@@ -236,6 +239,33 @@ void* sctp_server::sctp_receiver_thread(void* arg) {
   FD_SET(server_socket, &master);
   fdmax = server_socket;
 
+  auto close_client_socket = [&](int sd, const char* reason) {
+    Logger::sctp().warn("[socket(%d)] Closing SCTP client: %s", sd, reason);
+    ptr->sctp_handle_socket_down(sd);
+    pending_clients.erase(
+        std::remove(pending_clients.begin(), pending_clients.end(), sd),
+        pending_clients.end());
+    FD_CLR(sd, &master);
+    FD_CLR(sd, &read_fds);
+    if (close(sd) != 0) {
+      Logger::sctp().error(
+          "[socket(%d)] Close error: %s:%d", sd, strerror(errno), errno);
+    }
+    if (sd == fdmax) {
+      while (fdmax > server_socket && !FD_ISSET(fdmax, &master)) {
+        fdmax -= 1;
+      }
+    }
+    if (accept_paused) {
+      FD_SET(server_socket, &master);
+      accept_paused = false;
+    }
+  };
+  auto close_oldest_pending_client = [&](const char* reason) {
+    if (pending_clients.empty()) return;
+    close_client_socket(pending_clients.front(), reason);
+  };
+
   while (true) {
     struct timeval accept_timeout;
     struct timeval* select_timeout = NULL;
@@ -253,7 +283,6 @@ void* sctp_server::sctp_receiver_thread(void* arg) {
         select_timeout         = &accept_timeout;
       }
     }
-
     memcpy(&read_fds, &master, sizeof(master));
     const int ready = select(fdmax + 1, &read_fds, NULL, NULL, select_timeout);
     if (ready == -1) {
@@ -314,24 +343,27 @@ void* sctp_server::sctp_receiver_thread(void* arg) {
                   std::chrono::steady_clock::now() + kAcceptRetryDelay;
               continue;
             }
+            if (pending_clients.size() >= kMaxPendingClientSockets) {
+              close_oldest_pending_client("pending client limit reached");
+            }
             FD_SET(clientsock, &master);
             if (clientsock > fdmax) fdmax = clientsock;
+            pending_clients.push_back(clientsock);
           }
         } else {
           int ret = ptr->sctp_read_from_socket(i, ptr->app_->get_ppid());
-          if (ret == SCTP_RC_DISCONNECT) {
-            FD_CLR(i, &master);
-            if (close(i) != 0) {
-              Logger::sctp().error(
-                  "[socket(%d)] Close error: %s:%d", i, strerror(errno), errno);
-            }
-            if (accept_paused) {
-              FD_SET(server_socket, &master);
-              accept_paused = false;
-            }
-            if (i == fdmax) {
-              while (fdmax > server_socket && !FD_ISSET(fdmax, &master)) {
-                fdmax -= 1;
+          if (ret != SCTP_RC_NORMAL_READ) {
+            close_client_socket(i, "read or association handling failed");
+          } else {
+            std::lock_guard<std::mutex> lock(ptr->sctp_ctx_mutex_);
+            for (const auto* association : ptr->sctp_ctx_) {
+              if (association != nullptr && association->sd == i &&
+                  association->messages_recv > 0) {
+                pending_clients.erase(
+                    std::remove(
+                        pending_clients.begin(), pending_clients.end(), i),
+                    pending_clients.end());
+                break;
               }
             }
           }
