@@ -47,13 +47,13 @@ namespace amf_application {
 #define TASK_AMF_T3555_TIMER_EXPIRE (10)
 #define TASK_AMF_T3513_TIMER_EXPIRE (11)
 #define TASK_AMF_T3565_TIMER_EXPIRE (12)
-// One-shot paging-response supervision window (TS 23.502 section 4.2.3.3 step
-// 5: "The AMF supervises the paging procedure with a timer"). This is NOT
-// T3513 and its expiry never re-pages: it only terminates the transaction and
-// reclaims the buffered downlink payloads. TASK_AMF_T3513_TIMER_EXPIRE (11) is
-// deliberately NOT reused - that number belongs to the retransmission timer of
-// a later phase. arg2_user carries the 5G-GUTI, because the amf_ue_ngap_id
-// changes when a paging response rekeys the UE context.
+// One-shot paging-response supervision window (TS 23.502 section 4.2.3.3: "The
+// AMF supervises the paging procedure with a timer"). This is NOT T3513 and its
+// expiry never re-pages: it only terminates the transaction and reclaims the
+// buffered downlink payloads. TASK_AMF_T3513_TIMER_EXPIRE (11) is deliberately
+// NOT reused - that number belongs to the retransmission timer of a later
+// phase. arg2_user carries the 5G-GUTI, because the amf_ue_ngap_id changes when
+// a paging response rekeys the UE context.
 #define TASK_AMF_PAGING_WINDOW_EXPIRE (13)
 
 class amf_app {
@@ -668,9 +668,6 @@ class amf_app {
    * paging-response one on TASK_AMF_N1 - so that a dropped payload always
    * leaves the same trace; the caller passes its own logger.
    *
-   * NEVER takes ownership: the records stay in the caller's vector and that
-   * vector's destructor is their single free point.
-   *
    * @param [const oai::logger::printf_logger&] logger: caller's logger
    * @param [const std::string&] guti: 5G-GUTI the transaction was keyed on
    * @param [const char*] reason: why the payloads are being dropped
@@ -710,17 +707,10 @@ class amf_app {
    * was already connected and the paging-response path of a UE that has just
    * answered a page both go through it, so the two cannot drift.
    *
-   * BORROWS its bstrings. It never takes ownership and never frees them: it
-   * only bstrcpy()s (or, for the N1 SM, re-encodes) onward into the ITTI
-   * message it sends. The caller - the ITTI message on the CM-CONNECTED path,
-   * the buffered_n1n2_t record on the paging path - remains the single owner
-   * and the single free point.
-   *
-   * @param [const std::shared_ptr<ue_context>&] uc: UE context (may be null,
-   * in which case the NGAP UE ids are left at their defaults, as before)
-   * @param [bstring] n1sm: N1 SM container, borrowed
+   * @param [const std::shared_ptr<ue_context>&] uc: UE context (may be null)
+   * @param [bstring] n1sm: N1 SM container
    * @param [bool] is_n1sm_set: whether n1sm is present
-   * @param [bstring] n2sm: N2 SM container, borrowed
+   * @param [bstring] n2sm: N2 SM container
    * @param [bool] is_n2sm_set: whether n2sm is present
    * @param [const std::string&] n2sm_info_type: N2 SM info type
    * @param [uint8_t] pdu_session_id: PDU session id

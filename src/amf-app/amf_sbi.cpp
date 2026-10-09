@@ -1930,8 +1930,6 @@ bool amf_sbi::send_http_request(
   bstring n2sm_hex                = nullptr;
 
   if (http_response.body.size() > 0) {
-    // parse() also returns true for a body that is not multipart, which then
-    // has no parts: that body is the JSON part itself
     if (!parser.parse(http_response.body) ||
         !parser.get(oai::utils::JSON_CONTENT_ID_MIME, json_data_response)) {
       json_data_response = http_response.body;

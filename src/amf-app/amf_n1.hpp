@@ -1066,21 +1066,10 @@ class amf_n1 {
    * Close a paging transaction that this UE has just answered, and hand the
    * payloads buffered across it to TASK_AMF_APP for delivery.
    *
-   * A paging response arrives as an InitialUEMessage, so it reaches
-   * nas_signalling_establishment_request_handle() and NOT
-   * uplink_nas_msg_handle(); this is called from the three arms of that
-   * switch, after the arm has succeeded. No-op - not even a log - when no
-   * paging transaction was in flight, which is the normal case.
-   *
-   * @param [const std::shared_ptr<ue_context>&] uc: the UE context that holds
-   * the paging state. It MUST have been resolved before the arm ran: a
-   * UE-originating de-registration unbinds the 5G-GUTI on its way out
-   * (amf_n1.cpp, remove_guti_2_nas_context -> amf_app::unbind_guti), so a
-   * lookup by GUTI made here would already fail.
+   * @param [const std::shared_ptr<ue_context>&] uc: UE context
    * @param [bool] deliver: true for SERVICE REQUEST and REGISTRATION REQUEST
-   * (TS 24.501 section 5.6.2.2.1 a) 1)-3): the UE answered the page), false
-   * for a UE-originating DEREGISTRATION REQUEST (the UE is leaving; the
-   * transaction is terminated and the buffer dropped)
+   * (TS 24.501 section 5.6.2.2.1: the UE answered the page), false
+   * for a UE-originating DEREGISTRATION REQUEST
    *
    * PRECONDITION, both values of `deliver`: the caller MUST have established
    * that the message which triggered the arm was integrity-protected and

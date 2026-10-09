@@ -6,9 +6,6 @@
 
 #include "amf.hpp"
 #include "logger.hpp"
-// Complete definitions of the nested sub-contexts are only required in this TU,
-// where the out-of-line destructor instantiates the shared_ptr<...>
-// destructors.
 #include "nas_context.hpp"
 #include "ue_ngap_context.hpp"
 
@@ -35,8 +32,7 @@ ue_context::ue_context() {
   ue_ambr_dl  = 0;
   ue_ambr_ul  = 0;
   has_ue_ambr = false;
-  // Paging state (see ue_context.hpp). The two "has_" flags are what makes
-  // "never seeded" distinguishable from "seeded with a zero value".
+  // Paging-related state
   s_setid_               = {};
   s_pointer_             = {};
   s_tmsi_                = {};
@@ -49,8 +45,6 @@ ue_context::ue_context() {
 }
 
 //------------------------------------------------------------------------------
-// Defined out of line so that the shared_ptr<nas_context>/<ue_ngap_context>
-// member destructors are instantiated here, where the complete types are known.
 ue_context::~ue_context() {}
 
 //------------------------------------------------------------------------------
@@ -167,8 +161,8 @@ bool ue_context::push_pending_payload(
 
   std::unique_lock lock(m_paging_);
 
-  // 1. Lazy TTL sweep (plan-minimal.md section 8.3, mechanism 2). Catches the
-  //    records of a transaction whose window timer was lost, and the records
+  // 1. Lazy TTL sweep. Catches the records of a transaction whose window timer
+  // was lost, and the records
   //    of a UE that answered on a different GUTI and was never re-joined. A
   //    record left at the default time_point{} sweeps here, which is the safe
   //    direction: it is freed rather than kept forever.
@@ -181,7 +175,7 @@ bool ue_context::push_pending_payload(
     }
   }
 
-  // 2. Hard size bound (mechanism 3). Enforced here, inside the lock, so that
+  // 2. Hard size bound. Enforced here, inside the lock, so that
   //    pending_.size() <= kMaxPendingPayloads holds at every point another
   //    thread could observe. A while loop rather than an if: it also repairs
   //    an over-full vector instead of trusting that one cannot exist.
@@ -207,9 +201,6 @@ void ue_context::take_pending_payloads(
   {
     std::unique_lock lock(m_paging_);
     taken = std::move(pending_);
-    // A moved-from std::vector is valid but unspecified; make it empty
-    // explicitly so that the "drained exactly once" invariant does not depend
-    // on the library implementation.
     pending_.clear();
   }
 
@@ -258,10 +249,6 @@ bool ue_context::take_pending_pdu_session_resource_setup(
 paging_start_result_e ue_context::try_start_paging(const std::string& guti) {
   std::unique_lock lock(m_paging_);
 
-  // Refuse rather than warn-and-continue: a default-constructed Tai_t encodes
-  // into a well-formed PAGING for MCC 000 / MNC 00 / TAC 0, and an empty
-  // 5G-S-TMSI part makes FiveGSTmsi::encode() throw std::stol("") out of
-  // TASK_AMF_N2.
   if (guti.empty() || s_setid_.empty() || s_pointer_.empty() ||
       s_tmsi_.empty() || !has_last_known_tai_ || !has_last_gnb_assoc_id_) {
     return paging_start_result_e::kNotPageable;
@@ -285,19 +272,6 @@ void ue_context::set_paging_window_timer(timer_id_t timer_id) {
   std::unique_lock lock(m_paging_);
   // Only the transaction in flight, and only one that has no window timer
   // yet, may adopt this id.
-  //
-  //  * state != kInProgress: the transaction ended between the PAGING send and
-  //    this call (a very fast UE answer, or a teardown). The id is dropped on
-  //    the floor; the timer then expires against a transaction that does not
-  //    know it, clear_paging_state() rejects it, and the expiry is inert.
-  //  * window_timer_id != 0: the transaction in flight is NOT the one this id
-  //    was armed for - try_start_paging() zeroes the field on every kStarted,
-  //    so a non-zero value means a later transaction already armed its own
-  //    timer. Adopting this id would let an older timer expire against a live
-  //    transaction and drain its buffer early. Today TASK_AMF_APP is the only
-  //    thread that arms timers, so it cannot interleave with itself and this
-  //    arm is unreachable; it is here so that the invariant does not depend on
-  //    that fact.
   if ((paging_.state != paging_state_e::kInProgress) ||
       (paging_.window_timer_id != 0))
     return;
@@ -313,9 +287,6 @@ timer_id_t ue_context::get_paging_window_timer() const {
 //------------------------------------------------------------------------------
 bool ue_context::clear_paging_state(timer_id_t expected_or_zero) {
   std::unique_lock lock(m_paging_);
-  // Stale-expiry guard. On mismatch NOTHING is mutated - not the state, not
-  // the timer id, not the epoch - which is what makes a timer left over from a
-  // superseded transaction harmless.
   if ((expected_or_zero != 0) &&
       (paging_.window_timer_id != expected_or_zero)) {
     return false;
@@ -330,17 +301,11 @@ bool ue_context::begin_paging_response(
     std::string& guti_key_out, uint32_t& epoch_out, timer_id_t& timer_out) {
   std::unique_lock lock(m_paging_);
   if (paging_.state != paging_state_e::kInProgress) return false;
-  // kResponded means exactly what its declaration says: the UE answered and
-  // the buffer is being drained. The caller returns the state to kIdle with
-  // clear_paging_state(0) once the drain is done.
   paging_.state = paging_state_e::kResponded;
   guti_key_out  = paging_.guti_key;
   epoch_out     = paging_.epoch;
   timer_out     = paging_.window_timer_id;
-  // Disown the window timer before releasing the lock: an expiry that is
-  // already queued on TASK_AMF_APP then fails clear_paging_state()'s
-  // stale-expiry check and mutates nothing, instead of terminating a
-  // transaction the response has already taken over.
+  // Disown the window timer before releasing the lock
   paging_.window_timer_id = 0;
   return true;
 }

@@ -67,7 +67,7 @@ class ue_context {
       std::string& setid, std::string& pointer, std::string& tmsi) const;
 
   void set_last_known_tai(const Tai_t& tai_in);
-  // Returns false if no TAI has ever been seeded. Callers MUST NOT fall back to
+  // Returns false if no TAI has ever been seeded, must not fall back to
   // a default-constructed Tai_t: PlmnId::set("", "") yields MCC "000"/MNC "00"
   // and TAC 0, which encodes into a well-formed PAGING for a TAI that no gNB
   // serves - a silent non-page.
@@ -91,20 +91,6 @@ class ue_context {
 
   // Buffers one downlink N1/N2 payload for the duration of a paging
   // transaction. The record is MOVED in and `pending_` becomes its only owner.
-  //
-  // The caller MUST have written `b.expires_at` before the call: a record left
-  // at the default time_point{} (the epoch) is swept out immediately. The TTL
-  // is computed by the caller on purpose, so that this accessor reads no
-  // configuration and calls nothing while holding m_paging_.
-  //
-  // Two reclaim mechanisms run first, both INSIDE the lock, so that
-  // `pending_.size() <= kMaxPendingPayloads` holds at every observable point:
-  //   1. a lazy TTL sweep of every record whose `expires_at` has passed;
-  //   2. the hard size bound, which evicts the oldest record.
-  // Every record removed by either mechanism is MOVED WHOLE into
-  // `evicted_out`; this object frees nothing. The caller owns `evicted_out`
-  // and its destructor is the single free point for the bstrings it carries.
-  //
   // Returns false when the hard size bound had to evict a still-live record
   // (i.e. a payload was dropped because the UE has too many in flight), true
   // otherwise. `evicted_out` may be non-empty on a true return: expired
@@ -141,7 +127,7 @@ class ue_context {
 
   // --- Paging transaction lifecycle ----------------------------------------
 
-  // Compare-and-set: opens a paging transaction if and only if the UE is
+  // Opens a paging transaction if and only if the UE is
   // pageable and no transaction is already in flight. On kStarted the state
   // becomes kInProgress, `guti_key` is recorded, `epoch` is bumped (for log
   // correlation) and the window timer id is reset to 0.
@@ -194,15 +180,8 @@ class ue_context {
   bool begin_paging_response(
       std::string& guti_key_out, uint32_t& epoch_out, timer_id_t& timer_out);
 
-  // --- 5G-GUTI ------------------------------------------------------------
-  // Guarded by m_paging_ because the 5G-GUTI is the join key of a paging
-  // transaction: it is written on TASK_AMF_N1 (Registration Accept, uplink-NAS
-  // GUTI) and read on TASK_AMF_APP (the paging trigger) and inside
-  // ue_context_store under the store lock. A plain std::string member cannot
-  // be read on one task while another assigns it.
-  //
-  // Lock order: the store lock may be held while calling these (1 -> 4); the
-  // reverse never happens, because no m_paging_ accessor calls anything.
+  // 5G-GUTI, guarded by m_paging_ because the 5G-GUTI is the join key of a
+  // paging transaction
   void set_guti(const std::string& guti_in);
   std::string get_guti() const;  // empty = unset
 
@@ -250,14 +229,6 @@ class ue_context {
   mutable std::shared_mutex m_ctx_;
 
   // --- Paging state --------------------------------------------------------
-  // This lives on ue_context, not on ue_ngap_context, because ue_ngap_context
-  // is destroyed on every CM-IDLE transition (see amf_n2.cpp:2960 and :3086)
-  // while ue_context survives and stays indexed by SUPI and by GUTI.
-  //
-  // m_ctx_ is deliberately NOT widened to cover these members: it guards
-  // nas_ctx/ngap_ctx only, and widening it would silently change what the four
-  // accessors above it guarantee.
-  // 5G-GUTI (empty = unset). Reached only through set_guti()/get_guti().
   std::string guti_;
   std::string s_setid_;
   std::string s_pointer_;
@@ -267,9 +238,7 @@ class ue_context {
   sctp_assoc_id_t last_gnb_assoc_id_ = 0;
   bool has_last_gnb_assoc_id_        = false;
   paging_ctx_t paging_{};
-  // Buffered downlink N1/N2 payloads. Kept OUTSIDE paging_ctx_t on purpose:
-  // paging_ctx_t is copied out as a snapshot, and a vector of move-only owning
-  // records cannot be part of a copyable snapshot.
+  // Buffered downlink N1/N2 payloads.
   std::vector<buffered_n1n2_t> pending_{};
   mutable std::shared_mutex m_paging_;
 };
