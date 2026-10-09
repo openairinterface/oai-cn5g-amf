@@ -10,6 +10,8 @@ include_directories(${SRC_TOP_DIR}/itti/msgs)
 include_directories(${SRC_TOP_DIR}/sbi)
 include_directories(${SRC_TOP_DIR}/sbi/api)
 include_directories(${SRC_TOP_DIR}/sbi/impl)
+# sctp_server.hpp: sctp_assoc_id_t, reached through itti/msgs and contexts
+include_directories(${SRC_TOP_DIR}/sctp)
 include_directories(${SRC_TOP_DIR}/utils)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/3gpp)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/common)

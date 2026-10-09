@@ -226,11 +226,15 @@ void amf_n1::handle_itti_message(itti_downlink_nas_transfer& itti_msg) {
     return;
   }
 
+  // An N2-only transfer (e.g. the buffered payload of a page) has no N1
+  // message: send no NAS-PDU rather than a security header around nothing
   bstring protected_nas = nullptr;
-  encode_nas_message_protected(
-      nc->security_ctx.value(), false, kIntegrityProtectedAndCiphered,
-      NAS_MESSAGE_DOWNLINK, (uint8_t*) bdata(itti_msg.dl_nas),
-      blength(itti_msg.dl_nas), protected_nas);
+  if (blength(itti_msg.dl_nas) > 0) {
+    encode_nas_message_protected(
+        nc->security_ctx.value(), false, kIntegrityProtectedAndCiphered,
+        NAS_MESSAGE_DOWNLINK, (uint8_t*) bdata(itti_msg.dl_nas),
+        blength(itti_msg.dl_nas), protected_nas);
+  }
 
   if (itti_msg.is_n2sm_set) {
     // PDU Session Resource Release Command
@@ -476,6 +480,13 @@ void amf_n1::handle_itti_message(itti_uplink_nas_data_ind& nas_data_ind) {
   // Full 24-bit estimated uplink NAS COUNT
   uint32_t ulCount = 0;
 
+  // Set below ONLY where verify_and_decipher_uplink_nas() returned true, i.e.
+  // where the MAC was actually checked against the UE's NAS security context.
+  // It stays false for a plaintext message and for a failed-MAC message that
+  // is re-admitted as cleartext under the TS 24.501 section 4.4.4.3
+  // allow-list, neither of which proves anything about who sent it.
+  bool integrity_verified = false;
+
   // Uplink NAS receive-path security state machine.
   switch (security_header_type) {
     case kPlain5gsMessage: {
@@ -538,6 +549,9 @@ void amf_n1::handle_itti_message(itti_uplink_nas_data_ind& nas_data_ind) {
           oai::utils::utils::bdestroy_wrapper(&received_nas_msg);
           return;
         }
+      } else {
+        // The MAC was verified and the replay guard passed.
+        integrity_verified = true;
       }
     } break;
 
@@ -574,7 +588,8 @@ void amf_n1::handle_itti_message(itti_uplink_nas_data_ind& nas_data_ind) {
     oai::utils::utils::bdestroy_wrapper(&received_nas_msg);
     nas_signalling_establishment_request_handle(
         security_header_type, nc, nas_data_ind.ran_ue_ngap_id,
-        nas_data_ind.amf_ue_ngap_id, decoded_plain_msg, snn, ulCount);
+        nas_data_ind.amf_ue_ngap_id, decoded_plain_msg, snn, ulCount,
+        integrity_verified);
   } else {
     Logger::amf_n1().debug("Received Uplink NAS message...");
     oai::utils::utils::bdestroy_wrapper(&received_nas_msg);
@@ -697,6 +712,8 @@ bool amf_n1::verify_and_decipher_uplink_nas(
           "Dropping uplink NAS message: null integrity (5G-IA0) not permitted "
           "for a normal use-case");
       // TODO: return false;
+      // a 5G-IA0 (null-integrity) UE - which TS 33.501 section 5.5.2 permits
+      // for emergency sessions - never sets `integrity_verified`.
     }
 
     case nas_integrity_result::error:
@@ -745,7 +762,7 @@ bool amf_n1::verify_and_decipher_uplink_nas(
 void amf_n1::nas_signalling_establishment_request_handle(
     uint8_t security_header_type, std::shared_ptr<nas_context> nc,
     uint32_t ran_ue_ngap_id, uint64_t amf_ue_ngap_id, bstring plain_msg,
-    std::string snn, uint32_t ulCount) {
+    std::string snn, uint32_t ulCount, bool integrity_verified) {
   // Create NAS Context, or Update if existed
   if (!nc) {
     Logger::amf_n1().debug(
@@ -787,16 +804,50 @@ void amf_n1::nas_signalling_establishment_request_handle(
       get_nas_message_type((uint8_t*) bdata(plain_msg), blength(plain_msg));
   Logger::amf_n1().debug("NAS message type 0x%x", message_type);
 
+  // Get UE context
+  const std::shared_ptr<ue_context> uc =
+      amf_app_inst->find_ue_by_amf_ue_ngap_id(amf_ue_ngap_id);
+
   uint8_t cause = k5gmmCauseProtocolErrorUnspecified;
   switch (message_type) {
     case kRegistrationRequest: {
       Logger::amf_n1().debug(
           "Received Registration Request message, handling...");
+      // A UE that already has a NAS security context puts the IEs that must
+      // not be sent in clear into the NAS message container IE of this initial
+      // Registration Request, and ciphers that container (TS 24.501 section
+      // 4.4.6). The AMF can decipher it only if it has just verified the
+      // integrity of this message with that same security context.
+      const bool is_nas_message_container_ciphered = integrity_verified;
       if (!registration_request_handle(
-              nc, ran_ue_ngap_id, amf_ue_ngap_id, snn, plain_msg, cause)) {
+              nc, ran_ue_ngap_id, amf_ue_ngap_id, snn, plain_msg,
+              is_nas_message_container_ciphered, cause)) {
         // Send Registration Reject with appropriate cause
         send_registration_reject_msg(ran_ue_ngap_id, amf_ue_ngap_id, cause);
         nas_procedure_manager_.complete_specific_procedure(*nc);
+      } else if (integrity_verified) {
+        // A mobility or periodic registration is an allowed paging response,
+        // TS 24.501 section 5.6.2.2.1. The Registration Accept is
+        // already on its way, so the gNB will have a UE context by the time
+        // the buffered payload gets there.
+        //
+        // Gated on integrity_verified because registration_request_handle()
+        // returning true means only "a registration procedure was started or
+        // accepted": it is also true for a plaintext REGISTRATION REQUEST
+        // carrying an observed 5G-GUTI, and true after nothing more than an
+        // Identity Request or an Authentication Request has been sent. Only a
+        // verified message proves the sender owns the NAS security context,
+        // and only then is the Registration Accept really on its way.
+        complete_paging_if_any(uc, true);
+      } else {
+        // Deliberately leave the transaction at kInProgress and the buffer
+        // intact: the window timer still owns it and will reclaim it, and a
+        // genuine, integrity-protected response can still complete it.
+        Logger::amf_n1().warn(
+            "Registration Request for amf_ue_ngap_id " AMF_UE_NGAP_ID_FMT
+            " was not integrity-verified: not treating it as a paging "
+            "response; any paging transaction is left running",
+            amf_ue_ngap_id);
       }
     } break;
 
@@ -819,6 +870,9 @@ void amf_n1::nas_signalling_establishment_request_handle(
         // Send Service Reject with appropriate cause
         send_service_reject(nc, cause);
         nas_procedure_manager_.complete_specific_procedure(*nc);
+      } else {
+        // The canonical paging response, TS 24.501 section 5.6.2.2.1.
+        complete_paging_if_any(uc, true);
       }
     } break;
 
@@ -829,12 +883,153 @@ void amf_n1::nas_signalling_establishment_request_handle(
       if (!ue_initiate_de_registration_handle(
               ran_ue_ngap_id, amf_ue_ngap_id, plain_msg, cause)) {
         if (nc) nas_procedure_manager_.complete_specific_procedure(*nc);
+      } else if (integrity_verified) {
+        // The UE answered by leaving. This TERMINATES the transaction and
+        // DROPS the buffer - there is nothing left to deliver the payload to.
+        //
+        // Gated on integrity_verified because
+        // ue_initiate_de_registration_handle() performs no integrity check of
+        // its own, so without this test an
+        // unauthenticated plaintext DEREGISTRATION REQUEST quoting an observed
+        // 5G-GUTI would destroy another UE's buffered payload.
+        //
+        // this is necessarily a NO-OP: the handler above has
+        // exactly one `return true`, placed after its reclamation point, so
+        // the transaction is already kIdle by the time control gets here and
+        // begin_paging_response() returns false. It is kept, and kept gated,
+        // as a backstop: this arm still terminate the transaction for a
+        // VERIFIED de-registration, and it keeps
+        // complete_paging_if_any()'s "integrity-verified caller" precondition
+        // true at every one of its call sites.
+        complete_paging_if_any(uc, false);
+      } else {
+        // NOT a paging response: nothing here proves who sent the message, so
+        // the buffered payload is not delivered and the transaction is not
+        // completed on the sender's behalf.
+        Logger::amf_n1().warn(
+            "De-registration Request for amf_ue_ngap_id " AMF_UE_NGAP_ID_FMT
+            " was not integrity-verified: not treating it as a paging "
+            "response. The de-registration has already torn the NAS context "
+            "down, so the transaction can neither be answered nor reclaimed "
+            "later; it was abandoned and any buffered payload dropped at the "
+            "teardown itself",
+            amf_ue_ngap_id);
+        abandon_paging_transaction(
+            uc,
+            "an unverified de-registration tore the UE context down "
+            "before the page could be answered");
       }
     } break;
 
     default:
       Logger::amf_n1().error("No handler for NAS message 0x%x", message_type);
   }
+}
+
+//------------------------------------------------------------------------------
+void amf_n1::complete_paging_if_any(
+    const std::shared_ptr<ue_context>& uc, bool deliver) {
+  if (uc == nullptr) return;
+
+  std::string guti_key    = {};
+  uint32_t epoch          = 0;
+  timer_id_t window_timer = ITTI_INVALID_TIMER_ID;
+
+  if (!uc->begin_paging_response(guti_key, epoch, window_timer)) return;
+
+  Logger::amf_n1().info(
+      "SUPI %s answered paging transaction %u (GUTI %s)", uc->supi.c_str(),
+      epoch, guti_key.c_str());
+
+  if (window_timer != ITTI_INVALID_TIMER_ID) {
+    itti_inst->timer_remove(window_timer);
+  }
+
+  // `live` and `expired` own every record they are handed. Whatever happens
+  // below, their destructors free the bstrings still in them exactly once.
+  std::vector<buffered_n1n2_t> live    = {};
+  std::vector<buffered_n1n2_t> expired = {};
+  uc->take_pending_payloads(live, expired);
+
+  amf_app::log_dropped_payloads(
+      Logger::amf_n1(), guti_key,
+      "the record had outlived its TTL by the time the UE answered", expired);
+
+  if (!deliver) {
+    amf_app::log_dropped_payloads(
+        Logger::amf_n1(), guti_key,
+        "the UE answered the page by de-registering", live);
+  } else if (live.empty()) {
+    // Nothing is left to deliver, and nothing to free. This is a normal
+    // outcome, not an error. It happens when:
+    //  - the UE answered late: the supervision window had already expired and
+    //    reclaimed the buffer, or a de-registration had drained it;
+    //  - the Service Request that answered the page has already used the
+    //    buffered N2 SM information to set up its PDU sessions.
+    Logger::amf_n1().info(
+        "Nothing left to deliver to SUPI %s: the buffer of paging transaction "
+        "%u (GUTI %s) was already reclaimed, or used by the Service Request "
+        "that answered the page",
+        uc->supi.c_str(), epoch, guti_key.c_str());
+  } else {
+    // Hand the payloads to TASK_AMF_APP, which owns the one delivery path
+    // (amf_app::send_dl_n1n2) that an already-CM-CONNECTED UE also takes.
+    auto delivery = std::make_shared<itti_paging_payload_delivery>(
+        TASK_AMF_N1, TASK_AMF_APP);
+    delivery->supi           = uc->supi;
+    delivery->amf_ue_ngap_id = uc->amf_ue_ngap_id;
+    delivery->ran_ue_ngap_id = uc->ran_ue_ngap_id;
+
+    const size_t delivered = live.size();
+    // Ownership moves record by record into the message.
+    delivery->payloads = std::move(live);
+    live.clear();
+
+    int ret = itti_inst->send_msg(delivery);
+    if (0 != ret) {
+      Logger::amf_n1().error(
+          "Could not send ITTI message %s to task TASK_AMF_APP; dropping %zu "
+          "buffered downlink N1/N2 payload(s) for SUPI %s",
+          delivery->get_msg_name(), delivered, uc->supi.c_str());
+    } else {
+      Logger::amf_n1().debug(
+          "Handed %zu buffered downlink N1/N2 payload(s) of paging transaction "
+          "%u to TASK_AMF_APP for SUPI %s",
+          delivered, epoch, uc->supi.c_str());
+    }
+  }
+
+  // The transaction is over: kResponded -> kIdle, so the UE can be paged
+  // again.
+  (void) uc->clear_paging_state(0);
+}
+
+//------------------------------------------------------------------------------
+void amf_n1::abandon_paging_transaction(
+    const std::shared_ptr<ue_context>& uc, const char* reason) {
+  if (uc == nullptr) return;
+
+  // Read the window timer BEFORE clear_paging_state() zeroes the field.
+  const timer_id_t window_timer = uc->get_paging_window_timer();
+
+  (void) uc->clear_paging_state(0);
+
+  // `live` and `expired` own every record they are handed. Their destructors,
+  // at the end of this function and with no lock held, are the single free
+  // point. take_pending_payloads() takes m_paging_ itself and has released it
+  // by the time it returns, so nothing below runs under a lock.
+  std::vector<buffered_n1n2_t> live    = {};
+  std::vector<buffered_n1n2_t> expired = {};
+  uc->take_pending_payloads(live, expired);
+
+  if (window_timer != ITTI_INVALID_TIMER_ID) {
+    itti_inst->timer_remove(window_timer);
+  }
+
+  const std::string guti_key = uc->get_guti();
+  amf_app::log_dropped_payloads(Logger::amf_n1(), guti_key, reason, live);
+  amf_app::log_dropped_payloads(
+      Logger::amf_n1(), guti_key, "record expired", expired);
 }
 
 //------------------------------------------------------------------------------
@@ -963,8 +1158,13 @@ void amf_n1::uplink_nas_msg_handle(
             amf_conv::get_serving_network_name(plmn.mnc, plmn.mcc);
         Logger::amf_n1().debug("Serving network name %s", snn.c_str());
         if (get_nas_ctx_by_amf_ue_id(amf_ue_ngap_id, nc)) {
+          // This Registration Request is not an initial NAS message: the UE
+          // ciphered the whole message, so its NAS message container is not
+          // ciphered a second time
+          const bool is_nas_message_container_ciphered = false;
           if (!registration_request_handle(
-                  nc, ran_ue_ngap_id, amf_ue_ngap_id, snn, plain_msg, cause)) {
+                  nc, ran_ue_ngap_id, amf_ue_ngap_id, snn, plain_msg,
+                  is_nas_message_container_ciphered, cause)) {
             // Send Registration Reject with appropriate cause
             send_registration_reject_msg(ran_ue_ngap_id, amf_ue_ngap_id, cause);
             nas_procedure_manager_.complete_specific_procedure(*nc);
@@ -1238,14 +1438,21 @@ bool amf_n1::service_request_handle(
     // Get Uplink Data Status/PDU Session Status from NAS Message Container if
     // available
 
+    bstring container = nullptr;
     bstring plain_msg = nullptr;
-    if (service_request->GetNasMessageContainer(plain_msg)) {
-      if (blength(plain_msg) < kNasMessageMinLength) {
-        Logger::amf_n1().debug("NAS message is too short!");
+    if (service_request->GetNasMessageContainer(container)) {
+      if (!decipher_nas_message_container(
+              nc->security_ctx.value(), container, plain_msg) or
+          (blength(plain_msg) < kNasMessageMinLength)) {
+        Logger::amf_n1().debug(
+            "Cannot decipher the NAS Message Container, or the NAS message is "
+            "too short!");
+        oai::utils::utils::bdestroy_wrapper(&container);
         oai::utils::utils::bdestroy_wrapper(&plain_msg);
         cause = k5gmmCauseSemanticallyIncorrect;
         return false;
       }
+      oai::utils::utils::bdestroy_wrapper(&container);
 
       uint8_t message_type =
           get_nas_message_type((uint8_t*) bdata(plain_msg), blength(plain_msg));
@@ -1292,6 +1499,7 @@ bool amf_n1::service_request_handle(
           Logger::nas_mm().error(
               "NAS Message Container, unknown NAS message 0x%x", message_type);
       }
+      oai::utils::utils::bdestroy_wrapper(&plain_msg);
     }
   }
 
@@ -1608,14 +1816,21 @@ bool amf_n1::service_request_handle(
       !pdu_session_status_opt.has_value()) {
     // Get Uplink Data Status/PDU Session Status from NAS Message Container if
     // available
+    bstring container = nullptr;
     bstring plain_msg = nullptr;
-    if (service_request->GetNasMessageContainer(plain_msg)) {
-      if (blength(plain_msg) < kNasMessageMinLength) {
-        Logger::amf_n1().debug("NAS message is too short!");
+    if (service_request->GetNasMessageContainer(container)) {
+      if (!decipher_nas_message_container(
+              nc->security_ctx.value(), container, plain_msg) or
+          (blength(plain_msg) < kNasMessageMinLength)) {
+        Logger::amf_n1().debug(
+            "Cannot decipher the NAS Message Container, or the NAS message is "
+            "too short!");
+        oai::utils::utils::bdestroy_wrapper(&container);
         oai::utils::utils::bdestroy_wrapper(&plain_msg);
         cause = k5gmmCauseSemanticallyIncorrect;
         return false;
       }
+      oai::utils::utils::bdestroy_wrapper(&container);
 
       uint8_t message_type =
           get_nas_message_type((uint8_t*) bdata(plain_msg), blength(plain_msg));
@@ -1665,6 +1880,7 @@ bool amf_n1::service_request_handle(
           Logger::nas_mm().error(
               "NAS Message Container, unknown NAS message 0x%x", message_type);
       }
+      oai::utils::utils::bdestroy_wrapper(&plain_msg);
     }
   }
 
@@ -1763,6 +1979,30 @@ bool amf_n1::service_request_handle(
               nc->supi, pdu_session_id, psc)) {
         Logger::amf_n1().warn(
             "No PDU Session Context with PDU Session ID %d", pdu_session_id);
+      }
+
+      // Verify whether the Service Request is the answer to a page for this PDU
+      // session. If so, the SMF has already sent the N2 SM information to set
+      // the PDU session up, with the N1N2 message transfer that triggered the
+      // page, and the AMF kept it in the paging buffer. Send it now, in this
+      // Initial Context Setup Request. Asking the SMF to activate the user
+      // plane again and then also delivering the buffered copy would set up the
+      // same PDU session twice.
+      buffered_n1n2_t buffered_setup = {};
+      const bool is_answer_to_page =
+          uc->take_pending_pdu_session_resource_setup(
+              pdu_session_id, buffered_setup);
+      if (is_answer_to_page) {
+        Logger::amf_n1().info(
+            "PDU Session ID %d is set up with the N2 SM information buffered "
+            "for the page",
+            pdu_session_id);
+        pdu_session_info_t item = {};
+        item.n2sm               = bstrcpy(buffered_setup.n2sm);
+        item.is_n2sm_available  = true;
+        itti_msg->pdu_sessions.insert(
+            std::pair<uint8_t, pdu_session_info_t>(pdu_session_id, item));
+        continue;
       }
 
       if (psc and
@@ -1928,7 +2168,7 @@ bool amf_n1::send_service_reject(
 bool amf_n1::registration_request_handle(
     std::shared_ptr<nas_context>& nc, const uint32_t ran_ue_ngap_id,
     const uint64_t amf_ue_ngap_id, const std::string& snn, bstring reg,
-    uint8_t& cause) {
+    bool is_nas_message_container_ciphered, uint8_t& cause) {
   // Decode Registration Request message
   auto registration_request = std::make_unique<RegistrationRequest>();
   int decoded_size =
@@ -2303,6 +2543,31 @@ bool amf_n1::registration_request_handle(
   bool is_messagecontainer =
       registration_request->GetNasMessageContainer(nas_msg);
 
+  // The NAS message container holds a copy of the whole Registration Request,
+  // including the IEs that are not sent in clear. When it is ciphered,
+  // decipher it first; nas_msg then holds the plain Registration Request.
+  if (is_messagecontainer and is_nas_message_container_ciphered) {
+    bstring deciphered_msg = nullptr;
+    bool is_deciphered     = false;
+    if (nc->security_ctx.has_value()) {
+      is_deciphered = decipher_nas_message_container(
+          nc->security_ctx.value(), nas_msg, deciphered_msg);
+    }
+    // The ciphered copy is not needed any more
+    oai::utils::utils::bdestroy_wrapper(&nas_msg);
+
+    if (is_deciphered) {
+      nas_msg = deciphered_msg;
+    } else {
+      // Without it, the registration goes on with the IEs sent in clear only
+      Logger::amf_n1().warn(
+          "Cannot decipher the NAS Message Container of the Registration "
+          "Request, ignoring it");
+      oai::utils::utils::bdestroy_wrapper(&deciphered_msg);
+      is_messagecontainer = false;
+    }
+  }
+
   if (is_messagecontainer) {
     auto registration_request_msg_container =
         std::make_unique<RegistrationRequest>();
@@ -2437,6 +2702,21 @@ std::shared_ptr<ue_context> amf_n1::rekey_nas_owner_on_guti_rereg(
     uc_old->set_ngap_ctx(uc_new->get_ngap_ctx());
     new_gnb_id     = uc_new->gnb_id;
     uc_old->gnb_id = uc_new->gnb_id;
+
+    // Store necesary information for handling paging response later
+    uc_old->cgi                   = uc_new->cgi;
+    uc_old->tai                   = uc_new->tai;
+    uc_old->rrc_estb_cause        = uc_new->rrc_estb_cause;
+    uc_old->is_ue_context_request = uc_new->is_ue_context_request;
+
+    Tai_t carried_tai = {};
+    if (uc_new->get_last_known_tai(carried_tai)) {
+      uc_old->set_last_known_tai(carried_tai);
+    }
+    sctp_assoc_id_t carried_assoc_id = 0;
+    if (uc_new->get_last_gnb_assoc_id(carried_assoc_id)) {
+      uc_old->set_last_gnb_assoc_id(carried_assoc_id);
+    }
   }
   uc_old->ran_ue_ngap_id = new_ran_ue_ngap_id;
   uc_old->amf_ue_ngap_id = new_amf_ue_ngap_id;
@@ -2517,7 +2797,16 @@ void amf_n1::set_guti_2_nas_context(
         nc->amf_ue_ngap_id, guti.c_str());
     return;
   }
-  uc->guti = guti;
+  // NOTE (and this ordering is load-bearing): the context's own GUTI is set
+  // BEFORE bind_guti(), which makes bind_guti()'s "erase the previously bound
+  // key" branch (ue_context_store.hpp) dead - it compares the key it is about
+  // to bind against a value that already equals it. A paging window timer is
+  // keyed on the 5G-GUTI the page went out under, and it is that dead branch
+  // which leaves the old key in by_guti_ and lets the timer still resolve the
+  // UE after a re-registration reallocated the GUTI. Swapping these two lines
+  // would silently orphan every in-flight paging transaction of a UE that
+  // re-registers. See plan-minimal.md risk R4.
+  uc->set_guti(guti);
   amf_app_inst->bind_guti(guti, uc);
 }
 
@@ -3900,7 +4189,15 @@ bool amf_n1::security_mode_complete_handle(
 
   // registration_accept->SetT3512Value(0x5, T3512_TIMER_VALUE_MIN);
 
-  uc->guti = guti;
+  // Store the UE Paging Identity, so that a UE which registered with a SUCI is
+  // pageable.
+  uc->set_paging_identity(
+      std::to_string(amf_cfg->guami.amf_set_id),
+      std::to_string(amf_cfg->guami.amf_pointer),
+      amf_conv::tmsi_to_string(tmsi));
+
+  // Store GUTI
+  uc->set_guti(guti);
   amf_app_inst->bind_guti(guti, uc);
   nc->guti = std::make_optional<std::string>(guti);
 
@@ -4504,6 +4801,22 @@ bool amf_n1::nas_message_cipher_protected(
 }
 
 //------------------------------------------------------------------------------
+bool amf_n1::decipher_nas_message_container(
+    nas_secu_ctx& nsc, bstring container, bstring& plain_msg) {
+  if (!nas_message_cipher_protected(
+          nsc, NAS_MESSAGE_UPLINK, container, plain_msg)) {
+    Logger::amf_n1().error("Cannot decipher the NAS Message Container");
+    return false;
+  }
+  // NEA1 output is rounded up to a multiple of 4 octets: drop the padding
+  btrunc(plain_msg, blength(container));
+  oai::utils::output_wrapper::print_buffer(
+      "amf_n1", "Deciphered NAS Message Container", (uint8_t*) bdata(plain_msg),
+      blength(plain_msg));
+  return true;
+}
+
+//------------------------------------------------------------------------------
 bool amf_n1::ue_initiate_de_registration_handle(
     const uint32_t ran_ue_ngap_id, const uint64_t amf_ue_ngap_id, bstring nas,
     uint8_t& cause) {
@@ -4766,6 +5079,10 @@ bool amf_n1::ue_initiate_de_registration_handle(
 
   // Stop all procedure timers to prevent stale callbacks after deregistration
   nas_timer_manager_.stop_all_procedure_timers(nc);
+
+  // Reclame a paging transaction before release the id (if needed)
+  abandon_paging_transaction(
+      uc, "the UE de-registered before the page could be answered");
 
   // Remove NC context
   if (remove_amf_ue_ngap_id_2_nas_context(amf_ue_ngap_id)) {

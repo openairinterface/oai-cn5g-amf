@@ -314,12 +314,14 @@ class itti_paging : public itti_msg_n2 {
       : itti_msg_n2(PAGING, origin, destination) {
     ran_ue_ngap_id = 0;
     amf_ue_ngap_id = INVALID_AMF_UE_NGAP_ID;
+    guti           = {};
   }
   itti_paging(const itti_paging&) = delete;
 
  public:
   uint32_t ran_ue_ngap_id;
   uint64_t amf_ue_ngap_id;
+  std::string guti;
 };
 
 class itti_handover_request_ack : public itti_msg_n2 {
