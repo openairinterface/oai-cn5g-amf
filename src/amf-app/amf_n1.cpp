@@ -550,8 +550,7 @@ void amf_n1::handle_itti_message(itti_uplink_nas_data_ind& nas_data_ind) {
           return;
         }
       } else {
-        // The only place this is set: the MAC was verified and the replay
-        // guard passed.
+        // The MAC was verified and the replay guard passed.
         integrity_verified = true;
       }
     } break;
@@ -713,15 +712,8 @@ bool amf_n1::verify_and_decipher_uplink_nas(
           "Dropping uplink NAS message: null integrity (5G-IA0) not permitted "
           "for a normal use-case");
       // TODO: return false;
-      // KNOWN LIMITATION (paging): this case deliberately falls through to
-      // `default:` and returns false, so a 5G-IA0 (null-integrity) UE - which
-      // TS 33.501 section 5.5.2 permits for emergency sessions - never sets
-      // `integrity_verified`. Its REGISTRATION or DEREGISTRATION answer to a
-      // page is therefore not recognised as a paging response: the buffered
-      // mobile-terminated payload is not delivered and the supervision window
-      // reclaims it instead. That is the intended posture - an unprotected
-      // message cannot be told apart from an attacker's - but it IS a change
-      // of behaviour for such a UE. Recorded in plan-minimal.md section 13.
+      // a 5G-IA0 (null-integrity) UE - which TS 33.501 section 5.5.2 permits
+      // for emergency sessions - never sets `integrity_verified`.
     }
 
     case nas_integrity_result::error:
@@ -812,19 +804,7 @@ void amf_n1::nas_signalling_establishment_request_handle(
       get_nas_message_type((uint8_t*) bdata(plain_msg), blength(plain_msg));
   Logger::amf_n1().debug("NAS message type 0x%x", message_type);
 
-  // Resolve the UE context ONCE, here, before any arm runs, and hold a strong
-  // reference to it for the rest of this function. This is the object that
-  // carries the paging state and the buffered downlink payloads: by the time
-  // execution gets here, rekey_nas_owner_on_guti_rereg() has already moved the
-  // surviving (old) context to this amf_ue_ngap_id, so the lookup finds it.
-  //
-  // It must be done BEFORE the arms, not after, for two independent reasons:
-  //  * a UE-originating de-registration unbinds the 5G-GUTI on its way out
-  //    (remove_guti_2_nas_context() -> amf_app::unbind_guti()), so a lookup by
-  //    GUTI made afterwards would fail and the transaction would be left at
-  //    kInProgress with up to kMaxPendingPayloads records unreclaimed;
-  //  * holding the shared_ptr keeps the context alive even if an arm removes
-  //    it from the store, so the buffered bstrings are still freed.
+  // Get UE context
   const std::shared_ptr<ue_context> uc =
       amf_app_inst->find_ue_by_amf_ue_ngap_id(amf_ue_ngap_id);
 
@@ -847,7 +827,7 @@ void amf_n1::nas_signalling_establishment_request_handle(
         nas_procedure_manager_.complete_specific_procedure(*nc);
       } else if (integrity_verified) {
         // A mobility or periodic registration is an allowed paging response,
-        // TS 24.501 section 5.6.2.2.1 a) 3). The Registration Accept is
+        // TS 24.501 section 5.6.2.2.1. The Registration Accept is
         // already on its way, so the gNB will have a UE context by the time
         // the buffered payload gets there.
         //
@@ -891,16 +871,7 @@ void amf_n1::nas_signalling_establishment_request_handle(
         send_service_reject(nc, cause);
         nas_procedure_manager_.complete_specific_procedure(*nc);
       } else {
-        // The canonical paging response, TS 24.501 section 5.6.2.2.1 a) 1)-2).
-        //
-        // Unconditional, and it needs no integrity_verified test: reaching
-        // here already implies one. kServiceRequest is NOT on
-        // is_plaintext_message_allowed()'s list, so a plaintext SERVICE
-        // REQUEST is dropped in handle_itti_message(); a protected one whose
-        // MAC fails is answered with a Service Reject and returns before the
-        // switch; and service_request_handle() itself refuses when there is
-        // no security context. So this arm is unreachable unless
-        // verify_and_decipher_uplink_nas() returned true.
+        // The canonical paging response, TS 24.501 section 5.6.2.2.1.
         complete_paging_if_any(uc, true);
       }
     } break;
@@ -915,21 +886,18 @@ void amf_n1::nas_signalling_establishment_request_handle(
       } else if (integrity_verified) {
         // The UE answered by leaving. This TERMINATES the transaction and
         // DROPS the buffer - there is nothing left to deliver the payload to.
-        // `uc` was captured before this arm ran, so the 5G-GUTI this handler
-        // has just unbound is not needed to find it.
         //
         // Gated on integrity_verified because
         // ue_initiate_de_registration_handle() performs no integrity check of
-        // its own (its identity step is still a TODO), so without this test an
+        // its own, so without this test an
         // unauthenticated plaintext DEREGISTRATION REQUEST quoting an observed
         // 5G-GUTI would destroy another UE's buffered payload.
         //
-        // Since the B-2 fix this is necessarily a NO-OP: the handler above has
+        // this is necessarily a NO-OP: the handler above has
         // exactly one `return true`, placed after its reclamation point, so
         // the transaction is already kIdle by the time control gets here and
         // begin_paging_response() returns false. It is kept, and kept gated,
-        // as a backstop: if the handler's reclamation were ever moved or
-        // removed, this arm would still terminate the transaction for a
+        // as a backstop: this arm still terminate the transaction for a
         // VERIFIED de-registration, and it keeps
         // complete_paging_if_any()'s "integrity-verified caller" precondition
         // true at every one of its call sites.
@@ -937,31 +905,7 @@ void amf_n1::nas_signalling_establishment_request_handle(
       } else {
         // NOT a paging response: nothing here proves who sent the message, so
         // the buffered payload is not delivered and the transaction is not
-        // completed on the sender's behalf. It cannot be LEFT here either, and
-        // it is not: ue_initiate_de_registration_handle() has already
-        // reclaimed it at its reclamation point, immediately before it unbinds
-        // this context's nas_ctx, SUPI and 5G-GUTI - the three unbinds that
-        // together make a transaction unreclaimable for the lifetime of the
-        // process. Reaching this arm means that handler returned true, and its
-        // single `return true` is past that point, so on this arm the
-        // transaction is already terminated and the buffer already freed.
-        //
-        // The call below is therefore a backstop that today does nothing. It
-        // is kept so that this arm does not silently regress to holding the
-        // buffer if the handler's reclamation is ever moved, and because it
-        // costs one lock acquisition on a path that has just torn a UE down.
-        // It is NOT gated on integrity_verified and does not need to be: it
-        // only ever DROPS a payload, never delivers one, so it hands an
-        // unverified sender nothing that the de-registration itself did not
-        // already hand them.
-        //
-        // What an attacker still gains is only the payload DROP. That is the
-        // pre-existing unauthenticated-de-registration hole
-        // (ue_initiate_de_registration_handle() performs no integrity check of
-        // its own; its identity step is still a TODO) and is exactly what this
-        // message did before the integrity_verified gate existed. What the
-        // gate buys, and keeps, is that the payload is never DELIVERED to an
-        // unverified sender.
+        // completed on the sender's behalf.
         Logger::amf_n1().warn(
             "De-registration Request for amf_ue_ngap_id " AMF_UE_NGAP_ID_FMT
             " was not integrity-verified: not treating it as a paging "
@@ -991,23 +935,12 @@ void amf_n1::complete_paging_if_any(
   uint32_t epoch          = 0;
   timer_id_t window_timer = ITTI_INVALID_TIMER_ID;
 
-  // Compare-and-set, and the only thing that distinguishes a paging response
-  // from an ordinary InitialUEMessage: it returns false, mutating nothing, for
-  // every UE that nobody paged. Everything below therefore runs only for a
-  // genuine paging response.
   if (!uc->begin_paging_response(guti_key, epoch, window_timer)) return;
 
   Logger::amf_n1().info(
       "SUPI %s answered paging transaction %u (GUTI %s)", uc->supi.c_str(),
       epoch, guti_key.c_str());
 
-  // No lock is held from here on: begin_paging_response() released m_paging_
-  // before returning, and nothing below re-takes it while sending an ITTI
-  // message. Removing the window timer is what makes "no window-timer expiry
-  // fires after a successful response" hold. An expiry that was already queued
-  // when this ran is caught by the second line of defence: the stored timer id
-  // was zeroed inside begin_paging_response(), so clear_paging_state()'s
-  // stale-expiry guard rejects it and it mutates nothing.
   if (window_timer != ITTI_INVALID_TIMER_ID) {
     itti_inst->timer_remove(window_timer);
   }
@@ -1048,21 +981,16 @@ void amf_n1::complete_paging_if_any(
     delivery->ran_ue_ngap_id = uc->ran_ue_ngap_id;
 
     const size_t delivered = live.size();
-    // Ownership moves record by record into the message. `live` is left
-    // explicitly empty so that the "freed exactly once" invariant does not
-    // depend on what a moved-from std::vector contains.
+    // Ownership moves record by record into the message.
     delivery->payloads = std::move(live);
     live.clear();
 
-    // itti_mw::send_msg() returns an int (0 on success), never a bool.
     int ret = itti_inst->send_msg(delivery);
     if (0 != ret) {
       Logger::amf_n1().error(
           "Could not send ITTI message %s to task TASK_AMF_APP; dropping %zu "
           "buffered downlink N1/N2 payload(s) for SUPI %s",
           delivery->get_msg_name(), delivered, uc->supi.c_str());
-      // `delivery` is the only owner of those records now; it is destroyed at
-      // the end of this scope and frees each of them exactly once.
     } else {
       Logger::amf_n1().debug(
           "Handed %zu buffered downlink N1/N2 payload(s) of paging transaction "
@@ -1072,8 +1000,7 @@ void amf_n1::complete_paging_if_any(
   }
 
   // The transaction is over: kResponded -> kIdle, so the UE can be paged
-  // again. Unconditional (0) because this is the path that took the
-  // transaction over, and it always wins.
+  // again.
   (void) uc->clear_paging_state(0);
 }
 
@@ -1085,14 +1012,6 @@ void amf_n1::abandon_paging_transaction(
   // Read the window timer BEFORE clear_paging_state() zeroes the field.
   const timer_id_t window_timer = uc->get_paging_window_timer();
 
-  // Unconditional (0): this is an abandon by the thread that is about to make
-  // the transaction unreclaimable, and it always wins. It also disowns the
-  // window timer, so an expiry already queued on TASK_AMF_APP finds
-  // window_timer_id back at 0, fails clear_paging_state()'s stale-expiry guard
-  // and mutates nothing. Combined with take_pending_payloads() emptying
-  // pending_ under m_paging_ in one step - so whichever of the two runs first
-  // takes every record and the other takes none - no double free is
-  // constructible.
   (void) uc->clear_paging_state(0);
 
   // `live` and `expired` own every record they are handed. Their destructors,
@@ -1107,9 +1026,6 @@ void amf_n1::abandon_paging_transaction(
     itti_inst->timer_remove(window_timer);
   }
 
-  // Everything above is a no-op for the overwhelming majority of UEs, which
-  // were never paged: the state is already kIdle, the timer id already 0 and
-  // pending_ already empty, so log_dropped_payloads() below prints nothing.
   const std::string guti_key = uc->get_guti();
   amf_app::log_dropped_payloads(Logger::amf_n1(), guti_key, reason, live);
   amf_app::log_dropped_payloads(
@@ -2065,13 +1981,13 @@ bool amf_n1::service_request_handle(
             "No PDU Session Context with PDU Session ID %d", pdu_session_id);
       }
 
-      // Is this Service Request the answer to a page for this PDU session?
-      // If so, the SMF has already sent the N2 SM information to set the PDU
-      // session up, with the N1N2 message transfer that triggered the page,
-      // and the AMF kept it in the paging buffer. Send it now, in this Initial
-      // Context Setup Request. Asking the SMF to activate the user plane again
-      // and then also delivering the buffered copy would set up the same PDU
-      // session twice.
+      // Verify whether the Service Request is the answer to a page for this PDU
+      // session. If so, the SMF has already sent the N2 SM information to set
+      // the PDU session up, with the N1N2 message transfer that triggered the
+      // page, and the AMF kept it in the paging buffer. Send it now, in this
+      // Initial Context Setup Request. Asking the SMF to activate the user
+      // plane again and then also delivering the buffered copy would set up the
+      // same PDU session twice.
       buffered_n1n2_t buffered_setup = {};
       const bool is_answer_to_page =
           uc->take_pending_pdu_session_resource_setup(
@@ -2086,8 +2002,6 @@ bool amf_n1::service_request_handle(
         item.is_n2sm_available  = true;
         itti_msg->pdu_sessions.insert(
             std::pair<uint8_t, pdu_session_info_t>(pdu_session_id, item));
-        // Done with this PDU session. buffered_setup frees its own payload
-        // when it goes out of scope.
         continue;
       }
 
@@ -2789,26 +2703,12 @@ std::shared_ptr<ue_context> amf_n1::rekey_nas_owner_on_guti_rereg(
     new_gnb_id     = uc_new->gnb_id;
     uc_old->gnb_id = uc_new->gnb_id;
 
-    // uc_new is about to be DESTROYED. rekey_ue_context() below does
-    // by_amf_id_.erase(old_id); by_amf_id_[new_id] = uc_old; and by_amf_id_ is
-    // the only OWNING index of ue_context_store (the by-SUPI, by-GUTI and
-    // by-<ran,gnb> indexes all hold weak_ptr), so the entry that held the
-    // freshly created context is overwritten and its last reference goes with
-    // it. Everything amf_app::handle_itti_message(
-    // itti_nas_signalling_establishment_request&) just wrote on it therefore
-    // has to be carried onto the surviving context here or it is lost.
-    //
-    // This is what makes a paging response update the AMF's view of where the
-    // UE is: without it, a UE that answers a page from a different cell leaves
-    // uc_old->tai / ->cgi at their pre-page values.
+    // Store necesary information for handling paging response later
     uc_old->cgi                   = uc_new->cgi;
     uc_old->tai                   = uc_new->tai;
     uc_old->rrc_estb_cause        = uc_new->rrc_estb_cause;
     uc_old->is_ue_context_request = uc_new->is_ue_context_request;
 
-    // The paging location, through the locked accessors (both contexts are
-    // reachable from other tasks). Only carried when the new context actually
-    // has a value, so a missing seed never overwrites a good one with a zero.
     Tai_t carried_tai = {};
     if (uc_new->get_last_known_tai(carried_tai)) {
       uc_old->set_last_known_tai(carried_tai);
@@ -2817,16 +2717,6 @@ std::shared_ptr<ue_context> amf_n1::rekey_nas_owner_on_guti_rereg(
     if (uc_new->get_last_gnb_assoc_id(carried_assoc_id)) {
       uc_old->set_last_gnb_assoc_id(carried_assoc_id);
     }
-
-    // Deliberately NOT carried:
-    //  * the UE Paging Identity (s_setid_/s_pointer_/s_tmsi_): the OLD
-    //    context's is authoritative. It was written from what this AMF
-    //    allocated at the last Registration Accept; the new context only
-    //    mirrors what the UE happened to put in its InitialUEMessage.
-    //  * pending_ and the paging transaction state: the new context has
-    //    neither - it was created microseconds ago by the InitialUEMessage
-    //    that is the paging response, and the buffer and the transaction both
-    //    live on the old context, which is the one that survives.
   }
   uc_old->ran_ue_ngap_id = new_ran_ue_ngap_id;
   uc_old->amf_ue_ngap_id = new_amf_ue_ngap_id;
@@ -4299,27 +4189,14 @@ bool amf_n1::security_mode_complete_handle(
 
   // registration_accept->SetT3512Value(0x5, T3512_TIMER_VALUE_MIN);
 
-  // Write the UE Paging Identity back onto ue_context from what was just
-  // allocated, so that a UE which registered with a SUCI is pageable. Use the
-  // LOCAL `tmsi` the allocator produced, never uc->tmsi: they coincide today
-  // but uc->tmsi is also the field conv::get_tmsi_from_guti() can overwrite
-  // from a UE-supplied GUTI. All three strings are decimal - see the encoding
-  // contract on ue_context::set_paging_identity().
+  // Store the UE Paging Identity, so that a UE which registered with a SUCI is
+  // pageable.
   uc->set_paging_identity(
       std::to_string(amf_cfg->guami.amf_set_id),
       std::to_string(amf_cfg->guami.amf_pointer),
       amf_conv::tmsi_to_string(tmsi));
 
-  // Same load-bearing ordering as in set_guti_2_nas_context(): the context's
-  // GUTI is set BEFORE bind_guti(), so bind_guti()'s erase-the-old-key branch
-  // never runs and by_guti_ keeps the previous key pointing at this context.
-  // security_mode_complete_handle(), which builds the Registration Accept,
-  // allocates a fresh random TMSI every time it runs, so a UE that answers a
-  // page with a REGISTRATION REQUEST gets a new 5G-GUTI here - and it gets it
-  // BEFORE complete_paging_if_any() runs on the registration arm -
-  // and it is only that stale by_guti_ entry which keeps the paging window
-  // timer, keyed on the OLD GUTI, resolvable. Do not "fix" this ordering
-  // without first re-keying the window timer. See plan-minimal.md risk R4.
+  // Store GUTI
   uc->set_guti(guti);
   amf_app_inst->bind_guti(guti, uc);
   nc->guti = std::make_optional<std::string>(guti);
@@ -5203,34 +5080,7 @@ bool amf_n1::ue_initiate_de_registration_handle(
   // Stop all procedure timers to prevent stale callbacks after deregistration
   nas_timer_manager_.stop_all_procedure_timers(nc);
 
-  // RECLAMATION POINT. The three unbinds immediately below - nas_ctx, SUPI,
-  // 5G-GUTI - are, together, the ONLY thing in this tree that can make a
-  // paging transaction unreclaimable, and they all live here:
-  //   * remove_amf_ue_ngap_id_2_nas_context() -> uc->set_nas_ctx(nullptr),
-  //     after which amf_ue_id_2_nas_context() and guti_2_nas_context() both
-  //     fail, so no later NAS message can resolve this context, the
-  //     UEContextReleaseComplete handler returns before removing anything, and
-  //     the implicit-de-registration timer - the only live caller of
-  //     amf_app::remove_ue_context() - bails at its entry guard, so
-  //     ~ue_context never runs;
-  //   * remove_supi_2_nas_context() -> unbind_supi(), after which no further
-  //     N1N2MessageTransfer can reach this context (that path resolves by
-  //     SUPI) and the lazy TTL sweep in push_pending_payload() can never fire;
-  //   * remove_guti_2_nas_context() -> unbind_guti(), after which
-  //     amf_app::paging_window_timeout()'s find_ue_by_guti() - the window
-  //     timer's ONLY key - returns nullptr.
-  // So the transaction must be reclaimed HERE, before any of them, or its
-  // buffer is held until the process exits. Doing it at the point of teardown
-  // rather than at this function's call sites is deliberate: it covers both of
-  // them (the InitialUEMessage arm of
-  // nas_signalling_establishment_request_handle() and the established-
-  // connection arm of uplink_nas_msg_handle()) and any caller added later,
-  // which a per-call-site drain cannot.
-  //
-  // Unconditional, and deliberately NOT gated on integrity: this only DROPS a
-  // payload, it never delivers one, so it hands an unverified sender nothing
-  // (see the BD-1 note on the de-registration arm). It is a no-op for the
-  // overwhelming majority of UEs, which were never paged.
+  // Reclame a paging transaction before release the id (if needed)
   abandon_paging_transaction(
       uc, "the UE de-registered before the page could be answered");
 

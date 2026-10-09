@@ -123,9 +123,6 @@ class itti_paging_payload_delivery : public itti_msg_amf_app {
       const task_id_t origin, const task_id_t destination)
       : itti_msg_amf_app(PAGING_PAYLOAD_DELIVERY, origin, destination) {
     supi = {};
-    // `payloads` is default-constructed empty. Do NOT write `payloads = {};`:
-    // that selects vector::operator=(initializer_list), which copies, and
-    // buffered_n1n2_t is deliberately non-copyable.
   }
   itti_paging_payload_delivery(const itti_paging_payload_delivery&) = delete;
   itti_paging_payload_delivery& operator=(const itti_paging_payload_delivery&) =

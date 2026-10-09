@@ -325,7 +325,7 @@ void amf_app_task(void*) {
                   to->timer_id, to->arg2_user);
               break;
             case TASK_AMF_PAGING_WINDOW_EXPIRE:
-              // arg2_user carries the 5G-GUTI the transaction was keyed on.
+              // arg2_user carries the 5G-GUTI
               amf_app_inst->paging_window_timeout(to->timer_id, to->arg2_user);
               break;
             default:
@@ -395,8 +395,6 @@ std::shared_ptr<ue_context> amf_app::get_ue_context(
     const std::string& supi) const {
   std::shared_ptr<ue_context> uc = ue_context_store_.find_by_supi(supi);
   if (!uc) {
-    // .c_str(): passing a std::string to %s is undefined behaviour (F4).
-    // Fixed here because the paging delivery path now reaches this line.
     Logger::amf_app().warn("No UE context with UE SUPI %s", supi.c_str());
   }
   return uc;
@@ -517,19 +515,10 @@ std::string amf_app::generate_amf_status_change_sub_id_generator() {
 }
 
 //------------------------------------------------------------------------------
-// Logs one error per downlink payload that is being thrown away. This function
-// never takes ownership: the records stay in the caller's vector and that
-// vector's destructor is their single free point.
 void amf_app::log_dropped_payloads(
     const oai::logger::printf_logger& logger, const std::string& guti,
     const char* reason, const std::vector<buffered_n1n2_t>& records) {
   for (const auto& record : records) {
-    // NEVER pass a std::string to a printf conversion: every one of these is
-    // rendered with .c_str(). An empty field is rendered as "(none)" rather
-    // than as an empty pair of quotes, so that a reader can tell "the AMF has
-    // no such value" from "the SMF sent an empty one". The AMF assigns no
-    // n1n2MessageId on this path today (the 202 response carries only a
-    // cause), so that field is empty in this slice.
     logger.error(
         "Dropping a buffered downlink N1/N2 payload for GUTI %s (%s): N1N2 "
         "message id %s, PDU session id %d, N1N2 transfer failure "
@@ -540,7 +529,7 @@ void amf_app::log_dropped_payloads(
         record.pdu_session_id,
         record.failure_notif_uri.empty() ? "(none)" :
                                            record.failure_notif_uri.c_str());
-    // TODO(plan.md Phase 6): send an Namf_Communication
+    // TODO: send an Namf_Communication
     // N1N2TransferFailureNotification to record.failure_notif_uri here
     // (TS 29.518 section 5.2.2.3.2). Until then the SMF only learns of the
     // failure through its own guard timer.
@@ -563,8 +552,6 @@ bool amf_app::start_paging(
     return false;
   }
 
-  // Through the accessor: uc's 5G-GUTI is written on TASK_AMF_N1 (Registration
-  // Accept) and this runs on TASK_AMF_APP.
   const std::string guti = uc->get_guti();
 
   // Buffer first, open the transaction second: the payload must already be
@@ -575,8 +562,7 @@ bool amf_app::start_paging(
         "records; the oldest one was evicted to make room for this payload",
         uc->supi.c_str(), static_cast<uint32_t>(kMaxPendingPayloads));
   }
-  // Logged with no lock held (push_pending_payload released m_paging_ before
-  // returning) and freed when `evicted` goes out of scope.
+
   log_dropped_payloads(
       Logger::amf_app(), guti, "buffer full or record expired", evicted);
 
@@ -611,8 +597,6 @@ bool amf_app::start_paging(
   // empty one.
   dl_msg->guti = guti;
 
-  // itti_mw::send_msg() returns an int (0 on success, -1 on failure), never a
-  // bool: returning it directly from this function would invert the result.
   int ret = itti_inst->send_msg(dl_msg);
   if (0 != ret) {
     Logger::amf_app().error(
@@ -623,18 +607,15 @@ bool amf_app::start_paging(
   }
 
   // Arm the one-shot supervision window. This is NOT T3513: its expiry drops
-  // the buffer and never re-pages (see plan.md Phase 2 for the retransmission
-  // timer). It is keyed on the 5G-GUTI because a paging response rekeys the UE
-  // context and changes the amf_ue_ngap_id. NOTE: the AMF does not reallocate
-  // the 5G-GUTI after paging in this slice; a future phase that does must
-  // remove this timer before rebinding, or it would orphan it.
+  // the buffer and never re-pages. It is keyed on the 5G-GUTI because a paging
+  // response rekeys the UE context and changes the amf_ue_ngap_id. NOTE: the
+  // AMF does not reallocate the 5G-GUTI after paging in this slice; a future
+  // phase that does must remove this timer before rebinding, or it would orphan
+  // it.
   timer_id_t timer_id = itti_inst->timer_setup(
       kPagingResponseWindowSeconds, 0, TASK_AMF_APP,
       TASK_AMF_PAGING_WINDOW_EXPIRE, guti);
   if (ITTI_INVALID_TIMER_ID == timer_id) {
-    // timer_setup() returns ITTI_INVALID_TIMER_ID (0) on failure. Without the
-    // window nothing would ever terminate this transaction, so terminate it now
-    // rather than leave the UE unpageable for ever with a buffer nobody owns.
     Logger::amf_app().error(
         "Could not arm the paging response window for GUTI %s", guti.c_str());
     abandon_paging(uc, guti, "paging response window could not be armed");
@@ -667,9 +648,6 @@ void amf_app::abandon_paging(
 void amf_app::paging_window_timeout(
     timer_id_t timer_id, const std::string& guti) {
   if (ITTI_INVALID_TIMER_ID == timer_id) {
-    // 0 is clear_paging_state()'s "terminate unconditionally" value. A timeout
-    // that cannot identify itself must never be allowed to use it, or it would
-    // drain whichever transaction happens to be in flight.
     Logger::amf_app().error(
         "Paging response window expired with an invalid timer id for GUTI %s; "
         "ignoring it",
@@ -699,7 +677,7 @@ void amf_app::paging_window_timeout(
 
   Logger::amf_app().warn(
       "The paging response window (%u s) expired for GUTI %s: the UE did not "
-      "answer. NOT re-paging (see plan.md Phase 2 for T3513 retransmission)",
+      "answer. (for this version) NOT re-paging",
       kPagingResponseWindowSeconds, guti.c_str());
 
   std::vector<buffered_n1n2_t> live    = {};
@@ -709,7 +687,7 @@ void amf_app::paging_window_timeout(
       Logger::amf_app(), guti, "paging response window expired", live);
   log_dropped_payloads(Logger::amf_app(), guti, "record expired", expired);
   // Both vectors are destroyed here: every buffered bstring is freed exactly
-  // once, whichever path got here.
+  // once.
 }
 
 //------------------------------------------------------------------------------
@@ -717,13 +695,6 @@ void amf_app::send_dl_n1n2(
     const std::shared_ptr<ue_context>& uc, bstring n1sm, bool is_n1sm_set,
     bstring n2sm, bool is_n2sm_set, const std::string& n2sm_info_type,
     uint8_t pdu_session_id) {
-  // Extracted verbatim from the N1N2MessageTransfer branch below so that the
-  // paged UE is served by exactly the code path an already-CM-CONNECTED UE
-  // takes. Logic unchanged, with one exception, marked below: the bstrcpy()
-  // whose result was never stored is now owned by a local and freed.
-  //
-  // n1sm and n2sm are BORROWED. Nothing here frees them and nothing here keeps
-  // them: both are copied onward into the ITTI message.
   auto dl_msg =
       std::make_shared<itti_downlink_nas_transfer>(TASK_AMF_APP, TASK_AMF_N1);
 
@@ -736,11 +707,6 @@ void amf_app::send_dl_n1n2(
     // Encode DL NAS TRANSPORT message(NAS message)
     auto dl = std::make_unique<DlNasTransport>();
     dl->SetPayloadContainerType(kN1SmInformation);
-    // DlNasTransport::SetPayloadContainer(uint8_t*, int) blk2bstr()s the bytes
-    // it is given, so this copy is a temporary. It used to be an unnamed
-    // bstrcpy() whose bstring nothing ever freed; naming it and freeing it here
-    // changes no byte on the wire and plugs a leak that this shared path would
-    // otherwise hit once per delivered N1 SM.
     bstring n1sm_copy = bstrcpy(n1sm);
     dl->SetPayloadContainer((uint8_t*) bdata(n1sm_copy), blength(n1sm));
     oai::utils::utils::bdestroy_wrapper(&n1sm_copy);
@@ -779,16 +745,12 @@ void amf_app::handle_itti_message(itti_paging_payload_delivery& itti_msg) {
   // Setup that follows it) is on its way and the gNB has a UE context by the
   // time these payloads reach it.
   //
-  // Re-resolve the UE context by SUPI rather than trusting the NGAP UE ids on
-  // this message: both of them changed when the page was answered.
   std::shared_ptr<ue_context> uc = get_ue_context(itti_msg.supi);
   if (uc == nullptr) {
     Logger::amf_app().error(
         "No UE context for SUPI %s; cannot deliver %zu buffered downlink N1/N2 "
         "payload(s)",
         itti_msg.supi.c_str(), itti_msg.payloads.size());
-    // itti_msg still owns every record; ~itti_paging_payload_delivery ->
-    // ~std::vector -> ~buffered_n1n2_t frees both bstrings of each of them.
     return;
   }
 
@@ -816,13 +778,7 @@ void amf_app::handle_itti_message(
     Logger::amf_app().info(
         "Handle ITTI N1N2 Message Transfer Request for Paging");
 
-    // Buffer the downlink payload so that it survives the page. bstrcpy(),
-    // NEVER a move: the bstrings hanging off this ITTI message are themselves
-    // copies the SBI server made (amf_http2_server.cpp:1110, :1229) and the
-    // server frees its own locals right after send_msg() (:1332-1333).
-    // Stealing them would leave a non-null dangling bstring on a message whose
-    // other branches still bstrcpy() from it, and would double-free the day
-    // itti_n1n2_message_transfer_request gains a destructor.
+    // Buffer the downlink payload so that it survives the page.
     buffered_n1n2_t buffered   = {};
     buffered.failure_notif_uri = itti_msg.n1n2_failure_txf_notif_uri;
     if (itti_msg.is_n1sm_set && (itti_msg.n1sm != nullptr)) {
@@ -882,8 +838,7 @@ void amf_app::handle_itti_message(
 
     // The UE is CM-CONNECTED: deliver now, through the one delivery helper a
     // paged UE's buffered payload also goes through
-    // (handle_itti_message(itti_paging_payload_delivery&)). The bstrings stay
-    // owned by this ITTI message; send_dl_n1n2() only borrows them.
+    // (handle_itti_message(itti_paging_payload_delivery&)).
     send_dl_n1n2(
         uc, itti_msg.n1sm, itti_msg.is_n1sm_set, itti_msg.n2sm,
         itti_msg.is_n2sm_set, itti_msg.n2sm_info_type, itti_msg.pdu_session_id);
@@ -994,14 +949,10 @@ void amf_app::handle_itti_message(
   uc->is_ue_context_request = itti_msg.ue_ctx_req;
 
   // Seed the paging state on ue_context, which (unlike ue_ngap_context)
-  // survives every CM-IDLE teardown. This is the right place for it: at the
-  // amf_n2 InitialUEMessage site there is no ue_context yet.
+  // survives every CM-IDLE teardown.
   uc->set_last_known_tai(itti_msg.tai);
   uc->set_last_gnb_assoc_id(itti_msg.gnb_assoc_id);
 
-  // Mirror the UE-supplied 5G-S-TMSI, but only when it is complete: never
-  // overwrite an identity this AMF allocated at GUTI allocation with an empty
-  // one.
   if (!itti_msg.s_setid.empty() && !itti_msg.s_pointer.empty() &&
       !itti_msg.s_tmsi.empty()) {
     uc->set_paging_identity(
