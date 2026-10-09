@@ -20,10 +20,7 @@ extern "C" {
 #include "bstrlib.h"
 }
 
-// Types backing the CN-initiated paging procedure. They live on `ue_context`
-// (see `ue_context.hpp`), which is the only UE object that survives the eight
-// CM-IDLE teardown sites in `amf_n2.cpp`; `ue_ngap_context` is destroyed there
-// and must therefore never hold paging state.
+// Types backing the CN-initiated paging procedure.
 
 // Lifecycle of one paging transaction.
 enum class paging_state_e : uint8_t {
@@ -51,24 +48,15 @@ constexpr size_t kMaxPendingPayloads = 4;
 constexpr uint32_t kPagingResponseWindowSeconds = 10;
 
 // One buffered downlink N1/N2 payload.
-//
-// Owns its two bstrings. bstring is a raw pointer type: a silent copy would
-// give two owners and the second drain would double-free. Copy is DELETED.
-//
-// The producer must always `bstrcpy()` into `n1sm`/`n2sm`, never steal the
-// bstring off `itti_n1n2_message_transfer_request`: both SBI servers already
-// hand out two owners per payload and free their own local at the end of the
-// handler.
 struct buffered_n1n2_t {
   std::string n1n2_message_id;
-  std::string failure_notif_uri;  // n1n2FailureTxfNotifURI, for a later phase
+  std::string failure_notif_uri;  // n1n2FailureTxfNotifURI, for the later phase
   bstring n1sm     = nullptr;
   bool is_n1sm_set = false;
   bstring n2sm     = nullptr;
   bool is_n2sm_set = false;
   std::string n2sm_info_type;
   uint8_t pdu_session_id = 0;
-  // Written by the caller before the push; `ue_context` only sweeps on it.
   std::chrono::steady_clock::time_point expires_at{};
 
   buffered_n1n2_t()                                  = default;
