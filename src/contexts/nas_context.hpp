@@ -201,6 +201,7 @@ class nas_context {
   bool to_be_register_by_new_suci;
 
   bool get_kamf(uint8_t index, uint8_t (&k)[AUTH_VECTOR_LENGTH_OCTETS]) const;
+  void set_kgnb(const uint8_t (&k)[AUTH_VECTOR_LENGTH_OCTETS]);
   static std::string fivegmm_state_to_string(const _5gmm_state_t& state);
 
   // Pending UCU record — present while an acknowledged CUC is in-flight.
