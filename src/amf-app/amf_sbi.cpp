@@ -613,6 +613,8 @@ void amf_sbi::handle_itti_message(itti_nsmf_pdusession_create_sm_context& smf) {
       std::string nrf_uri = {};
       if (!amf_sbi::get_nrf_uri(psc->snssai, psc->plmn, psc->dnn, nrf_uri)) {
         Logger::amf_sbi().error("No NRF available");
+        // The SMF never learned about this session, drop the context
+        uc->remove_pdu_sessions_context(smf.pdu_sess_id);
         return;
       }
       // Store NRF's URI in UE Context
@@ -625,6 +627,8 @@ void amf_sbi::handle_itti_message(itti_nsmf_pdusession_create_sm_context& smf) {
               smf_uri_root, smf_api_version, psc->snssai, psc->plmn, psc->dnn,
               nrf_uri)) {
         Logger::amf_sbi().error("SMF Selection, no SMF candidate is available");
+        // The SMF never learned about this session, drop the context
+        uc->remove_pdu_sessions_context(smf.pdu_sess_id);
         return;
       }
 
@@ -632,6 +636,8 @@ void amf_sbi::handle_itti_message(itti_nsmf_pdusession_create_sm_context& smf) {
                    smf_uri_root, smf_api_version)) {
       Logger::amf_sbi().error(
           "No SMF candidate is available (from configuration file)");
+      // The SMF never learned about this session, drop the context
+      uc->remove_pdu_sessions_context(smf.pdu_sess_id);
       return;
     }
 
