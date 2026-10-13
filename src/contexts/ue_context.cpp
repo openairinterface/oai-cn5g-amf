@@ -103,6 +103,31 @@ void ue_context::copy_pdu_sessions(const std::shared_ptr<ue_context>& ue_ctx) {
 }
 
 //------------------------------------------------------------------------------
+void ue_context::take_pdu_sessions(const std::shared_ptr<ue_context>& ue_ctx) {
+  if (!ue_ctx || ue_ctx.get() == this) return;
+  std::map<std::uint8_t, std::shared_ptr<pdu_session_context>> taken;
+  {
+    std::unique_lock lock(ue_ctx->m_pdu_session);
+    taken.swap(ue_ctx->pdu_sessions);
+  }
+  std::unique_lock lock(m_pdu_session);
+  for (auto& [pdu_session_id, psc] : taken) {
+    auto [it, inserted] = pdu_sessions.emplace(pdu_session_id, psc);
+    // Same ID, different object: the UE established this PDU Session ID again
+    // on this context, and that Create SM Context already made the SMF
+    // replace and release the old SM context. Keep the current one; there is
+    // nothing left to release for the old object.
+    if (!inserted && it->second != psc) {
+      Logger::amf_app().warn(
+          "PDU Session ID %d exists in both UE contexts, keeping the current "
+          "one (old SM context %s replaced by %s)",
+          pdu_session_id, psc->smf_info.context_location.c_str(),
+          it->second->smf_info.context_location.c_str());
+    }
+  }
+}
+
+//------------------------------------------------------------------------------
 bool ue_context::get_pdu_sessions_context(
     std::vector<std::shared_ptr<pdu_session_context>>& sessions_ctx) const {
   std::shared_lock lock(m_pdu_session);

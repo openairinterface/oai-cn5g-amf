@@ -96,9 +96,12 @@ class ue_context_store {
     by_supi_[supi] = uc;
   }
 
-  void unbind_supi(const std::string& supi) {
+  // Erase the by-SUPI key only if it still refers to owner (see
+  // erase_if_owned)
+  void unbind_supi(
+      const std::string& supi, const std::shared_ptr<ue_context>& owner) {
     std::unique_lock lock(m_);
-    by_supi_.erase(supi);
+    erase_if_owned(by_supi_, supi, owner.get());
   }
 
   // ---- Secondary index: by GUTI ---------------------------------------------
@@ -136,14 +139,17 @@ class ue_context_store {
       const std::string& guti, const std::shared_ptr<ue_context>& uc) {
     std::unique_lock lock(m_);
     if (uc && !uc->guti.empty() && uc->guti != guti) {
-      by_guti_.erase(uc->guti);
+      erase_if_owned(by_guti_, uc->guti, uc.get());
     }
     by_guti_[guti] = uc;
   }
 
-  void unbind_guti(const std::string& guti) {
+  // Erase the by-GUTI key only if it still refers to owner (see
+  // erase_if_owned)
+  void unbind_guti(
+      const std::string& guti, const std::shared_ptr<ue_context>& owner) {
     std::unique_lock lock(m_);
-    by_guti_.erase(guti);
+    erase_if_owned(by_guti_, guti, owner.get());
   }
 
   // ---- Secondary index: by <ran_ue_ngap_id, gnb_id> -------------------------
@@ -183,9 +189,15 @@ class ue_context_store {
     by_ran_gnb_[ran_gnb_key_t{ran_ue_ngap_id, gnb_id}] = uc;
   }
 
-  void unbind_ran_gnb(uint32_t ran_ue_ngap_id, uint32_t gnb_id) {
+  // Erase the by-<ran,gnb> key only if it still refers to owner (see
+  // erase_if_owned). RAN UE NGAP IDs are reused, e.g. after a gNB restart, so
+  // the key may already belong to another UE.
+  void unbind_ran_gnb(
+      uint32_t ran_ue_ngap_id, uint32_t gnb_id,
+      const std::shared_ptr<ue_context>& owner) {
     std::unique_lock lock(m_);
-    by_ran_gnb_.erase(ran_gnb_key_t{ran_ue_ngap_id, gnb_id});
+    erase_if_owned(
+        by_ran_gnb_, ran_gnb_key_t{ran_ue_ngap_id, gnb_id}, owner.get());
   }
 
   // ---- Others ----------------------------------------------------------
@@ -245,18 +257,36 @@ class ue_context_store {
     std::shared_ptr<ue_context> uc = it->second;
     by_amf_id_.erase(it);
     if (uc) {
+      // The keys may already be rebound to a newer context (e.g. SUPI after a
+      // re-registration), only erase the ones still pointing to this one
       if (!uc->supi.empty()) {
-        by_supi_.erase(uc->supi);
+        erase_if_owned(by_supi_, uc->supi, uc.get());
       }
       if (!uc->guti.empty()) {
-        by_guti_.erase(uc->guti);
+        erase_if_owned(by_guti_, uc->guti, uc.get());
       }
-      by_ran_gnb_.erase(ran_gnb_key_t{uc->ran_ue_ngap_id, uc->gnb_id});
+      erase_if_owned(
+          by_ran_gnb_, ran_gnb_key_t{uc->ran_ue_ngap_id, uc->gnb_id}, uc.get());
     }
     return true;
   }
 
  private:
+  // Erase index[key] if it refers to owner or has expired. A null owner only
+  // erases an expired entry. Caller must hold m_ exclusively.
+  template<typename Index, typename Key>
+  static void erase_if_owned(
+      Index& index, const Key& key, const ue_context* owner) {
+    auto it = index.find(key);
+    if (it == index.end()) {
+      return;
+    }
+    auto current = it->second.lock();
+    if (!current || current.get() == owner) {
+      index.erase(it);
+    }
+  }
+
   // primary index, keyed by amf_ue_ngap_id.
   std::map<uint64_t, std::shared_ptr<ue_context>> by_amf_id_;
   // Secondary indexes hold weak references to the object; they expire

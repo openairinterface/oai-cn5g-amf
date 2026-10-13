@@ -13,6 +13,7 @@
 #include "amf.hpp"
 #include "itti_msg_n2.hpp"
 #include "ngap_app.hpp"
+#include "ue_context.hpp"
 #include "ue_ngap_context.hpp"
 #include "Struct.hpp"
 #include "NgapIeType_anyOf.h"
@@ -343,10 +344,13 @@ class amf_n2 : public oai::ngap::ngap_app {
    * Remove UE NGAP context associated with a RAN UE NGAP ID
    * @param [uint32_t] ran_ue_ngap_id: RAN UE NGAP ID
    * @param [uint32_t] gnb_id: gNB ID
+   * @param [const std::shared_ptr<ue_context>&] owner: UE context expected to
+   * own the <ran,gnb> key (nullptr: only an expired entry is removed)
    * @return void
    */
   void remove_ran_ue_ngap_id_2_ngap_context(
-      uint32_t ran_ue_ngap_id, uint32_t gnb_id);
+      uint32_t ran_ue_ngap_id, uint32_t gnb_id,
+      const std::shared_ptr<ue_context>& owner);
 
   /*
    * Release only NGAP/N2 context (set CM-IDLE, keep NAS/5GMM state).

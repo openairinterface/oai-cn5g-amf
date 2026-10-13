@@ -527,26 +527,37 @@ class amf_app {
       const std::shared_ptr<ue_context>& uc);
 
   /*
-   * Unbind a GUTI from the by-GUTI index
+   * Unbind a GUTI from the by-GUTI index, if it is still bound to owner
    * @param [const std::string&] guti: GUTI
+   * @param [const std::shared_ptr<ue_context>&] owner: expected UE context
+   * (nullptr: only an expired entry is removed)
    * @return void
    */
-  void unbind_guti(const std::string& guti);
+  void unbind_guti(
+      const std::string& guti, const std::shared_ptr<ue_context>& owner);
 
   /*
-   * Unbind a SUPI from the by-SUPI index
+   * Unbind a SUPI from the by-SUPI index, if it is still bound to owner
    * @param [const std::string&] supi: SUPI
+   * @param [const std::shared_ptr<ue_context>&] owner: expected UE context
+   * (nullptr: only an expired entry is removed)
    * @return void
    */
-  void unbind_supi(const std::string& supi);
+  void unbind_supi(
+      const std::string& supi, const std::shared_ptr<ue_context>& owner);
 
   /*
-   * Unbind <ran_ue_ngap_id, gnb_id> from the by-<ran,gnb> index
+   * Unbind <ran_ue_ngap_id, gnb_id> from the by-<ran,gnb> index, if it is
+   * still bound to owner
    * @param [uint32_t] ran_ue_ngap_id: RAN UE NGAP ID
    * @param [uint32_t] gnb_id: gNB ID
+   * @param [const std::shared_ptr<ue_context>&] owner: expected UE context
+   * (nullptr: only an expired entry is removed)
    * @return void
    */
-  void unbind_ran_gnb(uint32_t ran_ue_ngap_id, uint32_t gnb_id);
+  void unbind_ran_gnb(
+      uint32_t ran_ue_ngap_id, uint32_t gnb_id,
+      const std::shared_ptr<ue_context>& owner);
 
   /*
    * Apply fn to every UE Context (null entries are skipped). The callback

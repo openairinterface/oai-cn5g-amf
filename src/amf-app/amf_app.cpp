@@ -428,18 +428,22 @@ void amf_app::bind_ran_gnb(
 }
 
 //------------------------------------------------------------------------------
-void amf_app::unbind_guti(const std::string& guti) {
-  ue_context_store_.unbind_guti(guti);
+void amf_app::unbind_guti(
+    const std::string& guti, const std::shared_ptr<ue_context>& owner) {
+  ue_context_store_.unbind_guti(guti, owner);
 }
 
 //------------------------------------------------------------------------------
-void amf_app::unbind_supi(const std::string& supi) {
-  ue_context_store_.unbind_supi(supi);
+void amf_app::unbind_supi(
+    const std::string& supi, const std::shared_ptr<ue_context>& owner) {
+  ue_context_store_.unbind_supi(supi, owner);
 }
 
 //------------------------------------------------------------------------------
-void amf_app::unbind_ran_gnb(uint32_t ran_ue_ngap_id, uint32_t gnb_id) {
-  ue_context_store_.unbind_ran_gnb(ran_ue_ngap_id, gnb_id);
+void amf_app::unbind_ran_gnb(
+    uint32_t ran_ue_ngap_id, uint32_t gnb_id,
+    const std::shared_ptr<ue_context>& owner) {
+  ue_context_store_.unbind_ran_gnb(ran_ue_ngap_id, gnb_id, owner);
 }
 
 //------------------------------------------------------------------------------

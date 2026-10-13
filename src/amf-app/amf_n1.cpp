@@ -2034,11 +2034,8 @@ bool amf_n1::registration_request_handle(
         // Update UE context
         uc->supi = nc->supi;
 
-        // Try to find old nas_context and release
-        std::shared_ptr<nas_context> old_nc = {};
-        if (supi_2_nas_context(nc->supi, old_nc)) {
-          old_nc.reset();
-        }
+        // A context left over from a previous registration with this SUPI is
+        // retired once the UE is authenticated (Security Mode Complete)
 
         // Associate SUPI with Nas context
         set_supi_2_nas_context(nc->supi, nc);
@@ -2447,13 +2444,50 @@ std::shared_ptr<ue_context> amf_n1::rekey_nas_owner_on_guti_rereg(
   }
 
   // Rebind the <ran,gnb> secondary to the old context and drop the old link.
+  // The old key is only dropped if it still points to this UE: after a gNB
+  // restart it may already belong to another UE.
   amf_app_inst->bind_ran_gnb(new_ran_ue_ngap_id, new_gnb_id, uc_old);
   if (old_ran_ue_ngap_id != new_ran_ue_ngap_id || old_gnb_id != new_gnb_id) {
-    amf_app_inst->unbind_ran_gnb(old_ran_ue_ngap_id, old_gnb_id);
+    amf_app_inst->unbind_ran_gnb(old_ran_ue_ngap_id, old_gnb_id, uc_old);
   }
 
   // Return the old context (now under new_amf_ue_ngap_id)
   return uc_old;
+}
+
+//------------------------------------------------------------------------------
+void amf_n1::retire_stale_ue_contexts(const std::shared_ptr<ue_context>& uc) {
+  if (!uc || uc->supi.empty()) return;
+
+  // linear scan of all UE contexts (once per Security Mode
+  // Complete), add a SUPI multi-index to the store if this shows up in load
+  std::vector<std::shared_ptr<ue_context>> stale;
+  amf_app_inst->for_each_ue_context(
+      [&](const std::shared_ptr<ue_context>& other) {
+        if (other != uc && other->supi == uc->supi) stale.push_back(other);
+      });
+
+  for (const auto& old_uc : stale) {
+    auto old_nc = old_uc->get_nas_ctx();
+    if (old_nc && old_nc != uc->get_nas_ctx()) {
+      itti_inst->timer_remove(old_nc->mobile_reachable_timer);
+      itti_inst->timer_remove(old_nc->implicit_deregistration_timer);
+      nas_timer_manager_.stop_all_procedure_timers(old_nc);
+    }
+
+    // The UE keeps its PDU sessions: the current context becomes their only
+    // owner
+    uc->take_pdu_sessions(old_uc);
+
+    const uint64_t old_amf_ue_ngap_id = old_uc->amf_ue_ngap_id;
+    if (amf_app_inst->find_ue_by_amf_ue_ngap_id(old_amf_ue_ngap_id) == old_uc) {
+      amf_app_inst->remove_ue_context(old_amf_ue_ngap_id);
+    }
+    Logger::amf_n1().info(
+        "Retired stale UE context (amf_ue_ngap_id " AMF_UE_NGAP_ID_FMT
+        ") of SUPI %s, replaced by amf_ue_ngap_id " AMF_UE_NGAP_ID_FMT,
+        old_amf_ue_ngap_id, uc->supi.c_str(), uc->amf_ue_ngap_id);
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -2522,8 +2556,9 @@ void amf_n1::set_guti_2_nas_context(
 }
 
 //------------------------------------------------------------------------------
-bool amf_n1::remove_guti_2_nas_context(const std::string& guti) {
-  amf_app_inst->unbind_guti(guti);
+bool amf_n1::remove_guti_2_nas_context(
+    const std::string& guti, const std::shared_ptr<ue_context>& owner) {
+  amf_app_inst->unbind_guti(guti, owner);
   return true;
 }
 
@@ -2571,8 +2606,9 @@ void amf_n1::set_supi_2_nas_context(
 }
 
 //------------------------------------------------------------------------------
-bool amf_n1::remove_supi_2_nas_context(const std::string& imsi) {
-  amf_app_inst->unbind_supi(imsi);
+bool amf_n1::remove_supi_2_nas_context(
+    const std::string& imsi, const std::shared_ptr<ue_context>& owner) {
+  amf_app_inst->unbind_supi(imsi, owner);
   return true;
 }
 
@@ -3749,6 +3785,10 @@ bool amf_n1::security_mode_complete_handle(
     nc->imeisv = std::make_optional<oai::nas::IMEI_IMEISV_t>(imeisv);
   }
 
+  // The UE is now authenticated: drop the contexts of its previous
+  // registration, otherwise their timers later release its current sessions
+  retire_stale_ue_contexts(uc);
+
   std::optional<uint16_t> uplink_data_status_opt = std::nullopt;
   std::optional<uint16_t> pdu_session_status_opt = std::nullopt;
 
@@ -4780,7 +4820,7 @@ bool amf_n1::ue_initiate_de_registration_handle(
         amf_ue_ngap_id);
   }
 
-  if (remove_supi_2_nas_context(nc->supi)) {
+  if (remove_supi_2_nas_context(nc->supi, uc)) {
     Logger::amf_n1().debug(
         "Deleted nas_context associated SUPI %s ", nc->supi.c_str());
   } else {
@@ -4788,7 +4828,7 @@ bool amf_n1::ue_initiate_de_registration_handle(
         "Could not delete nas_context associated SUPI %s ", nc->supi.c_str());
   }
 
-  if (remove_guti_2_nas_context(dereg_request->Get5gGuti())) {
+  if (remove_guti_2_nas_context(dereg_request->Get5gGuti(), uc)) {
     Logger::amf_n1().debug(
         "Deleted nas_context associated GUTI %s ",
         dereg_request->Get5gGuti().c_str());
@@ -6265,8 +6305,8 @@ void amf_n1::implicit_deregistration_timer_timeout(
   // Access Type) to the UE
 
   // Send PDU Session Release SM Context Request to SMF for each PDU Session
-  std::shared_ptr<ue_context> uc =
-      amf_app_inst->get_ue_context(nc->amf_ue_ngap_id);
+  // of the context this timer was started for
+  std::shared_ptr<ue_context> uc = amf_app_inst->get_ue_context(amf_ue_ngap_id);
 
   if (uc == nullptr) return;
 
