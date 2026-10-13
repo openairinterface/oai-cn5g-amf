@@ -33,6 +33,8 @@
 #include "SdmSubscription.h"
 #include "string.hpp"
 
+#include <ctime>
+
 using namespace oai::config;
 using namespace amf_application;
 using namespace oai::amf::api;
@@ -45,6 +47,21 @@ extern std::shared_ptr<oai::http::http_client> http_client_inst;
 
 namespace {
 constexpr bool kSsrfStrictHostPolicy = false;
+
+// The event report timeStamp is a DateTime (TS 29.518 6.2.6.2.4), so RFC 3339
+// in UTC. It was an integer of Unix seconds, while the SMF sent NTP seconds as
+// a string for the same field -- so the two NFs disagreed on both the type and
+// the epoch, and a consumer merging their notifications could not order them.
+// AmfEventReport::m_TimeStamp is already declared std::string; this stops the
+// hand-built JSON contradicting the model.
+std::string event_timestamp() {
+  const std::time_t now = std::time(nullptr);
+  std::tm utc           = {};
+  gmtime_r(&now, &utc);
+  char formatted[sizeof("1970-01-01T00:00:00Z")] = {};
+  std::strftime(formatted, sizeof(formatted), "%Y-%m-%dT%H:%M:%SZ", &utc);
+  return formatted;
+}
 
 // RFC 3986 percent-encoding for a query-string VALUE. Unreserved
 // characters pass through unchanged, everything else (incl. '{', '}', '"', ' ',
@@ -917,11 +934,7 @@ void amf_sbi::handle_itti_message(itti_sbi_notify_subscribed_event& itti_msg) {
         report["commFailure"] = r.getCommFailure();
       }
 
-      // Timestamp
-      std::time_t time_epoch_ntp = std::time(nullptr);
-      uint64_t tv_ntp =
-          time_epoch_ntp;            // not needed: + SECONDS_SINCE_FIRST_EPOCH;
-      report["timeStamp"] = tv_ntp;  // don't convert to string, leave as int64
+      report["timeStamp"] = event_timestamp();
       report_lists.push_back(report);
     }
 
