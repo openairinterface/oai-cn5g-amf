@@ -24,6 +24,7 @@
 #include "itti.hpp"
 #include "logger.hpp"
 #include "ngap_app.hpp"
+#include "oam_server.hpp"
 #include "options.hpp"
 #include "pistache/endpoint.h"
 
@@ -36,6 +37,7 @@ statistics stacs;
 
 amf_http1_server* http1_server = nullptr;
 amf_http2_server* http2_server = nullptr;
+oai::oam::oam_server* oam_api_server = nullptr;
 
 std::shared_ptr<oai::http::http_client> http_client_inst = nullptr;
 
@@ -57,6 +59,11 @@ void amf_signal_handler(int s) {
 
   if (http2_server) {
     http2_server->stop();
+  }
+
+  if (oam_api_server) {
+    Logger::system().debug("Stopping OAM server.");
+    oam_api_server->stop();
   }
 
   if (amf_app_inst) {
@@ -81,6 +88,12 @@ void amf_signal_handler(int s) {
     delete http2_server;
     http2_server = nullptr;
     Logger::system().debug("HTTP/2 Server memory done.");
+  }
+
+  if (oam_api_server) {
+    delete oam_api_server;
+    oam_api_server = nullptr;
+    Logger::system().debug("OAM server memory done.");
   }
 
   if (amf_app_inst) {
@@ -171,7 +184,24 @@ int main(int argc, char** argv) {
     http2_server = new amf_http2_server(
         oai::utils::conv::toString(amf_cfg->sbi.addr4), amf_cfg->sbi.port,
         amf_app_inst);
+    // Dedicated OAM server serving the configuration service when enabled
+    std::thread oam_http2_manager;
+    if (amf_cfg->get_oam().is_enabled()) {
+      oam_api_server = new oai::oam::oam_server(
+          oai::utils::conv::toString(amf_cfg->get_oam().get_addr4()),
+          amf_cfg->get_oam().get_port(), Logger::amf_server(),
+          amf_cfg->enable_tls(),
+          amf_cfg->get_tls_config().get_cert_key_path() + "/oai_amf.key",
+          amf_cfg->get_tls_config().get_cert_certificate_path() +
+              "/oai_amf.crt");
+      http2_server->register_configuration_api(oam_api_server->get_server());
+      oam_http2_manager =
+          std::thread(&oai::oam::oam_server::start, oam_api_server);
+    }
     std::thread amf_http2_manager(&amf_http2_server::start, http2_server);
+    if (oam_http2_manager.joinable()) {
+      oam_http2_manager.join();
+    }
     amf_http2_manager.join();
   }
 

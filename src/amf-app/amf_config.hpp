@@ -484,6 +484,12 @@ class amf_config : public config {
    */
   bool from_json(nlohmann::json& json_data);
 
+  /**
+   * Returns the OAM interface configuration
+   * @return OAM configuration
+   */
+  const oam_config& get_oam() const;
+
   unsigned int instance;
   std::string pid_dir;
   spdlog::level::level_enum amf_log_level;
