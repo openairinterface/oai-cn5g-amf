@@ -1065,6 +1065,11 @@ amf_config::amf_config(
 //------------------------------------------------------------------------------
 amf_config::~amf_config() {}
 
+//------------------------------------------------------------------------------
+const oam_config& amf_config::get_oam() const {
+  return local().get_oam();
+}
+
 void amf_config::pre_process() {
   // Process configuration information to display only the appropriate
   // information
