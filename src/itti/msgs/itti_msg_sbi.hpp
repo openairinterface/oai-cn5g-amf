@@ -480,6 +480,7 @@ class itti_sbi_slice_selection_subscription_data : public itti_sbi_msg {
   };
 
   std::string supi;
+  std::string home_mcc, home_mnc;
   plmn_t plmn;
   uint32_t promise_id;
 };
@@ -850,8 +851,12 @@ class itti_sbi_ue_authentication_request : public itti_sbi_msg {
       const itti_sbi_ue_authentication_request& i, const task_id_t orig,
       const task_id_t dest)
       : itti_sbi_msg(i, orig, dest) {
-    promise_id = i.promise_id;
-    auth_info  = i.auth_info;
+    promise_id  = i.promise_id;
+    auth_info   = i.auth_info;
+    home_mcc    = i.home_mcc;
+    home_mnc    = i.home_mnc;
+    serving_mcc = i.serving_mcc;
+    serving_mnc = i.serving_mnc;
   }
 
   virtual ~itti_sbi_ue_authentication_request() {};
@@ -859,6 +864,7 @@ class itti_sbi_ue_authentication_request : public itti_sbi_msg {
 
   uint32_t promise_id;
   oai::_3gpp::model::AuthenticationInfo auth_info;
+  std::string home_mcc, home_mnc, serving_mcc, serving_mnc;
 };
 
 //-----------------------------------------------------------------------------
