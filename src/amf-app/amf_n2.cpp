@@ -340,26 +340,29 @@ amf_n2::~amf_n2() {}
 void amf_n2::handle_itti_message(std::shared_ptr<itti_paging>& itti_msg) {
   Logger::amf_n2().debug("Handle Paging message...");
 
-  // Get UE NGAP Context
-  std::shared_ptr<ue_ngap_context> unc = {};
-  if (!get_ngap_ctx_by_ran_amf(
-          itti_msg->ran_ue_ngap_id, itti_msg->amf_ue_ngap_id, unc))
-    return;
-
-  if (unc->amf_ue_ngap_id != itti_msg->amf_ue_ngap_id) {
-    // Abort on an inconsistent AMF UE NGAP ID
+  // In CM-IDLE, we must resolve the UE by its 5G-GUTI since other NGAP Ids have
+  // been removed.
+  if (itti_msg->guti.empty()) {
     Logger::amf_n2().error(
-        "The requested UE (amf_ue_ngap_id: " AMF_UE_NGAP_ID_FMT
-        ") is not valid, existed UE "
-        "which's amf_ue_ngap_id (" AMF_UE_NGAP_ID_FMT "); aborting Paging",
-        itti_msg->amf_ue_ngap_id, unc->amf_ue_ngap_id);
+        "Paging requested without a 5G-GUTI (amf_ue_ngap_id " AMF_UE_NGAP_ID_FMT
+        "); aborting Paging",
+        itti_msg->amf_ue_ngap_id);
+    return;
+  }
+
+  std::shared_ptr<ue_context> uc =
+      amf_app_inst->find_ue_by_guti(itti_msg->guti);
+  if (uc == nullptr) {
+    Logger::amf_n2().error(
+        "No UE context with GUTI %s; aborting Paging", itti_msg->guti.c_str());
     return;
   }
 
   // TODO: forward PPI/5QI/ARP as RANPagingPriority and page every TAI in the
   // UE registration area (TS 23.501 §5.4.3.3, TS 38.413 §9.3.3.1).
 
-  // get NAS context
+  // Get NAS context
+  // TODO: cross-task read of nas_context.
   std::shared_ptr<nas_context> nc = {};
   if (!amf_n1_inst->get_nas_ctx_by_amf_ue_id(itti_msg->amf_ue_ngap_id, nc) ||
       (nc == nullptr)) {
@@ -374,31 +377,89 @@ void amf_n2::handle_itti_message(std::shared_ptr<itti_paging>& itti_msg) {
     return;
   }
 
-  PagingMsg paging_msg = {};
+  // Get the PAGING PDU needs under only one shared lock
+  std::string s_setid      = {};
+  std::string s_pointer    = {};
+  std::string s_tmsi       = {};
+  Tai_t tai                = {};
+  sctp_assoc_id_t assoc_id = 0;
+  std::string missing      = {};
+  if (!uc->get_paging_snapshot(
+          s_setid, s_pointer, s_tmsi, tai, assoc_id, missing)) {
+    Logger::amf_n2().error(
+        "Incomplete paging state for GUTI %s: %s must be seeded before a "
+        "PAGING can be built; aborting Paging",
+        itti_msg->guti.c_str(), missing.c_str());
+    return;
+  }
+
+  // Validate the GNB before sending paging message
+  std::shared_ptr<gnb_context> gc = {};
+  if (!assoc_id_2_gnb_context(assoc_id, gc) || (gc == nullptr)) {
+    Logger::amf_n2().warn(
+        "The last-serving gNB (assoc id %d) of GUTI %s is gone; aborting "
+        "Paging",
+        assoc_id, itti_msg->guti.c_str());
+    return;
+  }
+
+  // Verify that the TAI is one the gNB broadcasts.
+  bool tai_found = false;
+  for (auto const& it : gc->supported_ta_list) {
+    for (auto const& plmn_item : it.getBroadcastPlmnList()) {
+      oai::ngap::PlmnId plmn_id = plmn_item.getPlmn();
+      oai::ngap::TAC tac        = it.getTac();
+      if (plmn_id.getMcc() == tai.mcc && plmn_id.getMnc() == tai.mnc &&
+          tac.get() == tai.tac) {
+        tai_found = true;
+        break;
+      }
+    }
+    if (tai_found) break;
+  }
+  if (!tai_found) {
+    Logger::amf_n2().warn(
+        "TAI (MCC %s, MNC %s, TAC %d) is not included in the supported TA List "
+        "of the last-serving gNB (assoc id %d); sending PAGING anyway",
+        tai.mcc.c_str(), tai.mnc.c_str(), tai.tac, assoc_id);
+  }
+
   Logger::amf_n2().debug(
-      " UE NGAP Context, s_setid (%d), s_pointer (%d), s_tmsi (%d)",
-      unc->s_setid, unc->s_pointer, unc->s_tmsi);
-  paging_msg.setUePagingIdentity(unc->s_setid, unc->s_pointer, unc->s_tmsi);
+      "UE Paging Identity: s_setid (%s), s_pointer (%s), s_tmsi (%s)",
+      s_setid.c_str(), s_pointer.c_str(), s_tmsi.c_str());
 
-  std ::vector<struct Tai_s> list;
-  Tai_t tai = {};
-  tai.mcc   = unc->tai.mcc;
-  tai.mnc   = unc->tai.mnc;
-  tai.tac   = unc->tai.tac;
+  PagingMsg paging_msg = {};
 
+  // NOTE: IE ORDER IS NORMATIVE. TS 38.413 §9.4.1: "IEs shall be ordered (in
+  // an IE container) in the order they appear in object set definitions", and a
+  // message that is not so constructed "shall be considered as Abstract Syntax
+  // Error". The PAGING object set, TS 38.413 §9.4.4 (p.381), orders the IEs
+  //   1 UEPagingIdentity (115, mandatory)
+  //   2 PagingDRX        (50, optional)
+  //   3 TAIListForPaging (103, mandatory)
+  //   4 PagingPriority   (52, optional)
+
+  paging_msg.setUePagingIdentity(s_setid, s_pointer, s_tmsi);
+
+  std::vector<struct Tai_s> list;
   list.push_back(tai);
   paging_msg.setTaiListForPaging(list);
 
-  uint8_t buffer[BUFFER_SIZE_512];
-  int encoded_size = paging_msg.Encode(buffer, BUFFER_SIZE_512);
-  if ((encoded_size < 0) || (encoded_size > BUFFER_SIZE_512)) {
-    Logger::amf_n2().error("Encoding failed or buffer too small");
+  // Encode message
+  uint8_t* buf     = nullptr;
+  int encoded_size = 0;
+  paging_msg.encode2NewBuffer(buf, encoded_size);
+  if ((encoded_size <= 0) || (buf == nullptr)) {
+    Logger::amf_n2().error("Encode PAGING failed (%d)", encoded_size);
+    free(buf);  // free(nullptr) is a no-op
     return;
   }
-  bstring b = blk2bstr(buffer, encoded_size);
 
-  amf_n2_inst->sctp_s_38412.sctp_send_msg(
-      unc->gnb_assoc_id, unc->sctp_stream_send, &b);
+  bstring b = blk2bstr(buf, encoded_size);
+  free(buf);
+
+  // Send Paging message
+  sctp_s_38412.sctp_send_msg(assoc_id, 0, &b);
 
   oai::utils::utils::bdestroy_wrapper(&b);
 }
@@ -883,6 +944,11 @@ void amf_n2::handle_itti_message(
     Logger::amf_n2().debug("5g_s_tmsi present: %s", _5g_s_tmsi);
     init_ue_msg->init_ue_message->get5GSTmsi(
         unc->s_setid, unc->s_pointer, unc->s_tmsi);
+    // Carry the decoded parts with the itti message so that they can be
+    // mirrored onto ue_context, which (unlike unc) survives CM-IDLE.
+    itti_msg->s_setid   = unc->s_setid;
+    itti_msg->s_pointer = unc->s_pointer;
+    itti_msg->s_tmsi    = unc->s_tmsi;
   }
 
   // NAS PDU (Mandatory)
@@ -912,6 +978,7 @@ void amf_n2::handle_itti_message(
   }
 
   itti_msg->gnb_id         = gc->gnb_id;
+  itti_msg->gnb_assoc_id   = init_ue_msg->assoc_id;
   itti_msg->ran_ue_ngap_id = ran_ue_ngap_id;
   itti_msg->amf_ue_ngap_id = INVALID_AMF_UE_NGAP_ID;
 
@@ -1120,7 +1187,8 @@ void amf_n2::handle_itti_message(
     Logger::amf_n2().debug("No IMEISV info available");
   }
 
-  msg->setNasPdu(itti_msg->nas);
+  // NAS-PDU is optional: omit it when there is no N1 message
+  if (blength(itti_msg->nas) > 0) msg->setNasPdu(itti_msg->nas);
 
   if (itti_msg->is_sr or !itti_msg->pdu_sessions.empty()) {
     // Set UE Radio Capability if available
@@ -1386,7 +1454,8 @@ void amf_n2::handle_itti_message(
 
   release_cmd_msg->setAmfUeNgapId(itti_msg->amf_ue_ngap_id);
   release_cmd_msg->setRanUeNgapId(itti_msg->ran_ue_ngap_id);
-  release_cmd_msg->setNasPdu(itti_msg->nas);
+  // NAS-PDU is optional: omit it when there is no N1 message
+  if (blength(itti_msg->nas) > 0) release_cmd_msg->setNasPdu(itti_msg->nas);
 
   std::vector<PDUSessionResourceToReleaseItem_t> list;
   PDUSessionResourceToReleaseItem_t item = {};
@@ -2986,8 +3055,9 @@ void amf_n2::release_ngap_context_only(
         amf_ue_ngap_id);
   }
 
-  // CM-IDLE: keep the context and uc->nas_ctx alive so the UE can be re-paged.
-  // Clear ONLY the NGAP sub-context
+  // CM-IDLE transition: UE can be re-paged only because the ue_context, its
+  // nas_ctx, and everything ue_context owns - including the paging identity,
+  // the last-known TAI and the last gNB SCTP association are kept.
   std::shared_ptr<ue_context> uc =
       amf_app_inst->find_ue_by_amf_ue_ngap_id(amf_ue_ngap_id);
   if (uc != nullptr) {
