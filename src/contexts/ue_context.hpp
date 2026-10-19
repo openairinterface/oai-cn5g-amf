@@ -40,6 +40,9 @@ class ue_context {
       std::uint8_t session_id,
       const std::shared_ptr<pdu_session_context>& context);
   void copy_pdu_sessions(const std::shared_ptr<ue_context>& ue_ctx);
+  // Move ue_ctx's PDU sessions into this context (existing entries here are
+  // kept) and leave ue_ctx with none
+  void take_pdu_sessions(const std::shared_ptr<ue_context>& ue_ctx);
   bool get_pdu_sessions_context(
       std::vector<std::shared_ptr<pdu_session_context>>& sessions_ctx) const;
 

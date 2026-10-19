@@ -428,18 +428,22 @@ void amf_app::bind_ran_gnb(
 }
 
 //------------------------------------------------------------------------------
-void amf_app::unbind_guti(const std::string& guti) {
-  ue_context_store_.unbind_guti(guti);
+void amf_app::unbind_guti(
+    const std::string& guti, const std::shared_ptr<ue_context>& owner) {
+  ue_context_store_.unbind_guti(guti, owner);
 }
 
 //------------------------------------------------------------------------------
-void amf_app::unbind_supi(const std::string& supi) {
-  ue_context_store_.unbind_supi(supi);
+void amf_app::unbind_supi(
+    const std::string& supi, const std::shared_ptr<ue_context>& owner) {
+  ue_context_store_.unbind_supi(supi, owner);
 }
 
 //------------------------------------------------------------------------------
-void amf_app::unbind_ran_gnb(uint32_t ran_ue_ngap_id, uint32_t gnb_id) {
-  ue_context_store_.unbind_ran_gnb(ran_ue_ngap_id, gnb_id);
+void amf_app::unbind_ran_gnb(
+    uint32_t ran_ue_ngap_id, uint32_t gnb_id,
+    const std::shared_ptr<ue_context>& owner) {
+  ue_context_store_.unbind_ran_gnb(ran_ue_ngap_id, gnb_id, owner);
 }
 
 //------------------------------------------------------------------------------
@@ -3117,74 +3121,53 @@ void amf_app::trigger_process_response(
 
 //------------------------------------------------------------------------------
 void amf_app::trigger_pdu_session_release(
-    const std::shared_ptr<ue_context>& uc) const {
+    const std::shared_ptr<ue_context>& uc,
+    const std::vector<uint8_t>& pdu_session_ids) const {
   Logger::amf_app().debug("Trigger PDU Session Release towards SMF");
-  std::vector<std::shared_ptr<pdu_session_context>> sessions_ctx;
 
-  if (uc->get_pdu_sessions_context(sessions_ctx)) {
-    // Send request to SMF to release all existing PDU sessions
-    std::map<uint32_t, boost::shared_future<nlohmann::json>> smf_responses;
-    for (auto session : sessions_ctx) {
-      auto itti_msg = std::make_shared<itti_nsmf_pdusession_release_sm_context>(
-          TASK_AMF_N2, TASK_AMF_SBI);
+  // Promise ID -> (PDU Session ID, SMF response)
+  std::map<uint32_t, std::pair<uint8_t, boost::shared_future<nlohmann::json>>>
+      smf_responses;
+  for (auto pdu_session_id : pdu_session_ids) {
+    std::shared_ptr<pdu_session_context> psc = {};
+    if (!uc->get_pdu_session_context(pdu_session_id, psc)) continue;
 
-      // Generate a promise and associate this promise to the ITTI message
-      uint32_t promise_id = {};
-      auto p = boost::make_shared<boost::promise<nlohmann::json>>();
-      boost::shared_future<nlohmann::json> f = p->get_future();
-      // Store the future to be processed later
-      amf_app_inst->store_promise(promise_id, p);
-      smf_responses.emplace(promise_id, f);
-      Logger::amf_app().debug("Promise ID generated %d", promise_id);
+    auto itti_msg = std::make_shared<itti_nsmf_pdusession_release_sm_context>(
+        TASK_AMF_N2, TASK_AMF_SBI);
 
-      itti_msg->supi             = uc->supi;
-      itti_msg->pdu_session_id   = session->pdu_session_id;
-      itti_msg->promise_id       = promise_id;
-      itti_msg->context_location = session->smf_info.context_location;
+    // Generate a promise and associate this promise to the ITTI message
+    uint32_t promise_id = {};
+    auto p              = boost::make_shared<boost::promise<nlohmann::json>>();
+    boost::shared_future<nlohmann::json> f = p->get_future();
+    amf_app_inst->store_promise(promise_id, p);
+    smf_responses.emplace(promise_id, std::make_pair(pdu_session_id, f));
 
-      int ret = itti_inst->send_msg(itti_msg);
-      if (0 != ret) {
-        Logger::amf_app().error(
-            "Could not send ITTI message %s to task TASK_AMF_SBI",
-            itti_msg->get_msg_name());
-      }
+    itti_msg->supi             = uc->supi;
+    itti_msg->pdu_session_id   = pdu_session_id;
+    itti_msg->promise_id       = promise_id;
+    itti_msg->context_location = psc->smf_info.context_location;
+
+    int ret = itti_inst->send_msg(itti_msg);
+    if (0 != ret) {
+      Logger::amf_app().error(
+          "Could not send ITTI message %s to task TASK_AMF_SBI",
+          itti_msg->get_msg_name());
     }
+  }
 
-    while (!smf_responses.empty()) {
-      // Wait for the result available and process accordingly
-      std::optional<nlohmann::json> result_opt = std::nullopt;
-      oai::utils::utils::wait_for_result(
-          smf_responses.begin()->second, result_opt);
-
-      if (result_opt.has_value()) {
-        nlohmann::json result = result_opt.value();
-        Logger::amf_app().debug(
-            "Got result for promise ID %d, json content %s",
-            smf_responses.begin()->first, result.dump());
-
-        uint32_t http_response_code = 0;
-        if (result.find(kSbiResponseHttpResponseCode) != result.end()) {
-          http_response_code = result[kSbiResponseHttpResponseCode].get<int>();
-          // Remove PDU session
-          // TODO for multiple sessions
-          if ((http_response_code == oai::common::sbi::http_status_code::OK) or
-              (http_response_code ==
-               oai::common::sbi::http_status_code::NO_CONTENT)) {
-            for (auto session : sessions_ctx) {
-              uc->remove_pdu_sessions_context(session->pdu_session_id);
-            }
-          }
-        } else {
-          // TODO:
-        }
-      }
-      // Remove the promise from the response handlers and from the local list
-      amf_app_inst->remove_promise(smf_responses.begin()->first);
-      smf_responses.erase(smf_responses.begin());
-    }
-
-  } else {
-    Logger::amf_app().debug("No PDU session available");
+  for (auto& [promise_id, response] : smf_responses) {
+    // Wait for the result (bounded), the SBI task needs the PDU session
+    // context until it has sent the request
+    std::optional<nlohmann::json> result_opt = std::nullopt;
+    oai::utils::utils::wait_for_result(response.second, result_opt);
+    Logger::amf_app().debug(
+        "Release of PDU Session ID %d: %s", response.first,
+        result_opt.has_value() ? result_opt.value().dump().c_str() :
+                                 "no response");
+    // Local release whatever the SMF answers: an SM context the SMF no longer
+    // has is gone as well
+    uc->remove_pdu_sessions_context(response.first);
+    amf_app_inst->remove_promise(promise_id);
   }
 }
 

@@ -1613,7 +1613,7 @@ void amf_n2::handle_itti_message(
         "); releasing NGAP context after UE Context Release Complete",
         amf_ue_ngap_id);
     remove_amf_ue_ngap_id_2_ue_ngap_context(amf_ue_ngap_id);
-    remove_ran_ue_ngap_id_2_ngap_context(ran_ue_ngap_id, gc->gnb_id);
+    remove_ran_ue_ngap_id_2_ngap_context(ran_ue_ngap_id, gc->gnb_id, uc);
     return;
   }
 
@@ -1626,7 +1626,7 @@ void amf_n2::handle_itti_message(
 
   if (unc->release_cause == Ngap_CauseRadioNetwork_successful_handover &&
       itti_msg->assoc_id == unc->release_gnb) {
-    remove_ran_ue_ngap_id_2_ngap_context(ran_ue_ngap_id, gc->gnb_id);
+    remove_ran_ue_ngap_id_2_ngap_context(ran_ue_ngap_id, gc->gnb_id, uc);
     unc->release_cause = 0;
     return;
   }
@@ -1653,7 +1653,7 @@ void amf_n2::handle_itti_message(
           ", received amf_ue_ngap_id " AMF_UE_NGAP_ID_FMT ")",
           current_amf_ue_ngap_id, amf_ue_ngap_id);
       remove_amf_ue_ngap_id_2_ue_ngap_context(amf_ue_ngap_id);
-      remove_ran_ue_ngap_id_2_ngap_context(ran_ue_ngap_id, gc->gnb_id);
+      remove_ran_ue_ngap_id_2_ngap_context(ran_ue_ngap_id, gc->gnb_id, uc);
       return;
     } else {
       amf_n1_inst->set_5gcm_state(nc, CM_IDLE);
@@ -1791,7 +1791,7 @@ void amf_n2::handle_itti_message(
   // Remove the UE NGAPcontext only: the N2 signalling connection
   // is gone, but the UE is still registered.
   remove_amf_ue_ngap_id_2_ue_ngap_context(amf_ue_ngap_id);
-  remove_ran_ue_ngap_id_2_ngap_context(ran_ue_ngap_id, gc->gnb_id);
+  remove_ran_ue_ngap_id_2_ngap_context(ran_ue_ngap_id, gc->gnb_id, uc);
 
   Logger::amf_n2().debug(
       "Keeping amf_app UE context for amf_ue_ngap_id " AMF_UE_NGAP_ID_FMT
@@ -2447,7 +2447,7 @@ void amf_n2::handle_itti_message(
   uc->gnb_id         = gc->gnb_id;
 
   // Remove the old mapping and add the new mapping for the UE context
-  amf_app_inst->unbind_ran_gnb(old_ran, old_gnb);
+  amf_app_inst->unbind_ran_gnb(old_ran, old_gnb, uc);
   amf_app_inst->bind_ran_gnb(uc->ran_ue_ngap_id, uc->gnb_id, uc);
 
   amf_app_inst->set_ue_context(amf_ue_ngap_id, uc);
@@ -2956,8 +2956,9 @@ void amf_n2::set_ran_ue_ngap_id_2_ue_ngap_context(
 
 //------------------------------------------------------------------------------
 void amf_n2::remove_ran_ue_ngap_id_2_ngap_context(
-    uint32_t ran_ue_ngap_id, uint32_t gnb_id) {
-  amf_app_inst->unbind_ran_gnb(ran_ue_ngap_id, gnb_id);
+    uint32_t ran_ue_ngap_id, uint32_t gnb_id,
+    const std::shared_ptr<ue_context>& owner) {
+  amf_app_inst->unbind_ran_gnb(ran_ue_ngap_id, gnb_id, owner);
   {
     std::lock_guard<std::mutex> lock(m_pending_ngap_);
     pending_ngap_by_ran_gnb_.erase(std::make_pair(ran_ue_ngap_id, gnb_id));
@@ -2993,7 +2994,7 @@ void amf_n2::release_ngap_context_only(
   if (uc != nullptr) {
     uc->set_ngap_ctx(nullptr);
   }
-  amf_app_inst->unbind_ran_gnb(ran_ue_ngap_id, gnb_id);
+  amf_app_inst->unbind_ran_gnb(ran_ue_ngap_id, gnb_id, uc);
 
   {
     std::lock_guard<std::mutex> lock(m_pending_ngap_);
