@@ -953,11 +953,13 @@ void amf_n2::handle_itti_message(
     std::optional<uint32_t> ran_id_opt =
         std::make_optional<uint32_t>(ran_ue_ngap_id);
 
-    // 5GS TMSI
-    FiveGSTmsi tmp = {};
-    tmp.set(unc->s_setid, unc->s_pointer, unc->s_tmsi);
-    std::optional<FiveGSTmsi> five_gs_tmsi =
-        std::make_optional<FiveGSTmsi>(tmp);
+    // 5GS TMSI, omitted if none has been allocated to the UE
+    std::optional<FiveGSTmsi> five_gs_tmsi;
+    if (!unc->s_tmsi.empty()) {
+      FiveGSTmsi tmp = {};
+      tmp.set(unc->s_setid, unc->s_pointer, unc->s_tmsi);
+      five_gs_tmsi = std::make_optional<FiveGSTmsi>(tmp);
+    }
 
     send_ng_error_indication(
         ul_nas_transport->assoc_id, ul_nas_transport->stream, amf_id_opt,
