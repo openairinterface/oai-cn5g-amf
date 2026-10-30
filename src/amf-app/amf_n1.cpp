@@ -1052,6 +1052,18 @@ bool amf_n1::identity_response_handle(
     return false;
   }
 
+  // Verify the response belongs to an active Identification procedure, if
+  // not, ignore the message
+  std::shared_ptr<nas_context> nc_proc = {};
+  if (!get_nas_ctx_by_amf_ue_id(amf_ue_ngap_id, nc_proc) ||
+      nas_procedure_manager_.get_active_common(*nc_proc) !=
+          nas_procedure_type_e::IDENTIFICATION) {
+    Logger::amf_n1().warn(
+        "Identity Response received while no Identification procedure is "
+        "active, ignoring...");
+    return true;
+  }
+
   auto identity_response = std::make_unique<IdentityResponse>();
 
   int decoded_size = identity_response->Decode(
@@ -1955,6 +1967,24 @@ bool amf_n1::registration_request_handle(
     return false;
   }
 
+  // TS 24.501 §5.5.1.2.8 e): Registration Request received while an initial
+  // registration procedure is still ongoing
+  if (nc->registration_request_is_set &&
+      nas_procedure_manager_.get_active_specific(*nc) ==
+          nas_procedure_type_e::REGISTRATION_INITIAL) {
+    if (biseq(nc->registration_request, reg)) {
+      Logger::amf_n1().debug(
+          "Identical Registration Request while registration procedure is "
+          "ongoing, ignoring it");
+      return true;
+    }
+    Logger::amf_n1().debug(
+        "Differing Registration Request while registration procedure is "
+        "ongoing, aborting the previous one");
+    nas_timer_manager_.stop_timer(nas_timer_type_e::T3560, nc);
+    nas_procedure_manager_.complete_specific_procedure(*nc);
+  }
+
   // store Registration request in Nas Context
   nc->registration_request = blk2bstr((uint8_t*) bdata(reg), blength(reg));
   nc->registration_request_is_set = true;
@@ -2790,7 +2820,7 @@ bool amf_n1::run_registration_procedure(
         ngksi_t ngksi = 0;
         if (nc->security_ctx.has_value() &&
             nc->ngksi != kNasKeySetIdentifierNotAvailable) {
-          ngksi = (nc->amf_ue_ngap_id + 1);  // % (NGKSI_MAX_VALUE + 1);
+          ngksi = (nc->amf_ue_ngap_id + 1) % (NGKSI_MAX_VALUE + 1);
         }
         nc->ngksi = ngksi;
       } else {
@@ -2804,7 +2834,7 @@ bool amf_n1::run_registration_procedure(
       ngksi_t ngksi = 0;
       if (nc->security_ctx.has_value() &&
           nc->ngksi != kNasKeySetIdentifierNotAvailable) {
-        ngksi = (nc->amf_ue_ngap_id + 1);  // % (NGKSI_MAX_VALUE + 1);
+        ngksi = (nc->amf_ue_ngap_id + 1) % (NGKSI_MAX_VALUE + 1);
         Logger::amf_n1().debug("New ngKSI (%d)", ngksi);
         // TODO: How to handle?
       }
@@ -4196,6 +4226,50 @@ bool amf_n1::security_mode_reject_handle(
     nas_timer_manager_.stop_timer(nas_timer_type_e::T3560, nc);
     handle_nas_event(
         nc, oai::amf::nas::nas_event_e::SECURITY_MODE_REJECT_RECEIVED);
+
+    // §5.4.2.5 / §5.5.1.2.8: the UE rejected the security context, so an
+    // ongoing registration procedure cannot proceed. Reject it and release
+    // the NAS context instead of leaving a half-updated context behind:
+    // any later registration request on the same NGAP UE (e.g., a GUTI
+    // registration replayed with ngKSI = kNasKeySetIdentifierNotAvailable)
+    // would otherwise re-enter run_registration_procedure on stale ngKSI
+    // and authentication vectors.
+    const auto specific = nas_procedure_manager_.get_active_specific(*nc);
+    if (specific == nas_procedure_type_e::REGISTRATION_INITIAL ||
+        specific == nas_procedure_type_e::REGISTRATION_MOBILITY ||
+        specific == nas_procedure_type_e::REGISTRATION_PERIODIC) {
+      Logger::amf_n1().warn(
+          "Security Mode Reject for UE %lu during registration, aborting "
+          "registration and releasing the UE context",
+          amf_ue_ngap_id);
+      // Sends the REGISTRATION REJECT and completes the specific procedure
+      send_registration_reject_msg(
+          ran_ue_ngap_id, amf_ue_ngap_id, k5gmmCauseProtocolErrorUnspecified);
+      nas_timer_manager_.stop_all_procedure_timers(nc);
+      remove_amf_ue_ngap_id_2_nas_context(amf_ue_ngap_id);
+      if (!nc->supi.empty()) {
+        auto uc = amf_app_inst->get_ue_context(amf_ue_ngap_id);
+        remove_supi_2_nas_context(nc->supi, uc);
+      }
+
+      // Release the NGAP UE context (idiom of registration_complete_handle)
+      auto itti_msg_cxt_release =
+          std::make_shared<itti_ue_context_release_command>(
+              TASK_AMF_N1, TASK_AMF_N2);
+      itti_msg_cxt_release->amf_ue_ngap_id = amf_ue_ngap_id;
+      itti_msg_cxt_release->ran_ue_ngap_id = ran_ue_ngap_id;
+      itti_msg_cxt_release->cause.setChoiceOfCause(Ngap_Cause_PR_nas);
+      itti_msg_cxt_release->cause.set(Ngap_CauseNas_normal_release);
+      int ret = itti_inst->send_msg(itti_msg_cxt_release);
+      if (0 != ret) {
+        Logger::amf_n1().error(
+            "Could not send ITTI message %s to task TASK_AMF_N2",
+            itti_msg_cxt_release->get_msg_name());
+      }
+      return true;
+    }
+
+    // SMC outside a registration (e.g., service request): abort the SMC only
     nas_procedure_manager_.abort_specific_procedure(*nc);
   }
 
