@@ -1973,15 +1973,56 @@ bool amf_n1::registration_request_handle(
       nas_procedure_manager_.get_active_specific(*nc) ==
           nas_procedure_type_e::REGISTRATION_INITIAL) {
     if (biseq(nc->registration_request, reg)) {
+      // TS 24.501 §5.5.1.2.8 d)2): if Registration Complete is expected
+      // (T3550 running), resend the Registration Accept and restart T3550
+      // (the retransmission counter is not incremented).
+      if (nc->nas_timers[static_cast<size_t>(nas_timer_type_e::T3550)]
+              .is_running) {
+        std::shared_ptr<ue_context> uc_retx =
+            amf_app_inst->get_ue_context(amf_ue_ngap_id);
+        if (uc_retx != nullptr && nc->security_ctx.has_value()) {
+          auto reg_accept_retx = std::make_unique<RegistrationAccept>();
+          initialize_registration_accept(reg_accept_retx, nc);
+          reg_accept_retx->Set5gGuti(
+              amf_cfg->guami.mcc, amf_cfg->guami.mnc, amf_cfg->guami.region_id,
+              amf_cfg->guami.amf_set_id, amf_cfg->guami.amf_pointer,
+              uc_retx->tmsi);
+          uint32_t retx_len          = reg_accept_retx->GetLength();
+          uint8_t retx_buf[retx_len] = {0};
+          if (reg_accept_retx->Encode(retx_buf, retx_len) !=
+              KEncodeDecodeError) {
+            bstring protected_nas_retx = nullptr;
+            encode_nas_message_protected(
+                nc->security_ctx.value(), false, kIntegrityProtectedAndCiphered,
+                NAS_MESSAGE_DOWNLINK, retx_buf, retx_len, protected_nas_retx);
+            auto itti_msg_retx = std::make_shared<itti_dl_nas_transport>(
+                TASK_AMF_N1, TASK_AMF_N2);
+            itti_msg_retx->ran_ue_ngap_id = ran_ue_ngap_id;
+            itti_msg_retx->amf_ue_ngap_id = amf_ue_ngap_id;
+            itti_msg_retx->nas            = bstrcpy(protected_nas_retx);
+            itti_inst->send_msg(itti_msg_retx);
+            oai::utils::utils::bdestroy_wrapper(&protected_nas_retx);
+          }
+          nas_timer_manager_.start_timer(
+              nas_timer_type_e::T3550, nc, amf_ue_ngap_id);
+        }
+        Logger::amf_n1().debug(
+            "Identical Registration Request while Registration Complete is "
+            "expected, Registration Accept resent (T3550 restarted)");
+        return true;
+      }
       Logger::amf_n1().debug(
           "Identical Registration Request while registration procedure is "
           "ongoing, ignoring it");
       return true;
     }
+    // TS 24.501 §5.5.1.2.8 d)1): differing IEs abort the previous
+    // procedure; the new request is progressed below.
     Logger::amf_n1().debug(
         "Differing Registration Request while registration procedure is "
         "ongoing, aborting the previous one");
     nas_timer_manager_.stop_timer(nas_timer_type_e::T3560, nc);
+    nas_timer_manager_.stop_timer(nas_timer_type_e::T3550, nc);
     nas_procedure_manager_.complete_specific_procedure(*nc);
   }
 
@@ -5218,6 +5259,13 @@ bool amf_n1::run_mobility_registration_update_procedure(
     cause = k5gmmCauseMessageNotCompatible;
     return false;
   }
+  // Commit the transition checked above (issue #42: it was only checked,
+  // leaving the context in 5GMM-DEREGISTERED while the update was accepted).
+  handle_nas_event(
+      nc, oai::amf::nas::nas_event_e::REGISTRATION_REQUEST_RECEIVED);
+  // TS 24.501 §5.5.1.2.8 g): Registration Complete is no longer expected for
+  // the initial registration — stop T3550; the allocated 5G-GUTI stays valid.
+  nas_timer_manager_.stop_timer(nas_timer_type_e::T3550, nc);
 
   // TODO: process with timers: T3513, T3565
 
@@ -5411,6 +5459,14 @@ bool amf_n1::run_mobility_registration_update_procedure(
     }
   }
 
+  // TS 24.501 §5.5.1.2.8 g) / §5.5.1.3.4: the update is accepted and the
+  // Accept carries a new 5G-GUTI — start T3550; Registration Complete is
+  // expected again (5GMM stays in COMMON-PROCEDURE-INITIATED).
+  nas_timer_manager_.start_timer(
+      nas_timer_type_e::T3550, nc, nc->amf_ue_ngap_id);
+  handle_nas_event(
+      nc, oai::amf::nas::nas_event_e::REGISTRATION_ACCEPT_SENT_WITH_T3550);
+
   return true;
 }
 
@@ -5426,6 +5482,12 @@ bool amf_n1::run_periodic_registration_update_procedure(
     cause = k5gmmCauseMessageNotCompatible;
     return false;
   }
+  // Commit the transition checked above (issue #42: it was only checked).
+  handle_nas_event(
+      nc, oai::amf::nas::nas_event_e::REGISTRATION_REQUEST_RECEIVED);
+  // TS 24.501 §5.5.1.2.8 g): Registration Complete is no longer expected for
+  // the initial registration — stop T3550; the allocated 5G-GUTI stays valid.
+  nas_timer_manager_.stop_timer(nas_timer_type_e::T3550, nc);
 
   // The UE is reachable again: without this it is implicitly deregistered
   // ~2 x 58 min later (TS 24.501 5.3.7).
@@ -5505,6 +5567,14 @@ bool amf_n1::run_periodic_registration_update_procedure(
   }
 
   oai::utils::utils::bdestroy_wrapper(&protected_nas);
+
+  // TS 24.501 §5.5.1.2.8 g) / §5.5.1.3.4: the update is accepted and the
+  // Accept carries a new 5G-GUTI — start T3550; Registration Complete is
+  // expected again (5GMM stays in COMMON-PROCEDURE-INITIATED).
+  nas_timer_manager_.start_timer(
+      nas_timer_type_e::T3550, nc, nc->amf_ue_ngap_id);
+  handle_nas_event(
+      nc, oai::amf::nas::nas_event_e::REGISTRATION_ACCEPT_SENT_WITH_T3550);
   return true;
 }
 
@@ -5520,6 +5590,12 @@ bool amf_n1::run_periodic_registration_update_procedure(
     cause = k5gmmCauseMessageNotCompatible;
     return false;
   }
+  // Commit the transition checked above (issue #42: it was only checked).
+  handle_nas_event(
+      nc, oai::amf::nas::nas_event_e::REGISTRATION_REQUEST_RECEIVED);
+  // TS 24.501 §5.5.1.2.8 g): Registration Complete is no longer expected for
+  // the initial registration — stop T3550; the allocated 5G-GUTI stays valid.
+  nas_timer_manager_.stop_timer(nas_timer_type_e::T3550, nc);
 
   // The UE is reachable again: without this it is implicitly deregistered
   // ~2 x 58 min later (TS 24.501 5.3.7).
@@ -5611,6 +5687,13 @@ bool amf_n1::run_periodic_registration_update_procedure(
 
   oai::utils::utils::bdestroy_wrapper(&protected_nas);
 
+  // TS 24.501 §5.5.1.2.8 g) / §5.5.1.3.4: the update is accepted and the
+  // Accept carries a new 5G-GUTI — start T3550; Registration Complete is
+  // expected again (5GMM stays in COMMON-PROCEDURE-INITIATED).
+  nas_timer_manager_.start_timer(
+      nas_timer_type_e::T3550, nc, nc->amf_ue_ngap_id);
+  handle_nas_event(
+      nc, oai::amf::nas::nas_event_e::REGISTRATION_ACCEPT_SENT_WITH_T3550);
   return true;
 }
 
