@@ -1861,14 +1861,16 @@ bool amf_sbi::discover_smf(
           if (instance_json["nfServices"].size() > 0) {
             nlohmann::json nf_service = instance_json["nfServices"].at(0);
             // Can check services provided by SMF e.g., SMF PDU session
-            if (nf_service.find("ipEndPoints") != nf_service.end()) {
+            if (nf_service.find("ipEndPoints") != nf_service.end() &&
+                nf_service["ipEndPoints"].size() > 0) {
               nlohmann::json nf_ip_endpoint = nf_service["ipEndPoints"].at(0);
               if (nf_ip_endpoint.find("port") != nf_ip_endpoint.end()) {
                 smf_port = nf_ip_endpoint["port"].get<int>();
               }
             }
 
-            if (nf_service.find("versions") != nf_service.end()) {
+            if (nf_service.find("versions") != nf_service.end() &&
+                nf_service["versions"].size() > 0) {
               nlohmann::json nf_version = nf_service["versions"].at(0);
               if (nf_version.find("apiVersionInUri") != nf_version.end()) {
                 smf_api_version =
