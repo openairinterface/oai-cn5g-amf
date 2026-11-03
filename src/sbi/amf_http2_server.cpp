@@ -287,45 +287,11 @@ void amf_http2_server::start() {
       });
 
   // AMF configuration-related APIs
-  server.handle(
-      amf_sbi_helper::AmfConfigurationServiceBase() +
-          amf_sbi_helper::AmfConfPathConfiguration,
-      [&](const request& request, const response& res) {
-        // OAuth2 access-token: validate the request
-        if (!oai::amf::sbi::authorize_request(request, res)) return;
-        auto body = std::make_shared<oai::amf::sbi::request_body_buffer>();
-        request.on_data([&, body](const uint8_t* data, std::size_t len) {
-          if (len > 0) {
-            if (!body->append(data, len))
-              return send_response(
-                  res, oai::common::sbi::http_status_code::PAYLOAD_TOO_LARGE);
-            return;
-          }
-          // Terminating callback: the full request body has been accumulated
-          if (body->rejected()) return;
-          const std::string& msg = body->body();
-          Logger::amf_server().debug(
-              "Received message with URI: %s", request.uri().path);
-          try {
-            if (request.method().compare("GET") == 0) {
-              this->get_configuration_handler(res);
-            }
-            if (request.method().compare("PUT") == 0 && !msg.empty()) {
-              nlohmann::json configuration_info = {};
-              if (!oai::amf::sbi::parse_json_body(msg, configuration_info)) {
-                return send_response(
-                    res, oai::common::sbi::http_status_code::BAD_REQUEST);
-              }
-              this->update_configuration_handler(configuration_info, res);
-            }
-          } catch (nlohmann::json::exception& e) {
-            Logger::amf_sbi().warn(
-                "Can not parse the JSON data (error: %s)!", e.what());
-            return send_response(
-                res, oai::common::sbi::http_status_code::BAD_REQUEST);
-          }
-        });
-      });
+  // The configuration service is served on the dedicated OAM interface when
+  // enabled, on this server otherwise
+  if (!amf_cfg->get_oam().is_enabled()) {
+    register_configuration_api(server);
+  }
 
   // NonUEN2MessageTransfer: /non-ue-n2-messages/transfer
   server.handle(
@@ -962,6 +928,49 @@ void amf_http2_server::start() {
 
   running_server = false;
   Logger::amf_server().info("HTTP2 server fully stopped");
+}
+
+//------------------------------------------------------------------------------
+void amf_http2_server::register_configuration_api(http2& srv) {
+  srv.handle(
+      amf_sbi_helper::AmfConfigurationServiceBase() +
+          amf_sbi_helper::AmfConfPathConfiguration,
+      [&](const request& request, const response& res) {
+        // OAuth2 access-token: validate the request
+        if (!oai::amf::sbi::authorize_request(request, res)) return;
+        auto body = std::make_shared<oai::amf::sbi::request_body_buffer>();
+        request.on_data([&, body](const uint8_t* data, std::size_t len) {
+          if (len > 0) {
+            if (!body->append(data, len))
+              return send_response(
+                  res, oai::common::sbi::http_status_code::PAYLOAD_TOO_LARGE);
+            return;
+          }
+          // Terminating callback: the full request body has been accumulated
+          if (body->rejected()) return;
+          const std::string& msg = body->body();
+          Logger::amf_server().debug(
+              "Received message with URI: %s", request.uri().path);
+          try {
+            if (request.method().compare("GET") == 0) {
+              this->get_configuration_handler(res);
+            }
+            if (request.method().compare("PUT") == 0 && !msg.empty()) {
+              nlohmann::json configuration_info = {};
+              if (!oai::amf::sbi::parse_json_body(msg, configuration_info)) {
+                return send_response(
+                    res, oai::common::sbi::http_status_code::BAD_REQUEST);
+              }
+              this->update_configuration_handler(configuration_info, res);
+            }
+          } catch (nlohmann::json::exception& e) {
+            Logger::amf_sbi().warn(
+                "Can not parse the JSON data (error: %s)!", e.what());
+            return send_response(
+                res, oai::common::sbi::http_status_code::BAD_REQUEST);
+          }
+        });
+      });
 }
 
 //------------------------------------------------------------------------------

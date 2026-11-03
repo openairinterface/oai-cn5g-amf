@@ -86,6 +86,8 @@ class amf_http2_server {
   void update_configuration_handler(
       nlohmann::json& configuration_info, const response& response);
 
+  void register_configuration_api(http2& srv);
+
   void update_policy_notification_handler(
       const std::string& ue_context_id, const PolicyUpdate& policy_update,
       const response& res);
