@@ -15,6 +15,7 @@
 #include "amf_msg.hpp"
 #include "amf_config.hpp"
 #include "3gpp_conversions.hpp"
+#include "amf_sbi_helper.hpp"
 
 extern std::unique_ptr<oai::config::amf_config> amf_cfg;
 
@@ -64,11 +65,16 @@ void SubscriptionsCollectionDocumentApiImplEventExposure::create_subscription(
       json_data["subscription"], amfCreateEventSubscription.getSubscription());
 
   if (sub_id != -1) {
+    // Location is the URI of the created subscription (TS 29.518 5.2.2.2).
+    // `base` already ends with the api version, so appending the version again
+    // gave ".../namf-evts/v1v1", and the service name was repeated where the
+    // collection name belongs -- the result addressed nothing:
+    //   host:port/namf-evts/v1v1/namf-evts/1
     std::string location =
+        "http://" +
         std::string(inet_ntoa(*((struct in_addr*) &amf_cfg->sbi.addr4))) + ":" +
         std::to_string(amf_cfg->sbi.port) + base +
-        amf_cfg->sbi.api_version.value_or(DEFAULT_SBI_API_VERSION) +
-        "/namf-evts/" + std::to_string(sub_id);
+        amf_sbi_helper::AmfEvtsPathSubscriptions + "/" + std::to_string(sub_id);
 
     json_data["subscriptionId"] = location;
     response.headers().add<Pistache::Http::Header::Location>(
