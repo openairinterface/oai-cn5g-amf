@@ -1657,17 +1657,7 @@ void amf_n2::handle_itti_message(
       return;
     } else {
       amf_n1_inst->set_5gcm_state(nc, CM_IDLE);
-      // Start/reset the Mobile Reachable Timer; drop any previous one first,
-      // or it stays armed with no owner and still fires
-      amf_n1_inst->stop_mobile_reachable_timers(nc);
-      timer_id_t tid = itti_inst->timer_setup(
-          kMobileReachableTimerNoEmergencyServicesMin * 60, 0, TASK_AMF_N1,
-          TASK_AMF_MOBILE_REACHABLE_TIMER_EXPIRE,
-          std::to_string(amf_ue_ngap_id));
-      Logger::amf_n2().startup("Started mobile reachable timer (tid %d)", tid);
-
-      amf_n1_inst->set_mobile_reachable_timer(nc, tid);
-      amf_n1_inst->set_mobile_reachable_timer_timeout(nc, false);
+      start_mobile_reachable_timer(nc, amf_ue_ngap_id);
     }
   } else {
     return;
@@ -2972,6 +2962,21 @@ void amf_n2::remove_ran_ue_ngap_id_2_ngap_context(
 }
 
 //------------------------------------------------------------------------------
+void amf_n2::start_mobile_reachable_timer(
+    std::shared_ptr<nas_context>& nc, const uint64_t& amf_ue_ngap_id) {
+  // Drop any previous timer first, or it stays armed with no owner and still
+  // fires
+  amf_n1_inst->stop_mobile_reachable_timers(nc);
+  timer_id_t tid = itti_inst->timer_setup(
+      kMobileReachableTimerNoEmergencyServicesMin * 60, 0, TASK_AMF_N1,
+      TASK_AMF_MOBILE_REACHABLE_TIMER_EXPIRE, std::to_string(amf_ue_ngap_id));
+  Logger::amf_n2().startup("Started mobile reachable timer (tid %d)", tid);
+
+  amf_n1_inst->set_mobile_reachable_timer(nc, tid);
+  amf_n1_inst->set_mobile_reachable_timer_timeout(nc, false);
+}
+
+//------------------------------------------------------------------------------
 void amf_n2::release_ngap_context_only(
     const uint64_t& amf_ue_ngap_id, const uint32_t& ran_ue_ngap_id,
     const uint32_t& gnb_id) {
@@ -2983,6 +2988,10 @@ void amf_n2::release_ngap_context_only(
         "CM-IDLE.",
         nc->supi.c_str());
     amf_n1_inst->set_5gcm_state(nc, CM_IDLE);
+    // No UE Context Release Complete follows on this path, so start the timer
+    // here, or a UE whose timer was stopped when it came back is never
+    // implicitly deregistered.
+    start_mobile_reachable_timer(nc, amf_ue_ngap_id);
   } else {
     Logger::amf_n2().warn(
         "No nas_context found for amf_ue_ngap_id(" AMF_UE_NGAP_ID_FMT ")",
