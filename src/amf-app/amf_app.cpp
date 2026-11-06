@@ -603,12 +603,23 @@ void amf_app::handle_itti_message(
     Logger::amf_app().info("Handle ITTI N1N2 Message Transfer Request LPP-NAS");
     std::shared_ptr<itti_downlink_nas_transfer> dl_msg =
         std::make_shared<itti_downlink_nas_transfer>(TASK_AMF_APP, TASK_AMF_N1);
+    // Largest plain NAS the DL NAS protection holds (TS 24.501 9.1.1)
+    const int dl_nas_max_len =
+        BUFFER_SIZE_4096 - kSecurityProtected5gsNasMessageHeaderLength;
+    if (blength(itti_msg.n1lpp) > dl_nas_max_len) {
+      Logger::amf_app().error(
+          "LPP message %d octets exceeds limit %d, not sent",
+          blength(itti_msg.n1lpp), dl_nas_max_len);
+      return;
+    }
+
     // Encode DL NAS TRANSPORT message(NAS message)
     auto dl = std::make_unique<DlNasTransport>();
     dl->SetHeader(kPlain5gsMessage);
     dl->SetPayloadContainerType(kLtePositioningProtocol);
+    // SetPayloadContainer() keeps its own copy of the LPP message
     dl->SetPayloadContainer(
-        (uint8_t*) bdata(bstrcpy(itti_msg.n1lpp)), blength(itti_msg.n1lpp));
+        (uint8_t*) bdata(itti_msg.n1lpp), blength(itti_msg.n1lpp));
     if (itti_msg.lcs_correlation_id.has_value()) {
       bstring lcs_correlation_id = nullptr;
       amf_conv::msg_str_2_msg_hex(
@@ -616,11 +627,22 @@ void amf_app::handle_itti_message(
       dl->SetAdditionalInformation(lcs_correlation_id);
     }
 
-    uint8_t nas[BUFFER_SIZE_1024];
-    int encoded_size = dl->Encode(nas, BUFFER_SIZE_1024);
+    const uint32_t msg_len = dl->GetLength();
+    if (msg_len > static_cast<uint32_t>(dl_nas_max_len)) {
+      Logger::amf_app().error(
+          "Downlink NAS message %u octets exceeds limit %d, not sent", msg_len,
+          dl_nas_max_len);
+      return;
+    }
+    std::vector<uint8_t> nas(msg_len);
+    int encoded_size = dl->Encode(nas.data(), msg_len);
+    if (encoded_size == KEncodeDecodeError) {
+      Logger::nas_mm().error("Encode DL NAS Transport message error");
+      return;
+    }
     oai::utils::output_wrapper::print_buffer(
-        "amf_app", "N1N2 message transfer", nas, encoded_size);
-    dl_msg->dl_nas = blk2bstr(nas, encoded_size);
+        "amf_app", "N1N2 message transfer", nas.data(), encoded_size);
+    dl_msg->dl_nas = blk2bstr(nas.data(), encoded_size);
     if (uc) {
       dl_msg->amf_ue_ngap_id = uc->amf_ue_ngap_id;
       dl_msg->ran_ue_ngap_id = uc->ran_ue_ngap_id;
