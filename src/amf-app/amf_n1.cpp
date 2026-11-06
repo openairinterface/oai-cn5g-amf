@@ -227,10 +227,11 @@ void amf_n1::handle_itti_message(itti_downlink_nas_transfer& itti_msg) {
   }
 
   bstring protected_nas = nullptr;
-  encode_nas_message_protected(
-      nc->security_ctx.value(), false, kIntegrityProtectedAndCiphered,
-      NAS_MESSAGE_DOWNLINK, (uint8_t*) bdata(itti_msg.dl_nas),
-      blength(itti_msg.dl_nas), protected_nas);
+  if (!encode_nas_message_protected(
+          nc->security_ctx.value(), false, kIntegrityProtectedAndCiphered,
+          NAS_MESSAGE_DOWNLINK, (uint8_t*) bdata(itti_msg.dl_nas),
+          blength(itti_msg.dl_nas), protected_nas))
+    return;
 
   if (itti_msg.is_n2sm_set) {
     // PDU Session Resource Release Command
@@ -1392,9 +1393,12 @@ bool amf_n1::service_request_handle(
     }
 
     bstring protected_nas = nullptr;
-    encode_nas_message_protected(
-        nc->security_ctx.value(), false, kIntegrityProtectedAndCiphered,
-        NAS_MESSAGE_DOWNLINK, buffer, encoded_size, protected_nas);
+    if (!encode_nas_message_protected(
+            nc->security_ctx.value(), false, kIntegrityProtectedAndCiphered,
+            NAS_MESSAGE_DOWNLINK, buffer, encoded_size, protected_nas)) {
+      cause = k5gmmCauseProtocolErrorUnspecified;
+      return false;
+    }
 
     psrsr->nas            = bstrcpy(protected_nas);
     psrsr->amf_ue_ngap_id = amf_ue_ngap_id;
@@ -1726,9 +1730,12 @@ bool amf_n1::service_request_handle(
       return false;
     }
     bstring protected_nas = nullptr;
-    encode_nas_message_protected(
-        nc->security_ctx.value(), false, kIntegrityProtectedAndCiphered,
-        NAS_MESSAGE_DOWNLINK, buffer, encoded_size, protected_nas);
+    if (!encode_nas_message_protected(
+            nc->security_ctx.value(), false, kIntegrityProtectedAndCiphered,
+            NAS_MESSAGE_DOWNLINK, buffer, encoded_size, protected_nas)) {
+      cause = k5gmmCauseProtocolErrorUnspecified;
+      return false;
+    }
 
     // send using InitialContextSetupRequest
     uint8_t kamf[AUTH_VECTOR_LENGTH_OCTETS];
@@ -1827,9 +1834,12 @@ bool amf_n1::service_request_handle(
       return false;
     }
     bstring protected_nas = nullptr;
-    encode_nas_message_protected(
-        nc->security_ctx.value(), false, kIntegrityProtectedAndCiphered,
-        NAS_MESSAGE_DOWNLINK, buffer, encoded_size, protected_nas);
+    if (!encode_nas_message_protected(
+            nc->security_ctx.value(), false, kIntegrityProtectedAndCiphered,
+            NAS_MESSAGE_DOWNLINK, buffer, encoded_size, protected_nas)) {
+      cause = k5gmmCauseProtocolErrorUnspecified;
+      return false;
+    }
 
     uint8_t kamf[AUTH_VECTOR_LENGTH_OCTETS];
     uint8_t kgnb[AUTH_VECTOR_LENGTH_OCTETS];
@@ -3713,10 +3723,13 @@ bool amf_n1::start_security_mode_control_procedure(
 
   // Send to UE via APP N2 task
   bstring protected_nas = nullptr;
-  encode_nas_message_protected(
-      nc->security_ctx.value(), security_context_is_new,
-      kIntegrityProtectedWithNewSecurityContext, NAS_MESSAGE_DOWNLINK, buffer,
-      encoded_size, protected_nas);
+  if (!encode_nas_message_protected(
+          nc->security_ctx.value(), security_context_is_new,
+          kIntegrityProtectedWithNewSecurityContext, NAS_MESSAGE_DOWNLINK,
+          buffer, encoded_size, protected_nas)) {
+    cause = k5gmmCauseProtocolErrorUnspecified;
+    return false;
+  }
   oai::utils::output_wrapper::print_buffer(
       "amf_n1", "Encrypted Security-Mode-Command message buffer",
       (uint8_t*) bdata(protected_nas), blength(protected_nas));
@@ -4068,9 +4081,14 @@ bool amf_n1::security_mode_complete_handle(
   oai::utils::output_wrapper::print_buffer(
       "amf_n1", "Registration-Accept message buffer", buffer, encoded_size);
 
-  encode_nas_message_protected(
-      nc->security_ctx.value(), false, kIntegrityProtectedAndCiphered,
-      NAS_MESSAGE_DOWNLINK, buffer, encoded_size, protected_nas);
+  if (!encode_nas_message_protected(
+          nc->security_ctx.value(), false, kIntegrityProtectedAndCiphered,
+          NAS_MESSAGE_DOWNLINK, buffer, encoded_size, protected_nas)) {
+    for (auto& p : pdu_sessions)
+      oai::utils::utils::bdestroy_wrapper(&p.second.n2sm);
+    cause = k5gmmCauseProtocolErrorUnspecified;
+    return false;
+  }
 
   bool itti_msg_is_sent = true;
   if (!uc->is_ue_context_request) {
@@ -4339,7 +4357,7 @@ bool amf_n1::registration_complete_handle(
 }
 
 //------------------------------------------------------------------------------
-void amf_n1::encode_nas_message_protected(
+bool amf_n1::encode_nas_message_protected(
     nas_secu_ctx& nsc, bool is_secu_ctx_new, uint8_t security_header_type,
     uint8_t direction, uint8_t* input_nas_buf, int input_nas_len,
     bstring& protected_nas) {
@@ -4370,11 +4388,19 @@ void amf_n1::encode_nas_message_protected(
       uint32_t mac32           = 0;
       const uint32_t dl_count_ = ((nsc.dl_count.overflow & 0x0000ffff) << 8) |
                                  (nsc.dl_count.seq_num & 0x000000ff);
-      if (nas_message_integrity_protected(
-              nsc, NAS_MESSAGE_DOWNLINK, dl_count_,
-              protected_nas_buf +
-                  kSecurityProtected5gsNasMessageSequenceNumberOctet,
-              input_nas_len + 1, mac32) != nas_integrity_result::verified) {
+      const nas_integrity_result integrity = nas_message_integrity_protected(
+          nsc, NAS_MESSAGE_DOWNLINK, dl_count_,
+          protected_nas_buf +
+              kSecurityProtected5gsNasMessageSequenceNumberOctet,
+          input_nas_len + 1, mac32);
+      if (integrity == nas_integrity_result::error) {
+        Logger::amf_n1().error(
+            "Downlink NAS message integrity protection failed, not sent");
+        oai::utils::utils::bdestroy_wrapper(&input);
+        oai::utils::utils::bdestroy_wrapper(&ciphered);
+        return false;
+      }
+      if (integrity != nas_integrity_result::verified) {  // 5G-IA0
         memcpy(protected_nas_buf, input_nas_buf, input_nas_len);
         encoded_size = input_nas_len;
       } else {
@@ -4390,7 +4416,7 @@ void amf_n1::encode_nas_message_protected(
     case kIntegrityProtectedWithNewSecurityContext: {
       if (!is_secu_ctx_new) {
         Logger::amf_n1().error("Security context is too old");
-        return;
+        return false;
       }
       protected_nas_buf[0] = k5gsMobilityManagementMessages;
       protected_nas_buf[1] = kIntegrityProtectedWithNewSecurityContext;
@@ -4402,11 +4428,17 @@ void amf_n1::encode_nas_message_protected(
       uint32_t mac32           = {};
       const uint32_t dl_count_ = ((nsc.dl_count.overflow & 0x0000ffff) << 8) |
                                  (nsc.dl_count.seq_num & 0x000000ff);
-      if (nas_message_integrity_protected(
-              nsc, NAS_MESSAGE_DOWNLINK, dl_count_,
-              protected_nas_buf +
-                  kSecurityProtected5gsNasMessageSequenceNumberOctet,
-              input_nas_len + 1, mac32) != nas_integrity_result::verified) {
+      const nas_integrity_result integrity = nas_message_integrity_protected(
+          nsc, NAS_MESSAGE_DOWNLINK, dl_count_,
+          protected_nas_buf +
+              kSecurityProtected5gsNasMessageSequenceNumberOctet,
+          input_nas_len + 1, mac32);
+      if (integrity == nas_integrity_result::error) {
+        Logger::amf_n1().error(
+            "Downlink NAS message integrity protection failed, not sent");
+        return false;
+      }
+      if (integrity != nas_integrity_result::verified) {  // 5G-IA0
         memcpy(protected_nas_buf, input_nas_buf, input_nas_len);
         encoded_size = input_nas_len;
       } else {
@@ -4426,6 +4458,7 @@ void amf_n1::encode_nas_message_protected(
     nsc.dl_count.overflow++;
   }
   nsc.dl_count.seq_num++;
+  return true;
 }
 
 //------------------------------------------------------------------------------
@@ -5259,9 +5292,14 @@ bool amf_n1::run_mobility_registration_update_procedure(
 
   // protect nas message
   bstring protected_nas = nullptr;
-  encode_nas_message_protected(
-      nc->security_ctx.value(), false, kIntegrityProtectedAndCiphered,
-      NAS_MESSAGE_DOWNLINK, buffer, encoded_size, protected_nas);
+  if (!encode_nas_message_protected(
+          nc->security_ctx.value(), false, kIntegrityProtectedAndCiphered,
+          NAS_MESSAGE_DOWNLINK, buffer, encoded_size, protected_nas)) {
+    for (auto& p : pdu_sessions)
+      oai::utils::utils::bdestroy_wrapper(&p.second.n2sm);
+    cause = k5gmmCauseProtocolErrorUnspecified;
+    return false;
+  }
 
   if (!uc->is_ue_context_request) {
     // TODO: Use DownlinkNasTransport to convey Registration Accept
@@ -5415,9 +5453,12 @@ bool amf_n1::run_periodic_registration_update_procedure(
   nc->nas_message_for_current_procedure_running = kRegistrationAccept;
 
   bstring protected_nas = nullptr;
-  encode_nas_message_protected(
-      nc->security_ctx.value(), false, kIntegrityProtectedAndCiphered,
-      NAS_MESSAGE_DOWNLINK, buffer, encoded_size, protected_nas);
+  if (!encode_nas_message_protected(
+          nc->security_ctx.value(), false, kIntegrityProtectedAndCiphered,
+          NAS_MESSAGE_DOWNLINK, buffer, encoded_size, protected_nas)) {
+    cause = k5gmmCauseProtocolErrorUnspecified;
+    return false;
+  }
 
   auto itti_msg =
       std::make_shared<itti_dl_nas_transport>(TASK_AMF_N1, TASK_AMF_N2);
@@ -5520,9 +5561,12 @@ bool amf_n1::run_periodic_registration_update_procedure(
   nc->nas_message_for_current_procedure_running = kRegistrationAccept;
 
   bstring protected_nas = nullptr;
-  encode_nas_message_protected(
-      nc->security_ctx.value(), false, kIntegrityProtectedAndCiphered,
-      NAS_MESSAGE_DOWNLINK, buffer, encoded_size, protected_nas);
+  if (!encode_nas_message_protected(
+          nc->security_ctx.value(), false, kIntegrityProtectedAndCiphered,
+          NAS_MESSAGE_DOWNLINK, buffer, encoded_size, protected_nas)) {
+    cause = k5gmmCauseProtocolErrorUnspecified;
+    return false;
+  }
 
   std::shared_ptr<itti_dl_nas_transport> itti_msg =
       std::make_shared<itti_dl_nas_transport>(TASK_AMF_N1, TASK_AMF_N2);
@@ -7883,13 +7927,13 @@ bool amf_n1::send_configuration_update_command(
       encoded_size);
 
   // Apply NAS security protection
-  bstring protected_nas = nullptr;
-  encode_nas_message_protected(
+  bstring protected_nas   = nullptr;
+  const bool is_protected = encode_nas_message_protected(
       nc->security_ctx.value(), false, kIntegrityProtectedAndCiphered,
       NAS_MESSAGE_DOWNLINK, buf_heap, encoded_size, protected_nas);
   delete[] buf_heap;
 
-  if (!protected_nas) {
+  if (!is_protected) {
     Logger::amf_n1().error(
         "Configuration Update Command: security protection failed for UE "
         "%lu",

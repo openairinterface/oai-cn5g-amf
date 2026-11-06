@@ -334,9 +334,10 @@ class amf_n1 {
    * @param [uint8_t*] input_nas_buf: Buffer of the input NAS
    * @param [int] input_nas_les: Length of the buffer
    * @param [bstring&] encrypted_nas: Encrypted NAS (output)
-   * @return void
+   * @return false if the message must not be sent: integrity protection failed
+   * or the security context is too old (encrypted_nas is left unset)
    */
-  void encode_nas_message_protected(
+  [[nodiscard]] bool encode_nas_message_protected(
       nas_secu_ctx& nsc, bool is_secu_ctx_new, uint8_t security_header_type,
       uint8_t direction, uint8_t* input_nas_buf, int input_nas_len,
       bstring& encrypted_nas);
