@@ -1184,15 +1184,19 @@ void amf_n2::handle_itti_message(
     }
   }
 
-  uint8_t buffer[BUFFER_SIZE_2048];
-  int encoded_size = msg->Encode(buffer, BUFFER_SIZE_2048);
-  if ((encoded_size < 0) || (encoded_size > BUFFER_SIZE_2048)) {
-    Logger::amf_n2().error("Encoding failed or buffer too small");
+  // Buffer sized to the message: the NAS-PDU and session list vary
+  uint8_t* buffer  = nullptr;
+  int encoded_size = 0;
+  msg->encode2NewBuffer(buffer, encoded_size);
+  if (encoded_size < 0) {
+    Logger::amf_n2().error("Encoding INITIAL CONTEXT SETUP REQUEST failed");
+    if (buffer) free(buffer);
     return;
   }
   bstring b = blk2bstr(buffer, encoded_size);
   sctp_s_38412.sctp_send_msg(gc->sctp_assoc_id, unc->sctp_stream_send, &b);
   oai::utils::utils::bdestroy_wrapper(&b);
+  free(buffer);
 }
 
 //------------------------------------------------------------------------------
@@ -2579,7 +2583,11 @@ void amf_n2::handle_itti_message(std::shared_ptr<itti_rereoute_nas>& itti_msg) {
 
   uint8_t buffer[BUFFER_SIZE_2048];
   int encoded_size = reroute_nas_request.Encode(buffer, BUFFER_SIZE_2048);
-  bstring b        = blk2bstr(buffer, encoded_size);
+  if (encoded_size < 0) {
+    Logger::amf_n2().error("Encoding failed or buffer too small");
+    return;
+  }
+  bstring b = blk2bstr(buffer, encoded_size);
 
   amf_n2_inst->sctp_s_38412.sctp_send_msg(
       unc->gnb_assoc_id, unc->sctp_stream_send, &b);
