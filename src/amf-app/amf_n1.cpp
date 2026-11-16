@@ -6115,11 +6115,19 @@ void amf_n1::initialize_registration_accept(
       false, false, false,
       0x01);  // 3GPP Access
 
-  // Timer T3512
-  registration_accept->SetT3512Value(0x5, kT3512TimerValueMin);
+  // Timer T3512: GPRS Timer 3 (TS 24.008 Table 10.5.163a) has a 5-bit value,
+  // so 54 min cannot be sent exactly. Send 5 x 10 min = 50 min: it must stay
+  // below the mobile reachable timer (T3512 + 4 min) that the AMF starts.
+  constexpr uint8_t kGprsTimer3Unit10Minutes = 0x0;
+  static_assert(kT3512TimerValueMin / 10 <= 0x1f);
+  registration_accept->SetT3512Value(
+      kGprsTimer3Unit10Minutes, kT3512TimerValueMin / 10);
 
-  // Timer T3502
-  registration_accept->SetT3502Value(kT3502TimerDefaultValueMin);
+  // Timer T3502: GPRS Timer 2 (TS 24.008 Table 10.5.172), unit 1 minute
+  constexpr uint8_t kGprsTimer2Unit1Minute = 0x1 << 5;
+  static_assert(kT3502TimerDefaultValueMin <= 0x1f);
+  registration_accept->SetT3502Value(
+      kGprsTimer2Unit1Minute | kT3502TimerDefaultValueMin);
 
   // LADN info (TODO)
   LadnInformation ladn_information = {};
