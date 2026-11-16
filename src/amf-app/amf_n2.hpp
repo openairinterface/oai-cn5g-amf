@@ -19,6 +19,9 @@
 #include "NgapIeType_anyOf.h"
 #include "N2InformationNotification.h"
 
+// Forward declaration
+class nas_context;
+
 namespace amf_application {
 
 class amf_n2 : public oai::ngap::ngap_app {
@@ -418,6 +421,13 @@ class amf_n2 : public oai::ngap::ngap_app {
       oai::_3gpp::model::N2InformationNotification& n2_info_notification);
 
  private:
+  /*
+   * Start the Mobile Reachable Timer of a UE that enters CM-IDLE, after
+   * dropping any previous one (TS 24.501 §5.3.7)
+   */
+  void start_mobile_reachable_timer(
+      std::shared_ptr<nas_context>& nc, const uint64_t& amf_ue_ngap_id);
+
   // Store the pending UE NGAP context associated with a RAN UE NGAP ID and gNB
   // ID
   std::map<std::pair<uint32_t, uint32_t>, std::shared_ptr<ue_ngap_context>>
