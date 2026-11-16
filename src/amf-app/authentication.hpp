@@ -8,9 +8,11 @@
 #include <mysql/mysql.h>
 #include <pthread.h>
 
+#include <cstring>
 #include <memory>
 #include <string>
 
+#include "conversions.hpp"
 #include "nas_context.hpp"
 
 namespace amf_application {
@@ -18,13 +20,49 @@ namespace amf_application {
 #define KEY_LENGTH (16)
 #define SQN_LENGTH (6)
 #define RAND_LENGTH (16)
+#define AMF_LENGTH (2)
 
 typedef struct {
   uint8_t key[KEY_LENGTH];
   uint8_t sqn[SQN_LENGTH];
   uint8_t opc[KEY_LENGTH];
-  uint8_t rand[RAND_LENGTH];
+  uint8_t amf[AMF_LENGTH];  // authenticationManagementField
 } mysql_auth_info_t;
+
+// Decodes exactly 2*N hex characters from a const char `src` into an array
+// `des`. Returns false, if any of:
+//   * src == nullptr          -- row[n] is a real null pointer for a NULL
+//   column
+//   * strlen(src) != 2 * N    -- wrong length, subsumes the odd-length case
+//   * any character outside [0-9A-Fa-f]
+// On success it has written exactly N bytes and returns true.
+//
+template<size_t N>
+static bool decode_fixed_hex(const char* src, uint8_t (&des)[N]) {
+  if (src == nullptr) return false;
+  if (std::strlen(src) != 2 * N) return false;
+  for (size_t i = 0; i < 2 * N; ++i) {
+    const char c      = src[i];
+    const bool is_hex = (c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') ||
+                        (c >= 'A' && c <= 'F');
+    if (!is_hex) return false;
+  }
+  oai::utils::conv::hex_str_to_uint8(src, des);  // input now fully validated
+  return true;
+}
+
+// Parses a MySQL `json` column value and extracts the 6-byte SQN.
+// Returns false and writes nothing if: json_text == nullptr; parse throws;
+// "sqn" is absent or not a string; its length != 12; or it is not all hex.
+bool parse_sequence_number(const char* json_text, uint8_t (&sqn)[SQN_LENGTH]);
+
+// Serialises the UDM-shaped document:
+//   {"sqnScheme":"NON_TIME_BASED","sqn":"<12 lower hex>",
+//    "lastIndexes":{"ausf":0}}
+std::string build_sequence_number_json(const uint8_t (&sqn)[SQN_LENGTH]);
+
+// Increment SQN: 48-bit SQN + 32
+void increment_sqn(const uint8_t (&in)[SQN_LENGTH], uint8_t (&out)[SQN_LENGTH]);
 
 typedef struct {
   MYSQL* db_conn;
@@ -70,21 +108,13 @@ class authentication {
   bool get_mysql_auth_info(const std::string& imsi, mysql_auth_info_t& resp);
 
   /*
-   * Update the RAND and SQN to the DB (MySQL)
-   * @param [const std::string&] imsi: UE IMSI
-   * @param [uint8_t*] rand_p: RAND
-   * @param [uint8_t*] sqn: SQN
-   * @return void
+   * Write the `sequenceNumber` JSON document for this subscriber (MySQL).
+   * @param [const std::string&] imsi: UE IMSI, used as `ueid`
+   * @param [const uint8_t(&)[SQN_LENGTH]] sqn: SQN to store
+   * @return true if the UPDATE executed successfully, otherwise false
    */
-  void mysql_push_rand_sqn(
-      const std::string& imsi, uint8_t* rand_p, uint8_t* sqn);
-
-  /*
-   * Increment SQN in the DB for next round (MySQL)
-   * @param [const std::string&] imsi: UE IMSI
-   * @return void
-   */
-  void mysql_increment_sqn(const std::string& imsi);
+  bool mysql_write_sqn(
+      const std::string& imsi, const uint8_t (&sqn)[SQN_LENGTH]);
 
   /*
    * Establish the connection to the DB (MySQL)
@@ -108,11 +138,13 @@ class authentication {
    * @param [uint8_t[16]] sqn: SQN
    * @param [std::string&] serving_network: Serving Network
    * @param [_5G_HE_AV_t&] vector: Generated vector
+   * @param [const uint8_t[AMF_LENGTH]] amf: AMF field from the DB
    * @return void
    */
   void generate_5g_he_av_in_udm(
       const uint8_t opc[16], const std::string& imsi, uint8_t key[16],
-      uint8_t sqn[6], std::string& serving_network, _5G_HE_AV_t& vector);
+      uint8_t sqn[6], std::string& serving_network, _5G_HE_AV_t& vector,
+      const uint8_t amf[AMF_LENGTH]);
 
   /*
    * Perform annex_a_4_33501 algorithm
@@ -138,6 +170,12 @@ class authentication {
   void apply_sha256(unsigned char* message, int msg_len, unsigned char* output);
 
  private:
+  /*
+   * mysql_real_escape_string wrapper. Returns false if the connection is
+   * unusable or the escape fails; `out` is only written on success.
+   */
+  bool sql_escape(const std::string& in, std::string& out);
+
   static uint8_t no_random_delta;
   random_state_t random_state;
   database_t db_desc;
