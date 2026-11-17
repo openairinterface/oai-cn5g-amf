@@ -138,8 +138,11 @@ class ue_context_store {
   void bind_guti(
       const std::string& guti, const std::shared_ptr<ue_context>& uc) {
     std::unique_lock lock(m_);
-    if (uc && !uc->guti.empty() && uc->guti != guti) {
-      erase_if_owned(by_guti_, uc->guti, uc.get());
+    if (uc) {
+      const std::string previous = uc->get_guti();
+      if (!previous.empty() && previous != guti) {
+        erase_if_owned(by_guti_, previous, uc.get());
+      }
     }
     by_guti_[guti] = uc;
   }
@@ -262,8 +265,9 @@ class ue_context_store {
       if (!uc->supi.empty()) {
         erase_if_owned(by_supi_, uc->supi, uc.get());
       }
-      if (!uc->guti.empty()) {
-        erase_if_owned(by_guti_, uc->guti, uc.get());
+      const std::string bound_guti = uc->get_guti();
+      if (!bound_guti.empty()) {
+        erase_if_owned(by_guti_, bound_guti, uc.get());
       }
       erase_if_owned(
           by_ran_gnb_, ran_gnb_key_t{uc->ran_ue_ngap_id, uc->gnb_id}, uc.get());
