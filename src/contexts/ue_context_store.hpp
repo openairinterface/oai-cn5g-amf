@@ -65,6 +65,8 @@ class ue_context_store {
 
   // Find by SUPI. Returns nullptr if absent or expired
   std::shared_ptr<ue_context> find_by_supi(const std::string& supi) const {
+    // An empty SUPI means "identity not known yet": it must never match
+    if (supi.empty()) return nullptr;
     {
       std::shared_lock lock(m_);
       auto it = by_supi_.find(supi);
@@ -92,6 +94,10 @@ class ue_context_store {
   // owner).
   void bind_supi(
       const std::string& supi, const std::shared_ptr<ue_context>& uc) {
+    // Never index a UE under an empty SUPI: every UE whose identity is not
+    // known yet would share that key, and a later lookup would return
+    // another UE's context (and its PDU sessions)
+    if (supi.empty()) return;
     std::unique_lock lock(m_);
     by_supi_[supi] = uc;
   }
