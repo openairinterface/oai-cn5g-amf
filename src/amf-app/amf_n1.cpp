@@ -2358,15 +2358,18 @@ bool amf_n1::registration_request_handle(
   }
 
   // Update UE context
-  if (uc != nullptr) {
+  // The SUPI is still empty when the UE registered with a 5G-GUTI this AMF
+  // does not know (identification follows): there is no old context to
+  // inherit PDU sessions from, and nothing to index the UE context by
+  if (uc != nullptr and !nc->supi.empty()) {
     uc->supi = nc->supi;
 
     if (uplink_data_status_opt.has_value() or
         pdu_session_status_opt.has_value()) {
-      // Verify if there's PDU session info in the old context
+      // PDU sessions can only be inherited from the same subscriber
       std::shared_ptr<ue_context> old_uc =
           amf_app_inst->get_ue_context(uc->supi);
-      if (old_uc) {
+      if (old_uc and old_uc != uc) {
         uc->copy_pdu_sessions(old_uc);
       }
     }
