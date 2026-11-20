@@ -1032,8 +1032,10 @@ void amf_app::handle_itti_message(
           itti_msg.smContextStatusNotification)) {
     Logger::amf_app().debug("Update PDU Session Release successfully");
 
-    // TODO: a RELEASED notification should also tear down the N2 context;
-    // RAN-side bearers are currently leaked (TS 23.502 §4.3.4).
+    // Nothing to release towards the RAN here. The SMF releases the RAN
+    // resources (N2 SM information in an N1N2MessageTransfer) before it
+    // notifies RELEASED (TS 23.502 section 4.3.4.2), and only the SMF can
+    // build that N2 SM information.
     response_data[kSbiResponseHttpResponseCode] =
         oai::common::sbi::http_status_code::NO_CONTENT;
 
