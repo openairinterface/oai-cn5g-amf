@@ -245,19 +245,19 @@ void statistics::update_ue_info(const ue_info_t& ue_info) {
 void statistics::update_5gmm_state(
     const std::shared_ptr<nas_context>& nc, const _5gmm_state_t& state) {
   if (!nc) return;
+  // Same key as update_ue_info: IMSI, or SUPI/SUCI when IMSI is unknown
+  const std::string ue_id = nc->imsi.empty() ? nc->supi : nc->imsi;
   std::unique_lock lock(m_ue_infos);
-  if (ue_infos.count(nc->imsi) > 0) {
-    ue_info_t ue_info       = ue_infos.at(nc->imsi);
+  if (ue_infos.count(ue_id) > 0) {
+    ue_info_t& ue_info      = ue_infos.at(ue_id);
     ue_info.register_status = state;
-    ;
     if (nc->guti.has_value()) ue_info.guti = nc->guti.value();
-    ue_infos.at(nc->imsi) = ue_info;
     Logger::amf_app().debug(
-        "The UE's state (IMSI %s, State %s) has been successfully updated!",
-        nc->imsi.c_str(), nas_context::fivegmm_state_to_string(state).c_str());
+        "The UE's state (UE_ID %s, State %s) has been successfully updated!",
+        ue_id.c_str(), nas_context::fivegmm_state_to_string(state).c_str());
   } else {
     Logger::amf_app().warn(
-        "Update UE State (IMSI %s), UE does not exist!", nc->imsi.c_str());
+        "Update UE State (UE_ID %s), UE does not exist!", ue_id.c_str());
   }
 }
 
