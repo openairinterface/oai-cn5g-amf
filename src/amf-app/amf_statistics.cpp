@@ -262,6 +262,15 @@ void statistics::update_5gmm_state(
 }
 
 //------------------------------------------------------------------------------
+void statistics::remove_ue_info(const std::shared_ptr<nas_context>& nc) {
+  if (!nc) return;
+  std::unique_lock lock(m_ue_infos);
+  // Entry may be keyed by IMSI or by SUPI/SUCI, erase both
+  if (!nc->imsi.empty()) ue_infos.erase(nc->imsi);
+  if (!nc->supi.empty()) ue_infos.erase(nc->supi);
+}
+
+//------------------------------------------------------------------------------
 void statistics::remove_gnb(uint32_t gnb_id) {
   std::unique_lock lock(m_gnbs);
   if (gnbs.count(gnb_id) > 0) {

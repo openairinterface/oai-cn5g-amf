@@ -4858,6 +4858,8 @@ bool amf_n1::ue_initiate_de_registration_handle(
   // Stop all procedure timers to prevent stale callbacks after deregistration
   nas_timer_manager_.stop_all_procedure_timers(nc);
 
+  stacs.remove_ue_info(nc);
+
   // Remove NC context
   if (remove_amf_ue_ngap_id_2_nas_context(amf_ue_ngap_id)) {
     Logger::amf_n1().debug(
@@ -6488,6 +6490,8 @@ void amf_n1::implicit_deregistration_timer_timeout(
       "Signal the UE Connectivity Status Event notification for SUPI %s",
       nc->supi.c_str());
   event_sub.ue_connectivity_state(nc->supi, CM_IDLE);
+
+  stacs.remove_ue_info(nc);
 
   // Finally, remove the UE context: this completes the
   // CM-IDLE -> mobile-reachable timer -> implicit de-registration ->
