@@ -1150,7 +1150,12 @@ bool amf_n1::identity_response_handle(
     // event_sub.ue_registration_state(supi, _5GMM_COMMON_PROCEDURE_INITIATED,
     // 1);
     // TODO: Trigger UE Location Report
-    return run_registration_procedure(nc, cause);
+    if (!run_registration_procedure(nc, cause)) {
+      // e.g. AUSF could not authenticate the SUCI: reject, don't leave the
+      // UE hanging in COMMON-PROCEDURE-INITIATED
+      send_registration_reject_msg(ran_ue_ngap_id, amf_ue_ngap_id, cause);
+      return false;
+    }
   }
 
   return true;
