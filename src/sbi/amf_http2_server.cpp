@@ -203,88 +203,96 @@ void amf_http2_server::start() {
       });
 
   // Event Exposure
-  server.handle(
-      amf_sbi_helper::AmfEventExposureServiceBase() +
-          amf_sbi_helper::AmfEvtsPathSubscriptions,
-      [&](const request& request, const response& res) {
-        // OAuth2 access-token: validate the request
-        if (!oai::amf::sbi::authorize_request(request, res)) return;
-        auto body = std::make_shared<oai::amf::sbi::request_body_buffer>();
-        request.on_data([&, body](const uint8_t* data, std::size_t len) {
-          if (len > 0) {
-            if (!body->append(data, len))
-              return send_response(
-                  res, oai::common::sbi::http_status_code::PAYLOAD_TOO_LARGE);
-            return;
+  //
+  // Registered for the collection *and* for the subtree beneath it. nghttp2
+  // follows Go's ServeMux rules: a pattern without a trailing slash matches
+  // only that exact path, so ".../subscriptions/1" reached no handler at all
+  // and nghttp2 answered its own 404. The DELETE and PATCH branches below read
+  // a subscription id out of the request path -- they were written for this
+  // and were simply unreachable.
+  auto event_exposure_handler = [&](const request& request,
+                                    const response& res) {
+    // OAuth2 access-token: validate the request
+    if (!oai::amf::sbi::authorize_request(request, res)) return;
+    auto body = std::make_shared<oai::amf::sbi::request_body_buffer>();
+    request.on_data([&, body](const uint8_t* data, std::size_t len) {
+      if (len > 0) {
+        if (!body->append(data, len))
+          return send_response(
+              res, oai::common::sbi::http_status_code::PAYLOAD_TOO_LARGE);
+        return;
+      }
+      // Terminating callback: the full request body has been accumulated
+      if (body->rejected()) return;
+      const std::string& msg = body->body();
+      Logger::amf_server().debug(
+          "Received message with URI: %s", request.uri().path);
+      try {
+        std::vector<std::string> split_result;
+        boost::split(split_result, request.uri().path, boost::is_any_of("/"));
+        if (request.method().compare("POST") == 0 && !msg.empty()) {
+          if (split_result.size() != 4) {
+            Logger::amf_server().warn("Requested URL is not implemented");
+            return send_response(
+                res, oai::common::sbi::http_status_code::NOT_IMPLEMENTED);
           }
-          // Terminating callback: the full request body has been accumulated
-          if (body->rejected()) return;
-          const std::string& msg = body->body();
-          Logger::amf_server().debug(
-              "Received message with URI: %s", request.uri().path);
-          try {
-            std::vector<std::string> split_result;
-            boost::split(
-                split_result, request.uri().path, boost::is_any_of("/"));
-            if (request.method().compare("POST") == 0 && !msg.empty()) {
-              if (split_result.size() != 4) {
-                Logger::amf_server().warn("Requested URL is not implemented");
-                return send_response(
-                    res, oai::common::sbi::http_status_code::NOT_IMPLEMENTED);
-              }
-              AmfCreateEventSubscription amfCreateEventSubscription;
-              if (!oai::amf::sbi::parse_json_body(
-                      msg, amfCreateEventSubscription)) {
-                return send_response(
-                    res, oai::common::sbi::http_status_code::BAD_REQUEST);
-              }
-              this->create_event_subscription_handler(
-                  amfCreateEventSubscription, res);
-            } else if (request.method().compare("DELETE") == 0) {
-              if (split_result.size() != 5) {
-                Logger::amf_server().warn("Requested URL is not implemented");
-                return send_response(
-                    res, oai::common::sbi::http_status_code::NOT_IMPLEMENTED);
-              }
-              std::string subscriptionId =
-                  split_result[split_result.size() - 1];
-              Logger::amf_server().debug(
-                  "Delete a subscription with ID %s", subscriptionId.c_str());
-              if (m_amf_app->handle_event_exposure_delete(subscriptionId)) {
-                send_response(
-                    res, oai::common::sbi::http_status_code::NO_CONTENT);
-              } else {
-                // Send response
-                nlohmann::json json_data       = {};
-                ProblemDetails problem_details = {};
-                problem_details.setCause("SUBSCRIPTION_NOT_FOUND");
-                to_json(json_data, problem_details);
-                res.write_head(oai::common::sbi::http_status_code::NOT_FOUND);
-                res.end(json_data.dump().c_str());
-              }
-            } else if (request.method().compare("PATCH") == 0) {
-              if (split_result.size() != 5) {
-                Logger::amf_server().warn("Requested URL is not implemented");
-                return send_response(
-                    res, oai::common::sbi::http_status_code::NOT_IMPLEMENTED);
-              }
-              Logger::amf_server().warn(
-                  "Modify EvenExposureSubscription Not Implemented");
-              return send_response(
-                  res, oai::common::sbi::http_status_code::NOT_IMPLEMENTED);
-            } else {
-              Logger::amf_server().warn(
-                  "Invalid request (error: Invalid Request Method)!");
-              return send_response(
-                  res, oai::common::sbi::http_status_code::BAD_REQUEST);
-            }
-          } catch (std::exception& e) {
-            Logger::amf_server().warn("Invalid request (error: %s)!", e.what());
+          AmfCreateEventSubscription amfCreateEventSubscription;
+          if (!oai::amf::sbi::parse_json_body(
+                  msg, amfCreateEventSubscription)) {
             return send_response(
                 res, oai::common::sbi::http_status_code::BAD_REQUEST);
           }
-        });
-      });
+          this->create_event_subscription_handler(
+              amfCreateEventSubscription, res);
+        } else if (request.method().compare("DELETE") == 0) {
+          if (split_result.size() != 5) {
+            Logger::amf_server().warn("Requested URL is not implemented");
+            return send_response(
+                res, oai::common::sbi::http_status_code::NOT_IMPLEMENTED);
+          }
+          std::string subscriptionId = split_result[split_result.size() - 1];
+          Logger::amf_server().debug(
+              "Delete a subscription with ID %s", subscriptionId.c_str());
+          if (m_amf_app->handle_event_exposure_delete(subscriptionId)) {
+            send_response(res, oai::common::sbi::http_status_code::NO_CONTENT);
+          } else {
+            // Send response
+            nlohmann::json json_data       = {};
+            ProblemDetails problem_details = {};
+            problem_details.setCause("SUBSCRIPTION_NOT_FOUND");
+            to_json(json_data, problem_details);
+            res.write_head(oai::common::sbi::http_status_code::NOT_FOUND);
+            res.end(json_data.dump().c_str());
+          }
+        } else if (request.method().compare("PATCH") == 0) {
+          if (split_result.size() != 5) {
+            Logger::amf_server().warn("Requested URL is not implemented");
+            return send_response(
+                res, oai::common::sbi::http_status_code::NOT_IMPLEMENTED);
+          }
+          Logger::amf_server().warn(
+              "Modify EvenExposureSubscription Not Implemented");
+          return send_response(
+              res, oai::common::sbi::http_status_code::NOT_IMPLEMENTED);
+        } else {
+          Logger::amf_server().warn(
+              "Invalid request (error: Invalid Request Method)!");
+          return send_response(
+              res, oai::common::sbi::http_status_code::BAD_REQUEST);
+        }
+      } catch (std::exception& e) {
+        Logger::amf_server().warn("Invalid request (error: %s)!", e.what());
+        return send_response(
+            res, oai::common::sbi::http_status_code::BAD_REQUEST);
+      }
+    });
+  };
+
+  const std::string event_exposure_path =
+      amf_sbi_helper::AmfEventExposureServiceBase() +
+      amf_sbi_helper::AmfEvtsPathSubscriptions;
+  server.handle(event_exposure_path, event_exposure_handler);
+  server.handle(event_exposure_path + "/", event_exposure_handler);
 
   // AMF configuration-related APIs
   server.handle(
@@ -986,15 +994,17 @@ void amf_http2_server::create_event_subscription_handler(
   to_json(
       json_data["subscription"], amfCreateEventSubscription.getSubscription());
 
-  // TODO: To be fixed with correct location
   if (sub_id != -1) {
     char sbi_addr_str[INET_ADDRSTRLEN] = {};
     inet_ntop(AF_INET, &amf_cfg->sbi.addr4, sbi_addr_str, sizeof(sbi_addr_str));
-    std::string location =
-        std::string(sbi_addr_str) + ":" + std::to_string(amf_cfg->sbi.port) +
-        NAMF_EVENT_EXPOSURE_BASE +
-        amf_cfg->sbi.api_version.value_or(DEFAULT_SBI_API_VERSION) +
-        "/namf-evts/" + std::to_string(sub_id);
+    // The same URI the HTTP/1.1 server returns. This repeated the service name
+    // where the collection name belongs, giving
+    //   host:port/namf-evts/v1/namf-evts/1
+    std::string location = "http://" + std::string(sbi_addr_str) + ":" +
+                           std::to_string(amf_cfg->sbi.port) +
+                           amf_sbi_helper::AmfEventExposureServiceBase() +
+                           amf_sbi_helper::AmfEvtsPathSubscriptions + "/" +
+                           std::to_string(sub_id);
 
     json_data["subscriptionId"] = location;
     h.insert(std::make_pair<std::string, header_value>(
