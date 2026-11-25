@@ -123,6 +123,13 @@ class statistics {
       const std::shared_ptr<nas_context>& nc, const _5gmm_state_t& state);
 
   /*
+   * Remove UE from the statistics (once its context is released)
+   * @param [std::shared_ptr<nas_context>&] nc: UE's NAS context
+   * @return void
+   */
+  void remove_ue_info(const std::shared_ptr<nas_context>& nc);
+
+  /*
    * Remove gNB from the list connected gNB to this AMF
    * @param [const uint32_t] gnb_id: gNB ID
    * @return void
