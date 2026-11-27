@@ -5133,6 +5133,9 @@ void amf_n1::ul_nas_transport_handle(
       }
     }
   }
+  // GetPayloadContainer() returns copies the caller owns
+  oai::utils::utils::bdestroy_wrapper(&sm_msg);
+  oai::utils::utils::bdestroy_wrapper(&lpp_msg);
 }
 
 //------------------------------------------------------------------------------
