@@ -510,10 +510,6 @@ int ngap_amf_handle_pdu_session_resource_modify_response(
 
   auto response_msg = std::make_unique<PduSessionResourceModifyResponseMsg>();
 
-  // TODO: decode() (oai-cn5g-common) rejects the whole message on any IE it
-  // does not know — UserLocationInformation, FailedToModifyList and
-  // CriticalityDiagnostics are all optional but commonly sent by real gNBs —
-  // so the response is dropped even for the QoS flows the RAN applied.
   if (!response_msg->decode(message_p)) {
     Logger::ngap().error(
         "Decoding PduSessionResourceModifyResponseMsg message error");
